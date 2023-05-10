@@ -14,27 +14,28 @@ public:
 
 	FMOD::Channel* getChannel(std::string& name);
 
-	// Adds a new Sound* to a std::map with name as its key.
-	// When using a large audio file (eg. BGM), set isStream to true to reduce memory usage.
-	// volume should be set between 0~100. Any higher or lower values will be set to its closest bounds.
-	// Returns true if successfully added, false otherwise.
+	// Creates a Sound object.
+	//
+	// path : Audio file path.
+	// name : Audio object identifier.
+	// isLoop : Decides if audio loops indefinitely.
+	// isStream : Decides if audio should be played through a stream. Set this to true for large audio files.
+	// volume : Volume of audio (0~100).
 	bool addSound(std::string& path, const char* name, bool isLoop, bool isStream, int volume);
 	bool addSound(std::string& path, std::string& name, bool isLoop, bool isStream, int volume);
 
-	// Iterates through _sounds to check if any sounds have finished playing.
-	// Deletes all items that fits criterion above.
+	// Checks through all allocated audio data and releases all that finished playing.
 	void update();
 
-	// Releases the sound playing on a channel if key equals name.
-	// If name is NULL, stop all sounds.
+	// Releases the sound with identifier 'name'.
+	// If name is empty (""), stop all sounds.
 	void stopSound(std::string& name);
 
+	// Returns true if there are any items in _sounds.
+	// Returns false otherwise.
 	bool hasSounds();
-private:
-	// Searches for any item with its name as 'name' in the sound data vector.
-	// If found, returns the vector index; otherwise, returns -1.
-	int searchSound(std::string& name);
 
+private:
 	FMOD::System* fs;
 	FMOD_RESULT fr;
 

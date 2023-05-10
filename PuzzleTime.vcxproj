@@ -20,29 +20,34 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\animation.h" />
-    <ClInclude Include="src\animations.h" />
     <ClInclude Include="src\audio.h" />
-    <ClInclude Include="src\functions.h" />
+    <ClInclude Include="src\command.h" />
     <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\sprite.h" />
+    <ClInclude Include="src\states\GameDouble.h" />
     <ClInclude Include="src\states\state.h" />
     <ClInclude Include="src\states\stateManager.h" />
-    <ClInclude Include="src\states\TestState.h" />
-    <ClInclude Include="src\states\TitleMenu.h" />
+    <ClInclude Include="src\states\StateTest.h" />
+    <ClInclude Include="src\states\StateTitle.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\animations.cpp" />
+    <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\audio.cpp" />
-    <ClCompile Include="src\functions.cpp" />
+    <ClCompile Include="src\command.cpp" />
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sprite.cpp" />
+    <ClCompile Include="src\states\GameDouble.cpp" />
     <ClCompile Include="src\states\state.cpp" />
     <ClCompile Include="src\states\stateManager.cpp" />
-    <ClCompile Include="src\states\TestState.cpp" />
-    <ClCompile Include="src\states\TitleMenu.cpp" />
+    <ClCompile Include="src\states\StateTest.cpp" />
+    <ClCompile Include="src\states\StateTitle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

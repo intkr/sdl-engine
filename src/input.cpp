@@ -1,7 +1,7 @@
 #include "input.h"
 
-Input::Input(std::map<std::string, Sprite*>** s) {
-	_sprites = s;
+Input::Input(Graphics* g) {
+	_g = g;
 	mouseStatus = 0;
 	curX = curY = 0;
 	
@@ -89,7 +89,6 @@ void Input::process(SDL_Event& e) {
 }
 
 void Input::flushInput() {
-	// push all active keys into passive keys, and reset active keys
 	for (auto key = pressedKeys.begin(); key != pressedKeys.end();) {
 		key++->second = true;
 	}
@@ -124,11 +123,11 @@ void Input::pollInput(int x, int y) {
 	case 1:
 		mouseStatus = 2;
 		for (int i = 2; i >= 0; i--) {
-			for (auto iter = (*_sprites[i]).cbegin(); iter != (*_sprites[i]).cend();) {
+			for (auto iter = (*_g->_sprites[i]).cbegin(); iter != (*_g->_sprites[i]).cend();) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 				
-				if (s->getDstRect() == NULL || checkCollision(&p, s)) {
+				if (s->getDstRect() == NULL || checkCollision(p, s)) {
 					clickedObject[t] = false;
 				}
 				iter++;
@@ -137,11 +136,11 @@ void Input::pollInput(int x, int y) {
 		break;
 	case 2:
 		for (int i = 2; i >= 0; i--) {
-			for (auto iter = (*_sprites[i]).cbegin(); iter != (*_sprites[i]).cend();) {
+			for (auto iter = (*_g->_sprites[i]).cbegin(); iter != (*_g->_sprites[i]).cend();) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 
-				if (s->getDstRect() == NULL || checkCollision(&p, s)) {
+				if (s->getDstRect() == NULL || checkCollision(p, s)) {
 					clickedObject[t] = true;
 				}
 				else if (clickedObject.count(t) > 0) {

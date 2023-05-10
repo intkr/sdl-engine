@@ -17,22 +17,6 @@ Graphics::~Graphics() {
 	SDL_DestroyRenderer(_renderer);
 }
 
-SDL_Window* Graphics::getWindow() {
-	return _window;
-}
-
-SDL_Renderer* Graphics::getRenderer() {
-	return _renderer;
-}
-
-std::map<std::string, SDL_Texture*>* Graphics::getTexturePtr() {
-	return &_textures;
-}
-
-std::map<std::string, Sprite*>** Graphics::getSpritePtr() {
-	return _sprites;
-}
-
 SDL_Texture* Graphics::getTexture(std::string name) {
 	if (_textures.count(name) > 0) {
 		return _textures[name];
@@ -41,15 +25,20 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 }
 
 bool Graphics::addTexture(std::string path, std::string name) {
+	// Check if identifier 'name' is already being used.
 	if (_textures.find(name) != _textures.end()) {
 		std::cout << "Key \"" << name << "\" already exists in texture data.\n";
 		return false;
 	}
+
+	// Check if image path 'path' exists and can be loaded successfully
 	SDL_Surface* bgSurface = IMG_Load(path.c_str());
 	if (bgSurface == NULL) {
 		std::cout << "File path \"" << path << "\" is invalid, failed to add texture \"" << name << "\".\n";
 		return false;
 	}
+	
+	// Create texture and add to data
 	SDL_Texture* bgTexture = SDL_CreateTextureFromSurface(_renderer, bgSurface);
 	SDL_SetTextureBlendMode(bgTexture, SDL_BLENDMODE_BLEND);
 	SDL_FreeSurface(bgSurface);
@@ -57,13 +46,10 @@ bool Graphics::addTexture(std::string path, std::string name) {
 	return true;
 }
 
-bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, int type, std::string name, double a) {
+bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
+	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
 	if (tex == NULL) {
 		std::cout << "Null texture, adding sprite \"" << name << "\" failed.\n";
-		return false;
-	}
-	if (type < BACKGROUND || type > POPUP) {
-		std::cout << "Invalid sprite type, adding sprite \"" << name << "\" failed.\n";
 		return false;
 	}
 	if ((*_sprites[type]).count(name) > 0) {
@@ -71,7 +57,8 @@ bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, int ty
 		return false;
 	}
 
-	(*_sprites[type])[name] = new Sprite(tex, src, dst, a);
+	// Create sprite and add to data
+	(*_sprites[type])[name] = new Sprite(tex, src, dst, angle);
 	return true;
 }
 
@@ -101,14 +88,7 @@ void Graphics::renderScreen() {
 	for (int i = 0; i < 3; i++) {
 		// If there's a pop-up window to render, cover the window with an translucent black sprite.
 		if (i == 2 && doesPopupExist()) {
-			SDL_Texture* t = SDL_CreateTexture(_renderer, 0, SDL_TEXTUREACCESS_TARGET, 1, 1);
-			SDL_SetRenderTarget(_renderer, t);
-			SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 128);
-			SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
-			SDL_RenderDrawPoint(_renderer, 0, 0);
-			SDL_SetRenderTarget(_renderer, NULL);
-			SDL_RenderCopy(_renderer, t, NULL, NULL);
-			SDL_DestroyTexture(t);
+			darkenScreen();
 		}
 		/*
 		Small note - read if screen flickers black when changing states
@@ -133,6 +113,18 @@ void Graphics::renderScreen() {
 	SDL_RenderPresent(_renderer);
 }
 
+void Graphics::darkenScreen() {
+	int dim = 50; // Black layer opacity
+
+	SDL_Texture* t = SDL_CreateTexture(_renderer, 0, SDL_TEXTUREACCESS_TARGET, 1, 1);
+	SDL_SetRenderTarget(_renderer, t);
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, dim * 255 / 100);
+	SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+	SDL_RenderDrawPoint(_renderer, 0, 0);
+	SDL_SetRenderTarget(_renderer, NULL);
+	SDL_RenderCopy(_renderer, t, NULL, NULL);
+	SDL_DestroyTexture(t);
+}
 void Graphics::reset() {
 	emptySprites();
 	emptyTextures();
@@ -155,7 +147,8 @@ void Graphics::emptyTextures() {
 	}
 }
 
-bool Graphics::addAnimation(std::string spriteName, std::string aniName, Animation* a, int type) {
+bool Graphics::addAnimation(std::string spriteName, std::string aniName, Animation* a, AnimationType type) {
+	// Check if identifier 'spriteName' exists in data.
 	int index = -1;
 	for (int i = 0; i < 3; i++) {
 		if ((*_sprites[i]).count(spriteName) > 0) {

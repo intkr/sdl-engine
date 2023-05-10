@@ -5,7 +5,10 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-enum AnimationType {INTRO, IDLE, OUTRO};
+#include "animation.h"
+
+enum AnimationType { _INTRO, _IDLE, _OUTRO, _INVALID };
+enum SpriteType { _BACKGROUND, _FOREGROUND, _POPUP };
 
 #define AniVector std::vector<std::pair<std::string, Animation*>>
 
@@ -16,25 +19,30 @@ public:
 	Sprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, double a = 0);
 	~Sprite();
 
-	SDL_Texture* getTexture();
-	SDL_Rect* getSrcRect();
-	SDL_FRect* getDstRect();
-	SDL_FRect* getBaseRect();
-	void setAngle(double a);
-	double getAngle();
-	bool isVisible();
+	SDL_Texture* getTexture() { return _texture; }
+	SDL_Rect* getSrcRect() { return srcRect; }
+	SDL_FRect* getDstRect() { return dstRect; }
+	SDL_FRect* getBaseRect() { return baseRect; }
+	double getAngle() { return angle; }
+	bool isVisible() { return visibility; }
 
-	void triggerOutro();
+	void setAngle(double a);
+
+	// Forces the status to _OUTRO.
+	// Use to remove certain sprites or trigger screen transitions.
+	void triggerOutro() { status = _OUTRO; }
 
 	// Updates sprite by processing through its animations.
 	// Returns true if sprite is valid and needs to be rendered,
 	// false if it finished its animations and needs to be deleted.
 	bool updateSprite();
 
-	// index : _INTRO | _IDLE | _OUTRO
-	bool addAnimation(std::string name, Animation* a, short index);
+	// Adds animation to vector. Returns true if successful, false otherwise.
+	//
+	// name : Sprite object identifier.
+	// a : Animation object. Must be dynamically allocated.
+	bool addAnimation(std::string name, Animation* a, AnimationType type);
 
-	// make functions to edit animation data instead of passing everything as a parameter on initialization
 private:
 	SDL_Texture* _texture;
 	SDL_Rect* srcRect;
@@ -44,65 +52,21 @@ private:
 	double angle;
 	bool visibility;
 
-	// when the user clicks this sprite, return this for callback
-	// if this sprite doesn't need a response, set it to its default (CMD_NONE)
-	//Command callback;
-
 	// destroy animation when finished (unless idle looping)
 	// change status when vector is empty
 	AniVector introAnimations;
 	AniVector idleAnimations;
 	AniVector outroAnimations;
 	AniVector* _animations[3];
-	short status;
+	AnimationType status;
 };
 
 
-class Animation {
-public:
 
-	Animation(float floats[4], int frames, bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*));
-	Animation(bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*));
-	~Animation();
+// This function checks the collision between a point and a rotated rectangle.
+// 
+// p : Point on screen.
+// s : Sprite to check collision with.
+bool checkCollision(SDL_FPoint& point, Sprite* sprite);
 
-	// perform func, and add 1 to the current frame count.
-	bool process(Sprite* s);
-
-	// set current frame count to 1
-	void reset();
-
-	bool isFinished();
-	bool isCompound();
-	bool isSequential();
-	bool isLooping();
-
-	// max frames
-	unsigned int getMF();
-
-	// current frames
-	unsigned int getCF();
-
-	// deliberately placed in public to reduce duplicate code for accessing data
-	float param[4];
-private:
-	void (*func)(Sprite*, Animation*);
-
-	// true : Loops until outro is triggered. If sequential, the entire sequence loops as a whole.
-	// false: Plays once.
-	bool looping;
-
-	// true : Subsequent animations will also be played.
-	// false: Subsequent animations won't be played until it ends.
-	bool compound;
-
-	// true : Only one animation (more if compound) in a group of sequential animations is played at a time.
-	// false: Multiple subsequent animations can be played.
-	bool sequential;
-
-	unsigned int maxFrames;
-	unsigned int currentFrames;
-
-};
-
-bool checkCollision(SDL_FPoint* p, Sprite* s);
 bool checkCollision(Sprite* s1, Sprite* s2);

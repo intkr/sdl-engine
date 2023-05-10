@@ -5,21 +5,34 @@
 
 #include "SDL.h"
 
+#include "graphics.h"
 #include "sprite.h"
 
 class Input {
 public:
-	Input(std::map<std::string, Sprite*>** s);
+	Input(Graphics* g);
 	~Input();
 
+	// Gets mouse / keyboard input from SDL2, and adds it to input data correspondingly.
 	void process(SDL_Event& e);
 
+	// Updates all active keys into passive keys.
+	// Erases all previously released objects from input data.
 	void flushInput();
 	
-	//void handleClick(std::map<std::string, Sprite*>** sprites);
-
+	// Contains all keyboard scancodes that has been pressed.
+	// map.first : Object name identifier
+	// map.second : Click status (false = active, true = passive)
 	std::map<SDL_Scancode, bool>* getPressedKeys();
+
+	// NOTE: Add released keys if needed
+	
+	// Contains all object identifiers that has been clicked.
+	// map.first : Object name identifier
+	// map.second : Click status (false = active, true = passive)
 	std::map<std::string, bool>* getClickedObject();
+
+	// Contains all object identifiers that were released this frame.
 	std::vector<std::string>* getReleasedObject();
 
 private:
@@ -39,7 +52,9 @@ private:
 	int curX, curY;
 	SDL_Scancode leftKeybinds[4][3];
 	SDL_Scancode rightKeybinds[4][3];
-	std::map<std::string, Sprite*>** _sprites;
+
+	// Pointer to the Graphics object to access sprite data.
+	const Graphics* _g;
 
 	// Stores all keys that are being pressed.
 	// If it's an active key (it was just pressed this frame), then the bool value is false.

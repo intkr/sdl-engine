@@ -8,6 +8,8 @@ Audio::Audio() {
 
 Audio::~Audio() {
 	FMOD::Sound* sound;
+
+	// Release all allocated audio data
 	for (auto a = _sounds.cbegin(); a != _sounds.cend();) {
 		a->second->getCurrentSound(&sound);
 		if (sound != NULL) {
@@ -16,6 +18,7 @@ Audio::~Audio() {
 		a->second->stop();
 		_sounds.erase(a++);
 	}
+
 	fs->close();
 	fs->release();
 }
@@ -27,6 +30,7 @@ bool Audio::addSound(std::string& path, const char* name, bool isLoop, bool isSt
 
 bool Audio::addSound(std::string& path, std::string& name, bool isLoop, bool isStream, int volume) {
 
+	// Setting audio boundaries
 	if (volume > 100) {
 		std::cout << "Warning: Sound \"" << name << "\" was set to volume " << volume << ", setting to 100 instead.\n";
 		volume = 100;
@@ -36,12 +40,14 @@ bool Audio::addSound(std::string& path, std::string& name, bool isLoop, bool isS
 		volume = 0;
 	}
 
+	// Create sound object
 	FMOD::Sound* sound;
 	fr = fs->createSound(path.c_str(), (isLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF) | FMOD_2D | (isStream ? FMOD_CREATESTREAM : 0), NULL, &sound);
 	if (fr != FMOD_OK) {
 		return false;
 	}
 
+	// Create channel object and pause sound immediately
 	FMOD::Channel* channel;
 	fs->playSound(sound, NULL, 1, &channel);
 	if (fr != FMOD_OK) {
@@ -57,7 +63,7 @@ bool Audio::addSound(std::string& path, std::string& name, bool isLoop, bool isS
 void Audio::stopSound(std::string& name) {
 	FMOD::Sound* sound;
 	
-	// release all sounds if empty string
+	// Release all sounds if 'name' is empty
 	if (name == "") {
 		for (auto a = _sounds.cbegin(); a != _sounds.cend();) {
 			a->second->getCurrentSound(&sound);
@@ -67,22 +73,22 @@ void Audio::stopSound(std::string& name) {
 		return;
 	}
 
-	// if not NULL, release sound from corresponding channel
-	int n = searchSound(name);
-	if (n == -1) {
+	// if not empty, release sound from corresponding channel
+	FMOD::Channel* ch = getChannel(name);
+	if (ch == nullptr) {
 		std::cout << "Sound name \"" << name << "\" doesn't exist, failed to delete.\n";
 		return;
 	}
 	
-	_sounds[n].second->getCurrentSound(&sound);
+	ch->getCurrentSound(&sound);
 	sound->release();
 }
 
 FMOD::Channel* Audio::getChannel(std::string& name) {
-	int n = searchSound(name);
-	if (n != -1) {
-		return _sounds[n].second;
+	for (int i = 0; i < _sounds.size(); i++) {
+		if (_sounds[i].first == name) return _sounds[i].second;
 	}
+
 	std::cout << "Sound name \"" << name << "\" doesn't exist, failed to get channel.\n";
 	return NULL;
 }
@@ -96,20 +102,13 @@ void Audio::update() {
 		if (!b || fr == FMOD_ERR_INVALID_HANDLE) {
 			a->second->getCurrentSound(&sound);
 			sound->release();
-			//a->second->stop(); // this should be unnecessary but keeping it for now just in case idk
+			//a->second->stop(); // this should be unnecessary
 			a = _sounds.erase(a);
 		}
 		else {
 			a++;
 		}
 	}
-}
-
-int Audio::searchSound(std::string& name) {
-	for (int i = 0; i < _sounds.size(); i++) {
-		if (_sounds[i].first == name) return i;
-	}
-	return -1;
 }
 
 bool Audio::hasSounds() {

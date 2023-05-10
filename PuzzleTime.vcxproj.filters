@@ -18,16 +18,7 @@
     <ClInclude Include="src\animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\animations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\audio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\functions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\input.h">
@@ -42,21 +33,27 @@
     <ClInclude Include="src\states\stateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\states\TestState.h">
+    <ClInclude Include="src\states\StateTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\states\TitleMenu.h">
+    <ClInclude Include="src\states\StateTitle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\states\GameDouble.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\animations.cpp">
+    <ClCompile Include="src\animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\graphics.cpp">
@@ -77,11 +74,25 @@
     <ClCompile Include="src\states\stateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\states\TestState.cpp">
+    <ClCompile Include="src\states\StateTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\states\TitleMenu.cpp">
+    <ClCompile Include="src\states\StateTitle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\states\GameDouble.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="README.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

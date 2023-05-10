@@ -12,7 +12,7 @@
 #include "input.h"
 #include "states/stateManager.h"
 
-extern const int fps = 60; // changing this value changes the game speed // TODO: fix this
+extern const int fps = 60; // Not actually FPS
 double rm = 0.6666666667; // 1280x720 : 0.6666666667, 1600x900 : 0.8333333333, 1920x1080 : 1.0
 
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
@@ -24,7 +24,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
 	Graphics* g = new Graphics((int)(1920 * rm), (int)(1080 * rm));
-	Input* i = new Input(g->getSpritePtr());
+	Input* i = new Input(g);
 	Audio* a = new Audio();
 	StateManager* s = new StateManager(1, g, i, a);
 
@@ -52,3 +52,13 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	SDL_Quit();
 	return 0;
 }
+
+/*
+TODO:
+	***Split functions into smaller parts
+
+	Fix sprite animation code
+	Fix "FPS" so it actually means FPS
+	Fis param in sprite class
+
+*/

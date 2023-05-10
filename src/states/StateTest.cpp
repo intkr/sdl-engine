@@ -2,30 +2,30 @@
 #include "../audio.h"
 #include "../input.h"
 
-#include "TestState.h"
+#include "StateTest.h"
 
 extern double rm;
 
-TestState::TestState(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
+StateTest::StateTest(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
 	init();
 }
 
-TestState::~TestState() {}
+StateTest::~StateTest() {}
 
-void TestState::init() {
+void StateTest::init() {
 	g->reset();
 }
 
-int TestState::update() {
+Command StateTest::update() {
 	auto pressedKeys = i->getPressedKeys();
 	if (pressedKeys->size() > 0) {
-		return 0;
+		return Command();
 	}
 
 	auto clickedObject = i->getClickedObject();
 	if (clickedObject->size() > 0) {
-		return 0;
+		return Command();
 	}
 
-	return 0;
+	return Command();
 }

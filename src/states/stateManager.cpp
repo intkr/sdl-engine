@@ -13,11 +13,15 @@ void StateManager::setState() {
 	switch (currentState) {
 	case _STATE_TITLE:
 		std::cout << "Screen transitioned to title menu.\n";
-		s = new TitleMenuState(g, i, a);
+		s = new StateTitle(g, i, a);
+		break;
+	case _GAME_DOUBLE:
+		std::cout << "Screen transitioned to game \"Double\".\n";
+		s = new GameDouble(g, i, a);
 		break;
 	case _STATE_TEST:
 		std::cout << "Screen transitioned to test menu.\n";
-		s = new TestState(g, i, a);
+		s = new StateTest(g, i, a);
 		break;
 	default:
 		// shouldn't happen
@@ -26,10 +30,20 @@ void StateManager::setState() {
 }
 
 void StateManager::update() {
-	int r = s->update();
+	_command = s->update();
 
-	if (currentState > 0 && r > 0) {
-		currentState = 0 - r;
+	switch (_command.getType()) {
+	case _CMD_STATE:
+
+		break;
+
+	case _CMD_NONE:
+	default:
+		break;
+	}
+	// fix when Command is implemented
+	if (currentState > 0 && 0) {
+		currentState = 0;
 		g->triggerOutro();
 	}
 	if (currentState < 0) {

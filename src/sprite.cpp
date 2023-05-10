@@ -1,64 +1,5 @@
 #include "sprite.h"
 
-Animation::Animation(float floats[4], int frames, bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*)) {
-	for (int i = 0; i < _countof(param); i++) param[i] = floats[i];
-	maxFrames = frames;
-	currentFrames = 1;
-	looping = loop;
-	compound = comp;
-	sequential = seq;
-	func = f;
-}
-
-Animation::Animation(bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*)) {
-	for (int i = 0; i < _countof(param); i++) param[i] = 0;
-	maxFrames = 1;
-	currentFrames = 1;
-	looping = loop;
-	compound = comp;
-	sequential = seq;
-	func = f;
-}
-
-Animation::~Animation() {}
-
-bool Animation::process(Sprite* s) {
-	if (!isFinished()) {
-		func(s, this);
-		currentFrames++;
-		return true;
-	}
-	return false;
-}
-
-bool Animation::isFinished() {
-	return (currentFrames > maxFrames);
-}
-
-bool Animation::isCompound() {
-	return compound;
-}
-
-bool Animation::isLooping() {
-	return looping;
-}
-
-bool Animation::isSequential() {
-	return sequential;
-}
-
-unsigned int Animation::getCF() {
-	return currentFrames;
-}
-
-unsigned int Animation::getMF() {
-	return maxFrames;
-}
-
-void Animation::reset() {
-	currentFrames = 1;
-}
-
 Sprite::Sprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, double a) {
 	_texture = tex;
 	srcRect = src;
@@ -71,7 +12,7 @@ Sprite::Sprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, double a) {
 	else {
 		dstRect = NULL;
 	}
-	status = 0;
+	status = _INTRO;
 
 	_animations[0] = &introAnimations;
 	_animations[1] = &idleAnimations;
@@ -93,39 +34,11 @@ Sprite::~Sprite() {
 	}
 }
 
-SDL_Texture* Sprite::getTexture() {
-	return _texture;
-}
-
-SDL_Rect* Sprite::getSrcRect() {
-	return srcRect;
-}
-
-SDL_FRect* Sprite::getBaseRect() {
-	return baseRect;
-}
-
-SDL_FRect* Sprite::getDstRect() {
-	return dstRect;
-}
-
 void Sprite::setAngle(double a) {
 	while (a > 180 || a < -180) { // normalize angle to -180 ~ 180
 		a += 360 * (a < 0 ? 1 : -1);
 	}
 	angle = a;
-}
-
-double Sprite::getAngle() {
-	return angle;
-}
-
-bool Sprite::isVisible() {
-	return visibility;
-}
-
-void Sprite::triggerOutro() {
-	status = OUTRO;
 }
 
 bool Sprite::updateSprite() {
@@ -199,39 +112,55 @@ bool Sprite::updateSprite() {
 	}
 
 	if (v->empty()) {
-		if (++status >= 3) return false;
+		// update status
+		switch (status) {
+		case _INTRO:
+			status = _IDLE;
+			break;
+		case _IDLE:
+			status = _OUTRO;
+			break;
+		case _OUTRO:
+			status = _INVALID;
+			break;
+		}
+
+		if (status == _INVALID) return false;
 	}
 	return true;
 }
 
-bool Sprite::addAnimation(std::string name, Animation* a, short index) {
-	if (index < 0 || index > 2) return false;
+bool Sprite::addAnimation(std::string name, Animation* a, AnimationType type) {
+	if (type == _INVALID) return false;
 	if (a == NULL) return false;
 
-	(*_animations[index]).push_back(std::make_pair(name, a));
+	(*_animations[type]).push_back(std::make_pair(name, a));
 	return true;
 }
 
-bool checkCollision(SDL_FPoint* p, Sprite* s) {
-	SDL_FRect* r = s->getDstRect();
-	float a = (float)(s->getAngle() * M_PI / 360); // sprite's rotation angle, converted to radians
+bool checkCollision(SDL_FPoint& point, Sprite* sprite) {
+	// Because rectangle objects can't be rotated, the function "un-rotates the point" instead.
 
-	// This function checks the collision between a point and a rotated rectangle.
-	// Because dstRect itself is not rotated, the point will be rotated instead for the collision check.
+	// Hitbox rect of sprite and its center point
+	SDL_FRect* rect = sprite->getDstRect();
+	SDL_FPoint rectCenter = { rect->x + rect->w / 2, rect->y + rect->h / 2 };
 
-	SDL_FPoint cp = { r->x + r->w / 2, r->y + r->h / 2 }; // center of r
+	// sprite'sprite rotation angle, converted to radians
+	float a = (float)(sprite->getAngle() * M_PI / 360);
 	
-	// subtract p by cp, so p can be rotated centered on (0, 0)
-	p->x -= cp.x;
-	p->y -= cp.y;
+	// Move point so it's related to (0, 0) instead of center of rect
+	point.x -= rectCenter.x;
+	point.y -= rectCenter.y;
 
 	// Rotate point
 	SDL_FPoint np; // new point
-	float c = atan2f(p->y, p->x); // rotation of p, radians
-	float d = sqrtf(p->x * p->x + p->y * p->y); // length of OP
-	np.x = d * cosf(a - c) + cp.x;
-	np.y = d * sinf(a - c) + cp.y;
-	return SDL_PointInFRect(&np, r);
+	float c = atan2f(point.y, point.x); // rotation of point, radians
+	float d = sqrtf(point.x * point.x + point.y * point.y); // length of OP
+	np.x = d * cosf(a - c) + rectCenter.x;
+	np.y = d * sinf(a - c) + rectCenter.y;
+
+	// Check if the un-rotated point is within rect
+	return SDL_PointInFRect(&np, rect);
 }
 
 bool checkCollision(Sprite* s1, Sprite* s2) {

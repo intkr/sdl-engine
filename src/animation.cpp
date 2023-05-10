@@ -1,4 +1,38 @@
-#include "animations.h"
+#include "animation.h"
+
+#include "sprite.h"
+
+Animation::Animation(float floats[4], int frames, bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*)) {
+	for (int i = 0; i < _countof(param); i++) param[i] = floats[i];
+	animationLength = frames;
+	currentFrame = 1;
+	looping = loop;
+	compound = comp;
+	sequential = seq;
+	func = f;
+}
+
+Animation::Animation(bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*)) {
+	for (int i = 0; i < _countof(param); i++) param[i] = 0;
+	animationLength = 1;
+	currentFrame = 1;
+	looping = loop;
+	compound = comp;
+	sequential = seq;
+	func = f;
+}
+
+Animation::~Animation() {}
+
+bool Animation::process(Sprite* sprite) {
+	if (!isFinished()) {
+		func(sprite, this);
+		currentFrame++;
+		return true;
+	}
+	return false;
+}
+
 
 void staticMotion(Sprite* _s, Animation* _a) {
 	// nothing
@@ -11,16 +45,16 @@ void invisible(Sprite* _s, Animation* _a) {
 
 void sincosMotion(Sprite* _s, Animation* _a) {
 	float a = _a->param[0], b = _a->param[1], c = _a->param[2], d = _a->param[3];
-	unsigned int cf = _a->getCF();
+	unsigned int cf = _a->getCurrentFrame();
 	SDL_FRect* dstRect = _s->getDstRect();
 	SDL_FRect* baseRect = _s->getBaseRect();
 
 	float f;
 	if (d == (float)true) { // true : sin, false : cos
-		f = (float)sin(cf * pi * b) * a;
+		f = (float)sin(cf * PI * b) * a;
 	}
 	else {
-		f = (float)cos(cf * pi * b) * a;
+		f = (float)cos(cf * PI * b) * a;
 	}
 
 	if (c == (float)true) { // true : x, false : y
@@ -55,7 +89,7 @@ void resizeCenteredMotion(Sprite* _s, Animation* _a) {
 		return;
 	}
 
-	int mf = _a->getMF(), cf = _a->getCF();
+	int mf = _a->getAniLength(), cf = _a->getCurrentFrame();
 	SDL_FRect* dstRect = _s->getDstRect();
 	SDL_FRect* baseRect = _s->getBaseRect();
 
@@ -72,15 +106,15 @@ void linearRotation(Sprite* _s, Animation* _a) {
 
 void sinRotation(Sprite* _s, Animation* _a) {
 	float a = _a->param[0], b = _a->param[1];
-	unsigned int cf = _a->getCF();
-	double d = sin(cf * pi * b) * a;
+	unsigned int cf = _a->getCurrentFrame();
+	double d = sin(cf * PI * b) * a;
 	_s->setAngle(d);
 }
 
 void opacity(Sprite* _s, Animation* _a) {
 	int a = (int)_a->param[0], b = (int)_a->param[1];
-	unsigned int cf = _a->getCF();
-	unsigned int mf = _a->getMF();
+	unsigned int cf = _a->getCurrentFrame();
+	unsigned int mf = _a->getAniLength();
 	if (mf == 1) {
 		SDL_SetTextureAlphaMod(_s->getTexture(), a);
 	}

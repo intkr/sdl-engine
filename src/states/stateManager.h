@@ -1,8 +1,9 @@
 #pragma once
-#include "TitleMenu.h"
-#include "TestState.h"
+#include "StateTitle.h"
+#include "StateTest.h"
 
-enum StateName { _STATE_TEST = 999, _STATE_TITLE = 1,  };
+#include "GameDouble.h"
+
 
 class StateManager {
 public:
@@ -16,5 +17,6 @@ private:
 	Input* i;
 	Audio* a;
 
+	Command _command;
 	int currentState;
 };
