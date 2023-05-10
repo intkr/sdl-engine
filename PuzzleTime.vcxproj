@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\animation.h" />
+    <ClInclude Include="src\animation_functions.h" />
     <ClInclude Include="src\audio.h" />
     <ClInclude Include="src\command.h" />
     <ClInclude Include="src\graphics.h" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\animation.cpp" />
+    <ClCompile Include="src\animation_functions.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\command.cpp" />
     <ClCompile Include="src\graphics.cpp" />

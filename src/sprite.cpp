@@ -121,17 +121,17 @@ bool Sprite::updateSprite() {
 			status = _OUTRO;
 			break;
 		case _OUTRO:
-			status = _INVALID;
+			status = _END;
 			break;
 		}
 
-		if (status == _INVALID) return false;
+		if (status == _END) return false;
 	}
 	return true;
 }
 
 bool Sprite::addAnimation(std::string name, Animation* a, AnimationType type) {
-	if (type == _INVALID) return false;
+	if (type == _END) return false;
 	if (a == NULL) return false;
 
 	(*_animations[type]).push_back(std::make_pair(name, a));

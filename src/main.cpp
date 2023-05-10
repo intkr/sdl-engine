@@ -55,10 +55,9 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	***Split functions into smaller parts
-
 	Fix sprite animation code
-	Fix "FPS" so it actually means FPS
+	
+	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
 	Fis param in sprite class
 
 */

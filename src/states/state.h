@@ -1,5 +1,6 @@
 #pragma once
 #include "../command.h"
+#include "../animation_functions.h"
 
 class Input;
 class Audio;

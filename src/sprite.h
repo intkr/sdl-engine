@@ -7,7 +7,7 @@
 
 #include "animation.h"
 
-enum AnimationType { _INTRO, _IDLE, _OUTRO, _INVALID };
+enum AnimationType { _INTRO, _IDLE, _OUTRO, _END };
 enum SpriteType { _BACKGROUND, _FOREGROUND, _POPUP };
 
 #define AniVector std::vector<std::pair<std::string, Animation*>>
