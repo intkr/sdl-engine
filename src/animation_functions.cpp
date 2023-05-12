@@ -2,18 +2,19 @@
 
 #include "sprite.h"
 
-void staticMotion(Sprite* _s, Animation* _a) {
+void Animations::staticMotion(Sprite* _s, AnimationEvent* _e) {
 	// nothing
 }
 
-void invisible(Sprite* _s, Animation* _a) {
+void Animations::invisible(Sprite* _s, AnimationEvent* _e) {
 	SDL_FRect* dstRect = _s->getDstRect();
 	dstRect->w = dstRect->h = 0;
 }
 
-void sincosMotion(Sprite* _s, Animation* _a) {
-	float a = _a->param[0], b = _a->param[1], c = _a->param[2], d = _a->param[3];
-	unsigned int cf = _a->getCurrentFrame();
+void Animations::sincosMotion(Sprite* _s, AnimationEvent* _e) {
+	std::vector<double>* p = _e->getParameter();
+	float a = (*p)[0], b = (*p)[1], c = (*p)[2], d = (*p)[3];
+	unsigned int cf = _e->getCurrentFrame();
 	SDL_FRect* dstRect = _s->getDstRect();
 	SDL_FRect* baseRect = _s->getBaseRect();
 
@@ -33,8 +34,9 @@ void sincosMotion(Sprite* _s, Animation* _a) {
 	}
 }
 
-void linearMotion(Sprite* _s, Animation* _a) {
-	float a = _a->param[0], b = _a->param[1], c = _a->param[2];
+void Animations::linearMotion(Sprite* _s, AnimationEvent* _e) {
+	std::vector<double>* p = _e->getParameter();
+	float a = (*p)[0], b = (*p)[1], c = (*p)[2];
 	SDL_FRect* dstRect = _s->getDstRect();
 	SDL_FRect* baseRect = _s->getBaseRect();
 
@@ -48,8 +50,9 @@ void linearMotion(Sprite* _s, Animation* _a) {
 	}
 }
 
-void resizeCenteredMotion(Sprite* _s, Animation* _a) {
-	float a = _a->param[0], b = _a->param[1];
+void Animations::resizeCenteredMotion(Sprite* _s, AnimationEvent* _e) {
+	std::vector<double>* p = _e->getParameter();
+	float a = (*p)[0], b = (*p)[1];
 
 	// validity check
 	if (a < 0 || b < 0) {
@@ -57,7 +60,7 @@ void resizeCenteredMotion(Sprite* _s, Animation* _a) {
 		return;
 	}
 
-	int mf = _a->getAniLength(), cf = _a->getCurrentFrame();
+	int mf = _e->getAnimationLength(), cf = _e->getCurrentFrame();
 	SDL_FRect* dstRect = _s->getDstRect();
 	SDL_FRect* baseRect = _s->getBaseRect();
 
@@ -68,21 +71,24 @@ void resizeCenteredMotion(Sprite* _s, Animation* _a) {
 	dstRect->y = baseRect->y + (baseRect->h - dstRect->h) / 2;
 }
 
-void linearRotation(Sprite* _s, Animation* _a) {
-	_s->setAngle(_s->getAngle() + (double)_a->param[0]);
+void Animations::linearRotation(Sprite* _s, AnimationEvent* _e) {
+	std::vector<double>* p = _e->getParameter();
+	_s->setAngle(_s->getAngle() + (double)(*p)[0]);
 }
 
-void sinRotation(Sprite* _s, Animation* _a) {
-	float a = _a->param[0], b = _a->param[1];
-	unsigned int cf = _a->getCurrentFrame();
+void Animations::sinRotation(Sprite* _s, AnimationEvent* _e) {
+	std::vector<double>* p = _e->getParameter();
+	float a = (*p)[0], b = (*p)[1];
+	unsigned int cf = _e->getCurrentFrame();
 	double d = sin(cf * M_PI * b) * a;
 	_s->setAngle(d);
 }
 
-void opacity(Sprite* _s, Animation* _a) {
-	int a = (int)_a->param[0], b = (int)_a->param[1];
-	unsigned int cf = _a->getCurrentFrame();
-	unsigned int mf = _a->getAniLength();
+void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
+	std::vector<double>* p = _e->getParameter();
+	int a = (int)(*p)[0], b = (int)(*p)[1];
+	unsigned int cf = _e->getCurrentFrame();
+	unsigned int mf = _e->getAnimationLength();
 	if (mf == 1) {
 		SDL_SetTextureAlphaMod(_s->getTexture(), a);
 	}

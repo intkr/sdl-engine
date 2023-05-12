@@ -55,7 +55,9 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Fix sprite animation code
+	Fix animation_functions to use double and make it more readable
+
+	Utilize TDD for minigame development
 	
 	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
 	Fis param in sprite class

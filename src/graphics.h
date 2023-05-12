@@ -32,21 +32,22 @@ public:
 	// Adds sprite to memory. Returns true if successful, false otherwise.
 	// 
 	// tex : Texture to use for the sprite. Use getTexture().
-	// src / dst : Rect area used on sprite data / screen. Pass NULL to use the entire area.
+	// src / dst : Rect area used on sprite sheet / sprite render. Pass NULL to use the entire area.
 	// name : Sprite object identifier.
 	// angle : Sprite rotation angle (clockwise).
 	bool addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
 
-	// Adds animation to sprite data. Returns true if successful, false otherwise.
+	bool addAnimationGroup(std::string spriteName, std::string groupName, AnimationType type, AnimationGroup* g);
+	// Adds animation to group 'groupName' in _sprites. Returns true if successful, false otherwise.
 	//
 	// spriteName : Sprite object identifier.
-	// aniName : Animation object identifier.
-	// a : Animation object. Must be dynamically allocated.
-	bool addAnimation(std::string spriteName, std::string aniName, Animation* a, AnimationType type);
+	// groupName : Animation group object identifier.
+	// e : Animation event object. Must be dynamically allocated.
+	bool addAnimationEvent(std::string spriteName, std::string groupName, AnimationEvent* e);
 
 	void renderScreen();
 
-	// Resets internal data by deleting all texture and sprite data.
+	// Resets internal data by deleting all texture and sprite objects.
 	void reset();
 
 	// Forces the current screen to end by setting every sprite to the outro state.

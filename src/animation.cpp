@@ -1,33 +1,59 @@
 #include "animation.h"
-
 #include "sprite.h"
 
-Animation::Animation(float floats[4], int frames, bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*)) {
-	for (int i = 0; i < _countof(param); i++) param[i] = floats[i];
-	animationLength = frames;
-	currentFrame = 1;
-	looping = loop;
-	compound = comp;
-	sequential = seq;
-	func = f;
+bool AnimationGroup::addEvent(AnimationEvent* e) {
+	try {
+		animationList.push_back(e);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
 }
 
-Animation::Animation(bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*)) {
-	for (int i = 0; i < _countof(param); i++) param[i] = 0;
-	animationLength = 1;
-	currentFrame = 1;
-	looping = loop;
-	compound = comp;
-	sequential = seq;
-	func = f;
+bool AnimationGroup::animate(Sprite* sprite) {
+	if (sequential) {
+		// Sequential animation group, process the currently playing animation.
+		if (animationList[currentAnimation]->animate(sprite)) {
+			// Animation has finished, move on to the next one.
+			// If the animation group doesn't loop, delete the currently finished animation.
+			if (!looping) {
+				delete animationList[currentAnimation];
+				animationList.erase(animationList.begin() + currentAnimation--); // subtract 1 as compensation
+			}
+
+			if (++currentAnimation >= animationList.size()) {
+				currentAnimation *= looping;
+				return !looping;
+			}
+		}
+	}
+	else {
+		for (auto animation = animationList.begin(); animation != animationList.end();) {
+			// Non-sequential animation group, iterate through animationList and process them all at once
+			if ((*animation)->animate(sprite)) {
+				// Animation has finished.
+				// If the animation group doesn't loop, delete the currently finished animation.
+				if (!looping) {
+					delete *animation;
+					animation = animationList.erase(animation);
+				}
+			}
+		}
+
+		return (animationList.size() == 0);
+	}
+
+	return false;
 }
 
-Animation::~Animation() {}
 
-bool Animation::process(Sprite* sprite) {
-	if (!isFinished()) {
-		func(sprite, this);
-		currentFrame++;
+bool AnimationEvent::animate(Sprite* sprite) {
+	f(sprite, this);
+
+	// When animation is finished, reset frame counter to 0
+	if (++currentFrame >= animationLength) {
+		currentFrame = 0;
 		return true;
 	}
 	return false;

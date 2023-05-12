@@ -38,7 +38,7 @@ bool Graphics::addTexture(std::string path, std::string name) {
 		return false;
 	}
 	
-	// Create texture and add to data
+	// Create texture and add to _textures
 	SDL_Texture* bgTexture = SDL_CreateTextureFromSurface(_renderer, bgSurface);
 	SDL_SetTextureBlendMode(bgTexture, SDL_BLENDMODE_BLEND);
 	SDL_FreeSurface(bgSurface);
@@ -57,7 +57,7 @@ bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, Sprite
 		return false;
 	}
 
-	// Create sprite and add to data
+	// Create sprite and add to _sprites
 	(*_sprites[type])[name] = new Sprite(tex, src, dst, angle);
 	return true;
 }
@@ -147,8 +147,8 @@ void Graphics::emptyTextures() {
 	}
 }
 
-bool Graphics::addAnimation(std::string spriteName, std::string aniName, Animation* a, AnimationType type) {
-	// Check if identifier 'spriteName' exists in data.
+bool Graphics::addAnimationGroup(std::string spriteName, std::string groupName, AnimationType type, AnimationGroup* g) {
+	if (g == nullptr) return false;
 	int index = -1;
 	for (int i = 0; i < 3; i++) {
 		if ((*_sprites[i]).count(spriteName) > 0) {
@@ -157,10 +157,27 @@ bool Graphics::addAnimation(std::string spriteName, std::string aniName, Animati
 		}
 	}
 	if (index == -1) {
-		std::cout << "Sprite \"" << spriteName << "\" doesn't exist, failed to add animation.\n";
+		std::cout << "Sprite \"" << spriteName << "\" doesn't exist, failed to add animation group.\n";
 		return false;
 	}
-	
-	(*_sprites[index])[spriteName]->addAnimation(aniName, a, type);
+
+	(*_sprites[index])[spriteName]->addAnimationGroup(groupName, type, g);
+	return true;
+}
+
+bool Graphics::addAnimationEvent(std::string spriteName, std::string groupName, AnimationEvent* e) {
+	int index = -1;
+	for (int i = 0; i < 3; i++) {
+		if ((*_sprites[i]).count(spriteName) > 0) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) {
+		std::cout << "Sprite \"" << spriteName << "\" doesn't exist, failed to add animation event.\n";
+		return false;
+	}
+
+	(*_sprites[index])[spriteName]->addAnimationEvent(groupName, e);
 	return true;
 }

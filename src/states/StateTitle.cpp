@@ -17,26 +17,47 @@ StateTitle::~StateTitle() {}
 void StateTitle::init() {
 	g->reset();
 
-	float f[4] = { 0, };
-	int w, h, animationLength, cycle;
-	Animation* a;
-
+	AnimationGroup* ag;
+	AnimationEvent* ae;
+	std::vector<double>* v;
+	// background
 	g->addTexture("assets/bg.png", "test");
 	g->addSprite(g->getTexture("test"), NULL, NULL, _BACKGROUND, "testbg");
-	a = new Animation(true, true, true, staticMotion);
-	g->addAnimation("testbg", "bgStatic", a, _INTRO);
-	a = new Animation(true, true, true, staticMotion);
-	g->addAnimation("testbg", "bgStatic", a, _IDLE);
 
+	//		static motion
+	ag = new AnimationGroup(true, false);
+	g->addAnimationGroup("testbg", "idleStatic", _IDLE, ag);
+
+	ae = new AnimationEvent(1, Animations::staticMotion);
+	g->addAnimationEvent("testbg", "idleStatic", ae);
+
+	// test logo
+	int w, h;
 	g->addTexture("assets/buh.png", "test2");
 	SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
 	SDL_FRect* r = new SDL_FRect{ (float)(rm * (1920 - w) / 2), (float)(rm * (1080 - h) / 2), (float)rm * w, (float)rm * h };
 	g->addSprite(g->getTexture("test2"), NULL, r, _FOREGROUND, "testfg");
-	// pop out from 0.0x to 1.0x across 30 frames
-	f[0] = 0;
-	f[1] = 1;
-	animationLength = 30;
-	g->addAnimation("testfg", "logoPopOut", new Animation(f, animationLength, false, true, false, resizeCenteredMotion), _INTRO);
+
+	// pop out from center of screen
+	ag = new AnimationGroup(false, false);
+	g->addAnimationGroup("testfg", "introPopOut", _INTRO, ag);
+	ae = new AnimationEvent(30, Animations::resizeCenteredMotion);
+	v = ae->getParameter();
+	v->push_back(0); // Change sprite size from 0.0x
+	v->push_back(1); // to 1.0x while being centered
+
+	// circular motion
+	ag = new AnimationGroup(true, false);
+	g->addAnimationGroup("testfg", "idleSpin", _IDLE, ag);
+	
+	int cycle = 80;
+	ae = new AnimationEvent(cycle * 2, Animations::sinRotation);
+	v = ae->getParameter();
+	v->push_back(6);
+	v->push_back(1.0 / cycle);
+	g->addAnimationEvent("testfg", "idleSpin", ae);
+	/*
+
 	// rotate as a sine function across 160 frames, 6 degrees max
 	cycle = 80;
 	f[0] = 6;
@@ -76,6 +97,8 @@ void StateTitle::init() {
 	
 	//g->addAnimation("testfg", "logoFadeOut", new Animation(f, animationLength, false, true, true, opacity), _OUTRO);
 	//g->addAnimation("testbg", "bgFadeOut", new Animation(f, animationLength, false, true, true, opacity), _OUTRO);
+
+	*/
 }
 
 Command StateTitle::update() {

@@ -1,51 +1,64 @@
 #pragma once
+#include <vector>
 
 class Sprite;
 
-class Animation {
+class AnimationEvent {
 public:
+	AnimationEvent(int length, void (*func)(Sprite*, AnimationEvent*)) : animationLength(length), currentFrame(0), f(func) {}
+
+	// Processes the sprite's animation.
+	// If an animation cycle has finished, reset the current frame timer and return true.
+	// Otherwise, return false.
+	bool animate(Sprite* s);
 	
-	Animation(float floats[4], int frames, bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*));
-	Animation(bool loop, bool comp, bool seq, void (*f)(Sprite*, Animation*));
-	~Animation();
-
-	// Returns false if the animation has already finished.
-	// Otherwise, performs the assigned animation function, and adds 1 to the current frame count. Returns true.
-	bool process(Sprite* s);
-
-	// Sets currentFrame to 1, resetting the animation to its initial state.
-	void reset() { currentFrame = 1; }
-
-	bool isFinished() { return (currentFrame > animationLength); }
-	bool isCompound() { return compound; }
-	bool isSequential() { return sequential; }
-	bool isLooping() { return looping; }
-
-	// Returns the length (frames) of the animatino.
-	unsigned int getAniLength() { return animationLength; }
-
-	// Returns the current frame number of the animation.
 	unsigned int getCurrentFrame() { return currentFrame; }
+	unsigned int getAnimationLength() { return animationLength; }
 
-	// deliberately placed in public to reduce duplicate code for accessing data
-	float param[4];
+	std::vector<double>* getParameter() { return &parameters; }
+
 private:
-	// Animation function from animation.h
-	void (*func)(Sprite*, Animation*);
+	void (*f)(Sprite*, AnimationEvent*);
 
-	// true : Loops until outro is triggered. If sequential, the entire sequence loops as a whole.
-	// false: Plays once.
-	bool looping;
-
-	// true : Subsequent animations will also be played.
-	// false: Subsequent animations won't be played until it ends.
-	bool compound;
-
-	// true : Only one animation (more if compound) in a group of sequential animations is played at a time.
-	// false: Multiple subsequent animations can be played.
-	bool sequential;
-
-	unsigned int animationLength;
+	// Value range is [0 ~ animationLength).
+	// Value is changed after animation is processed.
 	unsigned int currentFrame;
 
+	// Length is set assuming game runs at 60 FPS.
+	unsigned int animationLength;
+
+	std::vector<double> parameters;
+};
+
+class AnimationGroup {
+public:
+	AnimationGroup() : looping(false), sequential(false), currentAnimation(-1) {}
+	AnimationGroup(bool _looping, bool _sequential) : looping(_looping), sequential(_sequential), currentAnimation((int)!_sequential) {}
+
+	void reset();
+
+	// Processes the sprite's animation group.
+	// If all animation has finished playing, return true.
+	// Otherwise, return false.
+	bool animate(Sprite* s);
+
+	bool addEvent(AnimationEvent* e);
+
+	void update();
+
+private:
+	// Vector containing all animation objects within the group.
+	std::vector<AnimationEvent*> animationList;
+
+	// Index of the currently playing animation in _animationList.
+	// 
+	// Any non-negative value indicates that this animation group is sequential,
+	// so every AnimatinoEvent should be processed one-by-one.
+	//
+	// Negative values (ideally -1) indicates that this animation group is non-sequential,
+	// so every AnimationEvent should all be processed at once.
+	unsigned int currentAnimation;
+
+	bool looping;
+	bool sequential;
 };

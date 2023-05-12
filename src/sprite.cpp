@@ -42,77 +42,17 @@ void Sprite::setAngle(double a) {
 }
 
 bool Sprite::updateSprite() {
-	Animation* a;
-	AniVector* v = _animations[status];
-	short flag = 0; // 0 : no sequential animations // 1 : unfinished sequential animations // 2 : all sequential animations finished
+	AniContainer* list = _animations[status];
 
-	for (auto i = v->begin(); i != v->end();) {
-		a = i->second;
-
-		if (i->first == "logoMoveLeft") {
-			std::cout << "";
+	for (auto aniGroup = list->begin(); aniGroup != list->end();) {
+		if ((*aniGroup).second->animate(this)) {
+			delete aniGroup->second;
+			aniGroup = list->erase(aniGroup);
 		}
-		bool r = a->process(this);
-
-
-		if (!r) {
-			// animation was already finished, don't process and continue iteration
-			i++;
-			continue;
-		}
-
-		if (a->isFinished()) {
-			if (!a->isLooping()) {
-				// animation is finished and doesn't loop, delete from vector
-				delete a;
-				i = v->erase(i);
-				continue;
-			}
-
-			// animation is not part of a sequence, reset
-			if (!a->isSequential()) {
-				a->reset();
-				i++;
-				continue;
-			}
-			
-			if (!flag) flag = 2;
-			if (a->isCompound()) {
-				// this compound animation is part of a sequence, continue sequence
-				i++;
-				continue;
-			}
-			else {
-				// this sequence doesn't continue further, break here
-				break;
-			}
-		}
-		else {
-			if (a->isSequential()) flag = 1;
-
-			if (a->isCompound()) {
-				// this compound animation is part of a sequence, continue sequence
-				i++;
-				continue;
-			}
-			else {
-				// this sequence doesn't continue further, break here
-				break;
-			}
-		}
+		else aniGroup++;
 	}
 
-	// reset all finished sequential looping animations
-	if (flag == 2) {
-		for (auto i = v->begin(); i != v->end();) {
-			a = i->second;
-			if (a->isFinished() && a->isSequential() && a->isLooping()) a->reset();
-			i++;
-		}
-	}
-
-	if (v->empty()) {
-		// update status
+	if (list->empty()) {
 		switch (status) {
 		case _INTRO:
 			status = _IDLE;
@@ -124,17 +64,32 @@ bool Sprite::updateSprite() {
 			status = _END;
 			break;
 		}
-
-		if (status == _END) return false;
 	}
+
+	return status != _END;
+}
+
+bool Sprite::addAnimationGroup(std::string name, AnimationType type, AnimationGroup* g) {
+	if (type == _END) return false;
+	if (g == NULL) return false;
+	if ((*_animations[type]).count(name) > 0) return false;
+
+	(*_animations[type])[name] = g;
 	return true;
 }
 
-bool Sprite::addAnimation(std::string name, Animation* a, AnimationType type) {
-	if (type == _END) return false;
-	if (a == NULL) return false;
+bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
+	if (e == NULL) return false;
+	int index = -1;
+	for (int i = 0; i < 3; i++) {
+		if ((*_animations[i]).count(groupName) > 0) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) return false;
 
-	(*_animations[type]).push_back(std::make_pair(name, a));
+	(*_animations[index])[groupName]->addEvent(e);
 	return true;
 }
 

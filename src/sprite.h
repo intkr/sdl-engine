@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <vector>
 #include <iostream>
 
@@ -7,12 +8,13 @@
 
 #include "animation.h"
 
+// _INTRO, _IDLE, _OUTRO, _END
 enum AnimationType { _INTRO, _IDLE, _OUTRO, _END };
+
+// _BACKGROUND, _FOREGROUND, _POPUP
 enum SpriteType { _BACKGROUND, _FOREGROUND, _POPUP };
 
-#define AniVector std::vector<std::pair<std::string, Animation*>>
-
-class Animation;
+#define AniContainer std::map<std::string, AnimationGroup*>
 
 class Sprite {
 public:
@@ -37,11 +39,16 @@ public:
 	// false if it finished its animations and needs to be deleted.
 	bool updateSprite();
 
-	// Adds animation to vector. Returns true if successful, false otherwise.
+	// Adds animation group to _animations. Returns true if successful, false otherwise.
 	//
-	// name : Sprite object identifier.
-	// a : Animation object. Must be dynamically allocated.
-	bool addAnimation(std::string name, Animation* a, AnimationType type);
+	// name : Animation group object identifier.
+	// a : Animation group object.
+	bool addAnimationGroup(std::string name, AnimationType type, AnimationGroup* g);
+
+	// Adds animation event to an animation group.
+	// 
+	// groupName : Animation group object identifier.
+	bool addAnimationEvent(std::string groupName, AnimationEvent* e);
 
 private:
 	SDL_Texture* _texture;
@@ -54,10 +61,10 @@ private:
 
 	// destroy animation when finished (unless idle looping)
 	// change status when vector is empty
-	AniVector introAnimations;
-	AniVector idleAnimations;
-	AniVector outroAnimations;
-	AniVector* _animations[3];
+	AniContainer introAnimations;
+	AniContainer idleAnimations;
+	AniContainer outroAnimations;
+	AniContainer* _animations[3];
 	AnimationType status;
 };
 
