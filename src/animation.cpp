@@ -35,10 +35,12 @@ bool AnimationGroup::animate(Sprite* sprite) {
 				// Animation has finished.
 				// If the animation group doesn't loop, delete the currently finished animation.
 				if (!looping) {
-					delete *animation;
+					delete* animation;
 					animation = animationList.erase(animation);
 				}
+				else animation++;
 			}
+			else animation++;
 		}
 
 		return (animationList.size() == 0);

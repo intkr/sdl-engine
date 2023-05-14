@@ -1,5 +1,7 @@
 #pragma once
+#include <map>
 #include <vector>
+#include <string>
 
 class Sprite;
 
@@ -15,8 +17,29 @@ public:
 	unsigned int getCurrentFrame() { return currentFrame; }
 	unsigned int getAnimationLength() { return animationLength; }
 
-	std::vector<double>* getParameter() { return &parameters; }
+	bool setBool(std::string name, bool value) {
+		if (paramBool.count(name) > 0) return false;
+		paramBool[name] = value;
+		return true;
+	}
 
+	bool setFloat(std::string name, float value) {
+		if (paramFloat.count(name) > 0) return false;
+		paramFloat[name] = value;
+		return true;
+	}
+
+	bool setChar(std::string name, char value) {
+		if (paramChar.count(name) > 0) return false;
+		paramChar[name] = value;
+		return true;
+	}
+
+	bool getBool(std::string name) { return paramBool[name]; }
+
+	float getFloat(std::string name) { return paramFloat[name]; }
+
+	char getChar(std::string name) { return paramChar[name]; }
 private:
 	void (*f)(Sprite*, AnimationEvent*);
 
@@ -27,7 +50,9 @@ private:
 	// Length is set assuming game runs at 60 FPS.
 	unsigned int animationLength;
 
-	std::vector<double> parameters;
+	std::map<std::string, float> paramFloat;
+	std::map<std::string, char> paramChar;
+	std::map<std::string, bool> paramBool;
 };
 
 class AnimationGroup {

@@ -19,7 +19,7 @@ void StateTitle::init() {
 
 	AnimationGroup* ag;
 	AnimationEvent* ae;
-	std::vector<double>* v;
+	int cycle;
 	// background
 	g->addTexture("assets/bg.png", "test");
 	g->addSprite(g->getTexture("test"), NULL, NULL, _BACKGROUND, "testbg");
@@ -39,50 +39,54 @@ void StateTitle::init() {
 	g->addSprite(g->getTexture("test2"), NULL, r, _FOREGROUND, "testfg");
 
 	// pop out from center of screen
-	ag = new AnimationGroup(false, false);
+	cycle = 30;
+	ag = new AnimationGroup(false, true);
 	g->addAnimationGroup("testfg", "introPopOut", _INTRO, ag);
-	ae = new AnimationEvent(30, Animations::resizeCenteredMotion);
-	v = ae->getParameter();
-	v->push_back(0); // Change sprite size from 0.0x
-	v->push_back(1); // to 1.0x while being centered
+	ae = new AnimationEvent(cycle, Animations::resizeCenteredMotion);
+	ae->setFloat("startSize", 0.0);
+	ae->setFloat("endSize", 1.0);
+	g->addAnimationEvent("testfg", "introPopOut", ae);
 
-	// circular motion
+
+	// and move 128 pixels to the left for 24 frames
+	cycle = 24;
+	ae = new AnimationEvent(cycle, Animations::linearMotion);
+	ae->setChar("axis", 'x');
+	ae->setBool("baseMove", false);
+	ae->setFloat("speed", (float)rm * 128 / cycle * -1);
+	g->addAnimationEvent("testfg", "introPopOut", ae);
+
+	// idle in circular rotation / motion
 	ag = new AnimationGroup(true, false);
 	g->addAnimationGroup("testfg", "idleSpin", _IDLE, ag);
 	
-	int cycle = 80;
-	ae = new AnimationEvent(cycle * 2, Animations::sinRotation);
-	v = ae->getParameter();
-	v->push_back(6);
-	v->push_back(1.0 / cycle);
-	g->addAnimationEvent("testfg", "idleSpin", ae);
-	/*
-
-	// rotate as a sine function across 160 frames, 6 degrees max
+		// rotation
 	cycle = 80;
-	f[0] = 6;
-	f[1] = 1.0f / cycle;
-	animationLength = 2 * cycle;
-	g->addAnimation("testfg", "logoRotation", new Animation(f, animationLength, true, true, false, sinRotation), _IDLE);
-	// moves 128 pixels to the left across 24 frames
-	cycle = 24;
-	f[0] = 1;
-	f[1] = (float)rm * 128 / cycle * -1;
-	f[2] = 0;
-	animationLength = cycle;
-	g->addAnimation("testfg", "logoMoveLeft", new Animation(f, animationLength, false, false, true, linearMotion), _IDLE);
-	//move in a clockwise circular motion, T = 120 frames
-	
+	ae = new AnimationEvent(cycle * 2, Animations::sincosRotation);
+	ae->setFloat("a", 6);
+	ae->setFloat("b", (float)(1.0 / cycle));
+	ae->setChar("func", 's');
+	g->addAnimationEvent("testfg", "idleSpin", ae);
+
+		// motion (x axis)
+	ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
+	ae->setFloat("a", 128.0f * rm);
+	ae->setFloat("b", 1.0f / cycle);
+	ae->setChar("axis", 'x');
+	ae->setChar("func", 'c');
+	g->addAnimationEvent("testfg", "idleSpin", ae);
+
+		// motion (y axis)
 	cycle = 120;
-	f[0] = 128 * (float)rm;
-	f[1] = 1.0f / cycle;
-	f[2] = true;
-	f[3] = false; // y, sin
-	animationLength = 2 * cycle;
-	g->addAnimation("testfg", "logoCircularY", new Animation(f, animationLength, true, true, true, sincosMotion), _IDLE);
-	f[2] = false;
-	f[3] = true; // x, cos
-	g->addAnimation("testfg", "logoCircularX", new Animation(f, animationLength, true, true, true, sincosMotion), _IDLE);
+	ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
+	ae->setFloat("a", 128.0f * rm);
+	ae->setFloat("b", 1.0f / cycle);
+	ae->setChar("axis", 'y');
+	ae->setChar("func", 's');
+	g->addAnimationEvent("testfg", "idleSpin", ae);
+
+
+	/*
 	// opacity
 	f[0] = 0;
 	f[1] = 128;
