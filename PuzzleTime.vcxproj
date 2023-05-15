@@ -26,7 +26,7 @@
     <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\sprite.h" />
-    <ClInclude Include="src\states\GameDouble.h" />
+    <ClInclude Include="src\states\GamePair.h" />
     <ClInclude Include="src\states\state.h" />
     <ClInclude Include="src\states\stateManager.h" />
     <ClInclude Include="src\states\StateTest.h" />
@@ -41,7 +41,7 @@
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sprite.cpp" />
-    <ClCompile Include="src\states\GameDouble.cpp" />
+    <ClCompile Include="src\states\GamePair.cpp" />
     <ClCompile Include="src\states\state.cpp" />
     <ClCompile Include="src\states\stateManager.cpp" />
     <ClCompile Include="src\states\StateTest.cpp" />

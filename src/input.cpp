@@ -64,20 +64,22 @@ void Input::process(SDL_Event& e) {
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (e.button.button == SDL_BUTTON_LEFT) {
-				mouseStatus = 1;
+				mouseStatus = _MOUSE_ACTIVE;
 				curX = e.button.x;
 				curY = e.button.y;
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (e.button.button == SDL_BUTTON_LEFT) {
-				mouseStatus = 0;
+				mouseStatus = _MOUSE_UP;
 				curX = e.button.x;
 				curY = e.button.y;
 			}
 			break;
 		case SDL_MOUSEMOTION:
-			if (mouseStatus > 0) mouseStatus = 2;
+			// SDL_MOUSEBUTTONDOWN event can get overridden if code below isn't commented
+			// 
+			//if (mouseStatus == _MOUSE_ACTIVE) mouseStatus = _MOUSE_PASSIVE;
 			curX = e.motion.x;
 			curY = e.motion.y;
 			break;
@@ -91,6 +93,9 @@ void Input::process(SDL_Event& e) {
 void Input::flushInput() {
 	for (auto key = pressedKeys.begin(); key != pressedKeys.end();) {
 		key++->second = true;
+	}
+	for (auto obj = clickedObject.begin(); obj != clickedObject.end();) {
+		obj++->second = true;
 	}
 	releasedObject.clear();
 }
@@ -112,35 +117,38 @@ void Input::pollInput(SDL_Scancode inputKey, Uint32 type) {
 void Input::pollInput(int x, int y) {
 	SDL_FPoint p = { (float)x, (float)y };
 	switch (mouseStatus) {
-	case 0:
-		for (auto o = clickedObject.cbegin(); o != clickedObject.cend();) {
+	case _MOUSE_UP:
+		for (auto o = clickedObject.begin(); o != clickedObject.end();) {
 			std::string t = o->first;
 			releasedObject.push_back(o->first);
 			o++;
 		}
 		clickedObject.clear();
 		break;
-	case 1:
-		mouseStatus = 2;
-		for (int i = 2; i >= 0; i--) {
-			for (auto iter = (*_g->_sprites[i]).cbegin(); iter != (*_g->_sprites[i]).cend();) {
+
+	case _MOUSE_ACTIVE:
+		for (int i = 3; i; i--) {
+			for (auto iter = (*_g->_sprites[i - 1]).cbegin(); iter != (*_g->_sprites[i - 1]).cend();) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 				
-				if (s->getDstRect() == NULL || checkCollision(p, s)) {
+				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
 					clickedObject[t] = false;
 				}
 				iter++;
 			}
 		}
+
+		mouseStatus = _MOUSE_PASSIVE;
 		break;
-	case 2:
+
+	case _MOUSE_PASSIVE:
 		for (int i = 2; i >= 0; i--) {
 			for (auto iter = (*_g->_sprites[i]).cbegin(); iter != (*_g->_sprites[i]).cend();) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 
-				if (s->getDstRect() == NULL || checkCollision(p, s)) {
+				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
 					clickedObject[t] = true;
 				}
 				else if (clickedObject.count(t) > 0) {

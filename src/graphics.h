@@ -20,7 +20,7 @@ public:
 	SDL_Renderer* getRenderer() { return _renderer; }
 	
 	// Returns a pointer to the texture corresponding to the identifier 'name'.
-	// If no such texture exists, returns NULL.
+	// If no such texture exists, returns nullptr.
 	SDL_Texture* getTexture(std::string name);
 
 	// Stores texture on memory. Returns true if successful, false otherwise.
@@ -32,7 +32,7 @@ public:
 	// Adds sprite to memory. Returns true if successful, false otherwise.
 	// 
 	// tex : Texture to use for the sprite. Use getTexture().
-	// src / dst : Rect area used on sprite sheet / sprite render. Pass NULL to use the entire area.
+	// src / dst : Rect area used on sprite sheet / sprite render. Pass nullptr to use the entire area.
 	// name : Sprite object identifier.
 	// angle : Sprite rotation angle (clockwise).
 	bool addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
@@ -49,9 +49,6 @@ public:
 
 	// Resets internal data by deleting all texture and sprite objects.
 	void reset();
-
-	// Forces the current screen to end by setting every sprite to the outro state.
-	void triggerOutro();
 
 	bool hasSprites();
 	bool doesPopupExist();

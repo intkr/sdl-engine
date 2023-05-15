@@ -1,9 +1,9 @@
 #include "graphics.h"
 
-extern double rm;
+extern float rm;
 
 Graphics::Graphics(int w, int h) {
-	rm = (double)w / 1920;
+	rm = w / 1920.0f;
 	SDL_CreateWindowAndRenderer((int)(1920 * rm), (int)(1080 * rm), SDL_WINDOW_INPUT_FOCUS, &_window, &_renderer);
 	SDL_SetWindowTitle(_window, "Puzzle Time");
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
@@ -21,7 +21,7 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 	if (_textures.count(name) > 0) {
 		return _textures[name];
 	}
-	else return NULL;
+	else return nullptr;
 }
 
 bool Graphics::addTexture(std::string path, std::string name) {
@@ -33,7 +33,7 @@ bool Graphics::addTexture(std::string path, std::string name) {
 
 	// Check if image path 'path' exists and can be loaded successfully
 	SDL_Surface* bgSurface = IMG_Load(path.c_str());
-	if (bgSurface == NULL) {
+	if (bgSurface == nullptr) {
 		std::cout << "File path \"" << path << "\" is invalid, failed to add texture \"" << name << "\".\n";
 		return false;
 	}
@@ -48,7 +48,7 @@ bool Graphics::addTexture(std::string path, std::string name) {
 
 bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
 	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
-	if (tex == NULL) {
+	if (tex == nullptr) {
 		std::cout << "Null texture, adding sprite \"" << name << "\" failed.\n";
 		return false;
 	}
@@ -73,14 +73,6 @@ bool Graphics::doesPopupExist() {
 	return popupSprites.size() > 0;
 }
 
-void Graphics::triggerOutro() {
-	for (int i = 0; i < 3; i++) {
-		for (auto sprite : *_sprites[i]) {
-			sprite.second->triggerOutro();
-		}
-	}
-}
-
 void Graphics::renderScreen() {
 	SDL_RenderClear(_renderer);
 
@@ -100,7 +92,7 @@ void Graphics::renderScreen() {
 			Sprite* s = iter->second;
 			bool validSprite = s->updateSprite();
 			if (validSprite) {
-				if (s->isVisible()) SDL_RenderCopyExF(_renderer, s->getTexture(), s->getSrcRect(), s->getDstRect(), s->getAngle(), NULL, SDL_FLIP_NONE);
+				if (s->isVisible()) SDL_RenderCopyExF(_renderer, s->getTexture(), s->getSrcRect(), s->getDstRect(), s->getAngle(), nullptr, SDL_FLIP_NONE);
 				iter++;
 			}
 			else {
@@ -121,8 +113,8 @@ void Graphics::darkenScreen() {
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, dim * 255 / 100);
 	SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
 	SDL_RenderDrawPoint(_renderer, 0, 0);
-	SDL_SetRenderTarget(_renderer, NULL);
-	SDL_RenderCopy(_renderer, t, NULL, NULL);
+	SDL_SetRenderTarget(_renderer, nullptr);
+	SDL_RenderCopy(_renderer, t, nullptr, nullptr);
 	SDL_DestroyTexture(t);
 }
 void Graphics::reset() {

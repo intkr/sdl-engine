@@ -2,7 +2,7 @@
 #include "StateTitle.h"
 #include "StateTest.h"
 
-#include "GameDouble.h"
+#include "GamePair.h"
 
 
 class StateManager {

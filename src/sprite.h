@@ -74,6 +74,6 @@ private:
 // 
 // p : Point on screen.
 // s : Sprite to check collision with.
-bool checkCollision(SDL_FPoint& point, Sprite* sprite);
+bool checkCollision(SDL_FPoint point, Sprite* sprite);
 
 bool checkCollision(Sprite* s1, Sprite* s2);

@@ -39,7 +39,7 @@
     <ClInclude Include="src\states\StateTitle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\states\GameDouble.h">
+    <ClInclude Include="src\states\GamePair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\command.h">
@@ -83,7 +83,7 @@
     <ClCompile Include="src\states\StateTitle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\states\GameDouble.cpp">
+    <ClCompile Include="src\states\GamePair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\command.cpp">

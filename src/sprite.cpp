@@ -6,11 +6,11 @@ Sprite::Sprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, double a) {
 	baseRect = dst;
 	angle = a;
 	visibility = true;
-	if (dst != NULL) {
+	if (dst != nullptr) {
 		dstRect = new SDL_FRect(*dst);
 	}
 	else {
-		dstRect = NULL;
+		dstRect = nullptr;
 	}
 	status = _INTRO;
 
@@ -22,9 +22,9 @@ Sprite::Sprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, double a) {
 Sprite::~Sprite() {
 	// do not destroy texture
 
-	if (srcRect != NULL) delete srcRect;
-	if (baseRect != NULL) delete baseRect;
-	if (dstRect != NULL) delete dstRect;
+	if (srcRect != nullptr) delete srcRect;
+	if (baseRect != nullptr) delete baseRect;
+	if (dstRect != nullptr) delete dstRect;
 
 	for (int i = 0; i < 3; i++) {
 		for (auto it = _animations[i]->begin(); it != _animations[i]->end();) {
@@ -71,7 +71,7 @@ bool Sprite::updateSprite() {
 
 bool Sprite::addAnimationGroup(std::string name, AnimationType type, AnimationGroup* g) {
 	if (type == _END) return false;
-	if (g == NULL) return false;
+	if (g == nullptr) return false;
 	if ((*_animations[type]).count(name) > 0) return false;
 
 	(*_animations[type])[name] = g;
@@ -79,7 +79,7 @@ bool Sprite::addAnimationGroup(std::string name, AnimationType type, AnimationGr
 }
 
 bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
-	if (e == NULL) return false;
+	if (e == nullptr) return false;
 	int index = -1;
 	for (int i = 0; i < 3; i++) {
 		if ((*_animations[i]).count(groupName) > 0) {
@@ -93,7 +93,7 @@ bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
 	return true;
 }
 
-bool checkCollision(SDL_FPoint& point, Sprite* sprite) {
+bool checkCollision(SDL_FPoint point, Sprite* sprite) {
 	// Because rectangle objects can't be rotated, the function "un-rotates the point" instead.
 
 	// Hitbox rect of sprite and its center point

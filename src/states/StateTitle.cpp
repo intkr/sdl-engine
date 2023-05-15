@@ -6,7 +6,7 @@
 
 #include "StateTitle.h"
 
-extern double rm;
+extern float rm;
 
 StateTitle::StateTitle(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
 	init();
@@ -22,7 +22,7 @@ void StateTitle::init() {
 	int cycle;
 	// background
 	g->addTexture("assets/bg.png", "test");
-	g->addSprite(g->getTexture("test"), NULL, NULL, _BACKGROUND, "testbg");
+	g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
 
 	//		static motion
 	ag = new AnimationGroup(true, false);
@@ -36,7 +36,7 @@ void StateTitle::init() {
 	g->addTexture("assets/buh.png", "test2");
 	SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
 	SDL_FRect* r = new SDL_FRect{ (float)(rm * (1920 - w) / 2), (float)(rm * (1080 - h) / 2), (float)rm * w, (float)rm * h };
-	g->addSprite(g->getTexture("test2"), NULL, r, _FOREGROUND, "testfg");
+	g->addSprite(g->getTexture("test2"), nullptr, r, _FOREGROUND, "testfg");
 
 	// pop out from center of screen
 	cycle = 30;
@@ -69,6 +69,7 @@ void StateTitle::init() {
 	g->addAnimationEvent("testfg", "idleSpin", ae);
 
 		// motion (x axis)
+	cycle = 120;
 	ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
 	ae->setFloat("a", 128.0f * rm);
 	ae->setFloat("b", 1.0f / cycle);
@@ -110,17 +111,19 @@ Command StateTitle::update() {
 		// Trigger screen transition on any key press
 		if (key.second == false) {
 			g->reset();
-			return Command(_CMD_STATE, 1);
+			return Command(_CMD_NONE, 1);
 		}
 	}
 
-	//Note: this works but it's unnecessary now
+	FMOD::Channel* ch;
 	for (auto obj : *(i->getClickedObject())) {
 		if (obj.first == "testfg" && obj.second == false) {
+			// *vine boom*
 			std::string vine = "vine", path = "assets/Vine Boom.ogg";
-			a->addSound(path, vine, 0, 0, 100);
-			a->getChannel(vine)->setPaused(false);
-			return Command(_CMD_STATE, 1);
+			ch = a->addSound(path, vine, false, false, _AUDIO_SFX, 100);
+			ch->setPaused(false);
+
+			return Command(_CMD_NONE, 1);
 		}
 	}
 

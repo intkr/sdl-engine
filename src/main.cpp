@@ -13,7 +13,7 @@
 #include "states/stateManager.h"
 
 extern const int fps = 60; // Not actually FPS
-double rm = 0.6666666667; // 1280x720 : 0.6666666667, 1600x900 : 0.8333333333, 1920x1080 : 1.0
+float rm = 0.6666666667; // 1280x720 : 0.6666666667, 1600x900 : 0.8333333333, 1920x1080 : 1.0
 
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
 	// remove comment to enable console output
@@ -55,11 +55,11 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Fix animation_functions to use double and make it more readable
-
-	Utilize TDD for minigame development
+	Fix input code
+	Make 'hoveredObjects' in input
+	Make the pair minigame - utilize TDD for minigame development
 	
 	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
-	Fis param in sprite class
 
+	Make coherent error/exception prompts
 */

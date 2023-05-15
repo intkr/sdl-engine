@@ -8,16 +8,20 @@
 #include "graphics.h"
 #include "sprite.h"
 
+enum MouseStatus {
+	 _MOUSE_UP, _MOUSE_ACTIVE, _MOUSE_PASSIVE
+};
+
 class Input {
 public:
 	Input(Graphics* g);
 	~Input();
 
-	// Gets mouse / keyboard input from SDL2, and adds it to input data correspondingly.
+	// Gets mouse / keyboard input from SDL2, and stores its data accordingly.
 	void process(SDL_Event& e);
 
-	// Updates all active keys into passive keys.
-	// Erases all previously released objects from input data.
+	// Updates all active keys/objects in pressedKeys and clickedObjects to passive ones.
+	// Erases all previously released objects from releasedObjects.
 	void flushInput();
 	
 	// Contains all keyboard scancodes that has been pressed.
@@ -43,7 +47,7 @@ private:
 	// Handles mouse input. (Currently left click only)
 	void pollInput(int x, int y);
 
-	// Stores the data of the left mouse button.
+	// Stores the current status of the left mouse button.
 	// 0 : Up
 	// 1 : Down (active click)
 	// 2 : Down (passive click)
@@ -53,7 +57,7 @@ private:
 	SDL_Scancode leftKeybinds[4][3];
 	SDL_Scancode rightKeybinds[4][3];
 
-	// Pointer to the Graphics object to access sprite data.
+	// Pointer to the Graphics object to access sprite objects.
 	const Graphics* _g;
 
 	// Stores all keys that are being pressed.

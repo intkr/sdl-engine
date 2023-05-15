@@ -8,7 +8,7 @@ class Graphics;
 
 enum StateName {
 	_STATE_TEST = 999, _STATE_TITLE = 1,
-	_GAME_DOUBLE = 100
+	_GAME_PAIR = 101
 };
 
 // base class, add more stuff in the future if necessary
