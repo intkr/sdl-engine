@@ -50,9 +50,14 @@ std::vector<std::string>* Input::getReleasedObject() {
 	return &releasedObject;
 }
 
+std::vector<std::string>* Input::getHoveredObject() {
+	return &hoveredObject;
+}
+
 void Input::process(SDL_Event& e) {
 	flushInput();
 
+	// Handle key presses and mouse events
 	while (SDL_PollEvent(&e)) {
 		switch (e.type) {
 		case SDL_QUIT:
@@ -87,6 +92,7 @@ void Input::process(SDL_Event& e) {
 			break;
 		}
 	}
+
 	pollInput(curX, curY);
 }
 
@@ -97,6 +103,8 @@ void Input::flushInput() {
 	for (auto obj = clickedObject.begin(); obj != clickedObject.end();) {
 		obj++->second = true;
 	}
+
+	hoveredObject.clear();
 	releasedObject.clear();
 }
 
@@ -116,6 +124,21 @@ void Input::pollInput(SDL_Scancode inputKey, Uint32 type) {
 
 void Input::pollInput(int x, int y) {
 	SDL_FPoint p = { (float)x, (float)y };
+
+	// Handle hover
+	for (int i = 3; i; i--) {
+		for (auto iter = (*_g->_sprites[i - 1]).cbegin(); iter != (*_g->_sprites[i - 1]).cend();) {
+			Sprite* s = iter->second;
+			std::string t = iter->first;
+
+			if (s->getDstRect() == nullptr || checkCollision(p, s)) {
+				hoveredObject.push_back(t);
+			}
+			iter++;
+		}
+	}
+
+	// Handle other mouse events
 	switch (mouseStatus) {
 	case _MOUSE_UP:
 		for (auto o = clickedObject.begin(); o != clickedObject.end();) {

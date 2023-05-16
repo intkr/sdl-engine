@@ -39,6 +39,8 @@ public:
 	// Contains all object identifiers that were released this frame.
 	std::vector<std::string>* getReleasedObject();
 
+	std::vector<std::string>* getHoveredObject();
+
 private:
 	// Handles keyboard input.
 	// type should be either SDL_KEYDOWN or SDL_KEYUP.
@@ -73,4 +75,6 @@ private:
 	// Stores all names of objects where the mouse button is released within its hitbox.
 	// Use this to figure out which buttons were clicked, and make sure to clear it before the next frame.
 	std::vector<std::string> releasedObject;
+
+	std::vector<std::string> hoveredObject;
 };
