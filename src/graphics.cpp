@@ -26,17 +26,13 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 
 bool Graphics::addTexture(std::string path, std::string name) {
 	// Check if identifier 'name' is already being used.
-	if (_textures.find(name) != _textures.end()) {
-		std::cout << "Key \"" << name << "\" already exists in texture data.\n";
+	if (_textures.find(name) != _textures.end())
 		return false;
-	}
 
 	// Check if image path 'path' exists and can be loaded successfully
 	SDL_Surface* bgSurface = IMG_Load(path.c_str());
-	if (bgSurface == nullptr) {
-		std::cout << "File path \"" << path << "\" is invalid, failed to add texture \"" << name << "\".\n";
+	if (bgSurface == nullptr)
 		return false;
-	}
 	
 	// Create texture and add to _textures
 	SDL_Texture* bgTexture = SDL_CreateTextureFromSurface(_renderer, bgSurface);
@@ -48,14 +44,11 @@ bool Graphics::addTexture(std::string path, std::string name) {
 
 bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
 	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
-	if (tex == nullptr) {
-		std::cout << "Null texture, adding sprite \"" << name << "\" failed.\n";
+	if (tex == nullptr)
 		return false;
-	}
-	if ((*_sprites[type]).count(name) > 0) {
-		std::cout << "Name already exists in sprite data, adding sprite \"" << name << "\" failed.\n";
+
+	if (_sprites[type]->count(name) > 0)
 		return false;
-	}
 
 	// Create sprite and add to _sprites
 	(*_sprites[type])[name] = new Sprite(tex, src, dst, angle);
@@ -64,7 +57,8 @@ bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, Sprite
 
 bool Graphics::hasSprites() {
 	for (int i = 0; i < 3; i++) {
-		if (_sprites[i]->size() > 0) return false;
+		if (_sprites[i]->size() > 0)
+			return false;
 	}
 	return true;
 }
@@ -88,16 +82,20 @@ void Graphics::renderScreen() {
 		It happens because when triggerOutro is triggered, updateSprite will return false if there is no outro animation to play.
 		End of (or lack of) animation means that the sprite will not be drawn. This results in a black screen.
 		*/
-		for (auto iter = (*_sprites[i]).cbegin(); iter != (*_sprites[i]).cend();) {
+		for (auto iter = _sprites[i]->cbegin(); iter != _sprites[i]->cend();) {
 			Sprite* s = iter->second;
 			bool validSprite = s->updateSprite();
 			if (validSprite) {
-				if (s->isVisible()) SDL_RenderCopyExF(_renderer, s->getTexture(), s->getSrcRect(), s->getDstRect(), s->getAngle(), nullptr, SDL_FLIP_NONE);
+				if (s->isVisible()) SDL_RenderCopyExF(_renderer, s->getTexture(), s->getSrcRect(), s->getDstRect(),
+									s->getAngle(), nullptr, SDL_FLIP_NONE);
 				iter++;
 			}
 			else {
-				delete s;
-				_sprites[i]->erase(iter++);
+				// Do not erase sprites here, it may be reused later.
+				// Sprites should only be deallocated by State::free().
+
+				//delete s;
+				//_sprites[i]->erase(iter++);
 			}
 		}
 	}
@@ -143,7 +141,7 @@ bool Graphics::addAnimationGroup(std::string spriteName, std::string groupName, 
 	if (g == nullptr) return false;
 	int index = -1;
 	for (int i = 0; i < 3; i++) {
-		if ((*_sprites[i]).count(spriteName) > 0) {
+		if (_sprites[i]->count(spriteName) > 0) {
 			index = i;
 			break;
 		}
@@ -160,7 +158,7 @@ bool Graphics::addAnimationGroup(std::string spriteName, std::string groupName, 
 bool Graphics::addAnimationEvent(std::string spriteName, std::string groupName, AnimationEvent* e) {
 	int index = -1;
 	for (int i = 0; i < 3; i++) {
-		if ((*_sprites[i]).count(spriteName) > 0) {
+		if (_sprites[i]->count(spriteName) > 0) {
 			index = i;
 			break;
 		}
@@ -172,4 +170,25 @@ bool Graphics::addAnimationEvent(std::string spriteName, std::string groupName, 
 
 	(*_sprites[index])[spriteName]->addAnimationEvent(groupName, e);
 	return true;
+}
+
+
+bool Graphics::deleteSprite(std::string name, SpriteType type) {
+	auto sprite = _sprites[type]->find(name);
+	if (sprite != _sprites[type]->end()) {
+		delete sprite->second;
+		_sprites[type]->erase(sprite);
+		return true;
+	}
+	else return false;
+}
+
+bool Graphics::deleteTexture(std::string name) {
+	auto texture = _textures.find(name);
+	if (texture != _textures.end()) {
+		SDL_DestroyTexture(texture->second);
+		_textures.erase(texture);
+		return true;
+	}
+	else return false;
 }

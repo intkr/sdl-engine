@@ -8,11 +8,14 @@ class Sprite;
 class AnimationEvent {
 public:
 	AnimationEvent(int length, void (*func)(Sprite*, AnimationEvent*)) : animationLength(length), currentFrame(0), f(func) {}
+	~AnimationEvent() {}
 
 	// Processes the sprite's animation.
 	// If an animation cycle has finished, reset the current frame timer and return true.
 	// Otherwise, return false.
 	bool animate(Sprite* s);
+
+	void reset() { currentFrame = 0; }
 	
 	unsigned int getCurrentFrame() { return currentFrame; }
 	unsigned int getAnimationLength() { return animationLength; }
@@ -22,13 +25,11 @@ public:
 		paramBool[name] = value;
 		return true;
 	}
-
 	bool setFloat(std::string name, float value) {
 		if (paramFloat.count(name) > 0) return false;
 		paramFloat[name] = value;
 		return true;
 	}
-
 	bool setChar(std::string name, char value) {
 		if (paramChar.count(name) > 0) return false;
 		paramChar[name] = value;
@@ -36,10 +37,9 @@ public:
 	}
 
 	bool getBool(std::string name) { return paramBool[name]; }
-
 	float getFloat(std::string name) { return paramFloat[name]; }
-
 	char getChar(std::string name) { return paramChar[name]; }
+
 private:
 	void (*f)(Sprite*, AnimationEvent*);
 
@@ -57,9 +57,12 @@ private:
 
 class AnimationGroup {
 public:
-	AnimationGroup() : looping(false), sequential(false), currentAnimation(-1) {}
-	AnimationGroup(bool _looping, bool _sequential) : looping(_looping), sequential(_sequential), currentAnimation((int)!_sequential) {}
+	AnimationGroup() : looping(false), sequential(false), enabled(true), currentAnimation(-1) {}
+	AnimationGroup(bool _looping, bool _sequential, bool _enabled)
+		: looping(_looping), sequential(_sequential), enabled(_enabled), currentAnimation((int)!_sequential) {}
+	~AnimationGroup();
 
+	// Resets all AnimationEvents to its initial state.
 	void reset();
 
 	// Processes the sprite's animation group.
@@ -70,6 +73,9 @@ public:
 	bool addEvent(AnimationEvent* e);
 
 	void update();
+
+	void enableGroup() { enabled = true; }
+	void disableGroup() { enabled = false; }
 
 private:
 	// Vector containing all animation objects within the group.
@@ -84,6 +90,7 @@ private:
 	// so every AnimationEvent should all be processed at once.
 	unsigned int currentAnimation;
 
+	bool enabled;
 	bool looping;
 	bool sequential;
 };

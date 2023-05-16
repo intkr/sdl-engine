@@ -37,6 +37,9 @@ public:
 	// angle : Sprite rotation angle (clockwise).
 	bool addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
 
+	bool deleteTexture(std::string name);
+	bool deleteSprite(std::string name, SpriteType type);
+
 	bool addAnimationGroup(std::string spriteName, std::string groupName, AnimationType type, AnimationGroup* g);
 	// Adds animation to group 'groupName' in _sprites. Returns true if successful, false otherwise.
 	//

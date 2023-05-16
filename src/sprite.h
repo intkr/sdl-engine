@@ -36,7 +36,7 @@ public:
 
 	// Updates sprite by processing through its animations.
 	// Returns true if sprite is valid and needs to be rendered,
-	// false if it finished its animations and needs to be deleted.
+	// false if its animations have all finished playing.
 	bool updateSprite();
 
 	// Adds animation group to _animations. Returns true if successful, false otherwise.
@@ -49,6 +49,8 @@ public:
 	// 
 	// groupName : Animation group object identifier.
 	bool addAnimationEvent(std::string groupName, AnimationEvent* e);
+
+	bool enableAnimationGroup(std::string groupName, AnimationType type);
 
 private:
 	SDL_Texture* _texture;

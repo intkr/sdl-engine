@@ -42,28 +42,26 @@ void Sprite::setAngle(double a) {
 }
 
 bool Sprite::updateSprite() {
+	if (status == _END) return false;
+
 	AniContainer* list = _animations[status];
 
 	for (auto aniGroup = list->begin(); aniGroup != list->end();) {
-		if ((*aniGroup).second->animate(this)) {
-			delete aniGroup->second;
-			aniGroup = list->erase(aniGroup);
+		if (aniGroup->second->animate(this)) {
+			switch (status) {
+			case _INTRO:
+				status = _IDLE;
+				break;
+			case _IDLE:
+				status = _OUTRO;
+				break;
+			case _OUTRO:
+				status = _END;
+				break;
+			}
 		}
-		else aniGroup++;
-	}
-
-	if (list->empty()) {
-		switch (status) {
-		case _INTRO:
-			status = _IDLE;
-			break;
-		case _IDLE:
-			status = _OUTRO;
-			break;
-		case _OUTRO:
-			status = _END;
-			break;
-		}
+		
+		aniGroup++;
 	}
 
 	return status != _END;
@@ -91,6 +89,14 @@ bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
 
 	(*_animations[index])[groupName]->addEvent(e);
 	return true;
+}
+
+bool Sprite::enableAnimationGroup(std::string groupName, AnimationType type) {
+	if (_animations[type]->count(groupName) > 0) {
+		(*_animations[type])[groupName]->enableGroup();
+		return true;
+	}
+	else return false;
 }
 
 bool checkCollision(SDL_FPoint point, Sprite* sprite) {
