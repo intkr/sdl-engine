@@ -7,4 +7,6 @@ public:
 	~StateTest();
 	void init() override;
 	Command update() override;
+	void free(Command& cmd) override;
+	bool isStateRunning() override;
 };

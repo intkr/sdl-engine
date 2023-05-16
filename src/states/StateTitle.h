@@ -7,7 +7,10 @@ public:
 	~StateTitle();
 	void init() override;
 	Command update() override;
+	void free(Command& cmd) override;
+	bool isStateRunning() override;
 
 private:
-
+	void freeAll();
+	void freeSpecifics(); // rename to something better
 };

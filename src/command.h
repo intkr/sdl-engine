@@ -1,7 +1,7 @@
 #pragma once
 
 enum CommandType {
-	_CMD_NONE = 0, _CMD_STATE
+	_CMD_NONE = 0, _CMD_TRANSITION, _CMD_STATE
 };
 
 class Command {

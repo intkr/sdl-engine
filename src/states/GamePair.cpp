@@ -17,6 +17,20 @@ GamePair::~GamePair() {}
 void GamePair::init() {
 	g->reset();
 
+	AnimationGroup* ag;
+	AnimationEvent* ae;
+	int cycle;
+
+	// background
+	g->addTexture("assets/bg.png", "test");
+	g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
+
+	//		static motion
+	ag = new AnimationGroup(true, false, true);
+	g->addAnimationGroup("testbg", "idleStatic", _IDLE, ag);
+
+	ae = new AnimationEvent(1, Animations::staticMotion);
+	g->addAnimationEvent("testbg", "idleStatic", ae);
 }
 
 Command GamePair::update() {
@@ -35,4 +49,11 @@ Command GamePair::update() {
 	}
 
 	return Command();
+}
+
+void GamePair::free(Command& cmd) {
+}
+
+bool GamePair::isStateRunning() {
+	return true;
 }

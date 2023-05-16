@@ -12,6 +12,12 @@ public:
 	void update();
 private:
 	void setState();
+
+	// Returns false if _command currently has a certain type.
+	//	(ex. _CMD_STATE - game is under state transition)
+	// Otherwise, returns true.
+	bool isCmdUpdatable();
+
 	State* s;
 	Graphics* g;
 	Input* i;

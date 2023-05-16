@@ -23,12 +23,15 @@ public:
 	// otherwise returns screen state key value
 	virtual Command update() = 0;
 
-	// Check for sprite and audio data.
+	// Deallocates sprites and textures.
+	// In most cases (if not all), _CMD_STATE or _CMD_TRANSITION is assumed.
+	virtual void free(Command& cmd) = 0;
+
+	// Checks for sprite and audio data.
 	// If there are no sprites available and no sound is playing,
 	// assume the game is going to transition into a new state and return false.
 	// Otherwise, return true.
-	virtual bool isStateRunning();
-
+	virtual bool isStateRunning() = 0;
 protected:
 	Graphics* g;
 	Input* i;

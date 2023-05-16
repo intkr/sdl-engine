@@ -29,3 +29,10 @@ Command StateTest::update() {
 
 	return Command();
 }
+
+void StateTest::free(Command& cmd) {
+}
+
+bool StateTest::isStateRunning() {
+	return true;
+}

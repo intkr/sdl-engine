@@ -16,7 +16,7 @@ void StateManager::setState() {
 		s = new StateTitle(g, i, a);
 		break;
 	case _GAME_PAIR:
-		std::cout << "Screen transitioned to game \"Double\".\n";
+		std::cout << "Screen transitioned to game \"Pair\".\n";
 		s = new GamePair(g, i, a);
 		break;
 	case _STATE_TEST:
@@ -33,34 +33,44 @@ void StateManager::update() {
 	// Return value is ignored under certain situations
 	Command returnCmd = s->update();
 
-	switch (_command.getType()) {
-	case _CMD_STATE:
-		// _command shouldn't change
-		break;
-	default:
+	if (isCmdUpdatable()) {
 		_command = returnCmd;
-	}
 
-	// 
-	switch (_command.getType()) {
-	case _CMD_STATE:
+		switch (_command.getType()) {
+		case _CMD_TRANSITION:
 
-		break;
+			break;
 
-	case _CMD_NONE:
-	default:
-		break;
+		case _CMD_STATE:
+			s->free(_command);
+			break;
+
+		case _CMD_NONE:
+		default:
+			break;
+		}
 	}
 
 	// fix when Command is implemented
-	if (currentState > 0 && 0) {
-		currentState = 0;
-		//g->triggerOutro();
-	}
-	if (currentState < 0) {
-		if (s->isStateRunning()) {
-			currentState = 0 - currentState;
-			setState();
-		}
+	//if (currentState > 0 && 0) {
+	//	currentState = 0;
+	//	//g->triggerOutro();
+	//}
+	//if (currentState < 0) {
+	//	if (s->isStateRunning()) {
+	//		currentState = 0 - currentState;
+	//		setState();
+	//	}
+	//}
+}
+
+bool StateManager::isCmdUpdatable() {
+	switch (_command.getType()) {
+	case _CMD_STATE:
+	case _CMD_TRANSITION:
+		return false;
+		break;
+	default:
+		return true;
 	}
 }

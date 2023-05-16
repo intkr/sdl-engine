@@ -25,7 +25,7 @@ void StateTitle::init() {
 	g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
 
 	//		static motion
-	ag = new AnimationGroup(true, false);
+	ag = new AnimationGroup(true, false, true);
 	g->addAnimationGroup("testbg", "idleStatic", _IDLE, ag);
 
 	ae = new AnimationEvent(1, Animations::staticMotion);
@@ -40,7 +40,7 @@ void StateTitle::init() {
 
 	// pop out from center of screen
 	cycle = 30;
-	ag = new AnimationGroup(false, true);
+	ag = new AnimationGroup(false, true, true);
 	g->addAnimationGroup("testfg", "introPopOut", _INTRO, ag);
 	ae = new AnimationEvent(cycle, Animations::resizeCenteredMotion);
 	ae->setFloat("startSize", 0.0);
@@ -57,7 +57,7 @@ void StateTitle::init() {
 	g->addAnimationEvent("testfg", "introPopOut", ae);
 
 	// idle in circular rotation / motion
-	ag = new AnimationGroup(true, false);
+	ag = new AnimationGroup(true, false, true);
 	g->addAnimationGroup("testfg", "idleSpin", _IDLE, ag);
 	
 		// rotation
@@ -85,25 +85,6 @@ void StateTitle::init() {
 	ae->setChar("axis", 'y');
 	ae->setChar("func", 's');
 	g->addAnimationEvent("testfg", "idleSpin", ae);
-
-
-	/*
-	// opacity
-	f[0] = 0;
-	f[1] = 128;
-	animationLength = 15;
-	g->addAnimation("testfg", "logoFadeIn", new Animation(f, animationLength, false, true, true, opacity), _INTRO);
-	f[0] = 128;
-	animationLength = 1;
-	g->addAnimation("testfg", "logoOpacity", new Animation(f, animationLength, true, true, true, opacity), _IDLE);
-	f[0] = 128;
-	f[1] = 0;
-	animationLength = 15;
-	
-	//g->addAnimation("testfg", "logoFadeOut", new Animation(f, animationLength, false, true, true, opacity), _OUTRO);
-	//g->addAnimation("testbg", "bgFadeOut", new Animation(f, animationLength, false, true, true, opacity), _OUTRO);
-
-	*/
 }
 
 Command StateTitle::update() {
@@ -115,6 +96,13 @@ Command StateTitle::update() {
 		}
 	}
 
+	// test
+	for (auto obj : *(i->getHoveredObject())) {
+		if (obj == "testfg") {
+			std::cout << "a";
+		}
+	}
+
 	FMOD::Channel* ch;
 	for (auto obj : *(i->getClickedObject())) {
 		if (obj.first == "testfg" && obj.second == false) {
@@ -123,9 +111,30 @@ Command StateTitle::update() {
 			ch = a->addSound(path, vine, false, false, _AUDIO_SFX, 100);
 			ch->setPaused(false);
 
-			return Command(_CMD_NONE, 1);
+			return Command(_CMD_TRANSITION, _GAME_PAIR);
 		}
 	}
 
 	return Command(_CMD_NONE, 1);
+}
+
+void StateTitle::free(Command& cmd) {
+	switch (cmd.getValue()) {
+	case _GAME_PAIR:
+		freeSpecifics();
+		break;
+	default:
+		freeAll();
+	}
+}
+
+bool StateTitle::isStateRunning() {
+	return true;
+}
+
+void StateTitle::freeAll() {
+	
+}
+
+void StateTitle::freeSpecifics() {
 }
