@@ -1,16 +1,16 @@
 #include "stateManager.h"
 #include "../graphics.h"
 
-StateManager::StateManager(int n, Graphics* _g, Input* _i, Audio* _a) : g(_g), i(_i), a(_a), currentState(n) {
-	setState();
+StateManager::StateManager(StateType _s, Graphics* _g, Input* _i, Audio* _a) : g(_g), i(_i), a(_a), currentState(_s) {
+	setState(_s);
 }
 
 StateManager::~StateManager() {}
 
-void StateManager::setState() {
+void StateManager::setState(StateType state) {
 	delete s;
 
-	switch (currentState) {
+	switch (state) {
 	case _STATE_TITLE:
 		std::cout << "Screen transitioned to title menu.\n";
 		s = new StateTitle(g, i, a);
@@ -38,11 +38,13 @@ void StateManager::update() {
 
 		switch (_command.getType()) {
 		case _CMD_TRANSITION:
-
-			break;
+			
+			// idk how to implement this rn
+			//break;
 
 		case _CMD_STATE:
 			s->free(_command);
+			setState((StateType)_command.getValue());
 			break;
 
 		case _CMD_NONE:

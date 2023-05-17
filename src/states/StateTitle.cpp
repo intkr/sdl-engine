@@ -19,72 +19,77 @@ void StateTitle::init() {
 
 	AnimationGroup* ag;
 	AnimationEvent* ae;
-	int cycle;
+	int cycle, w, h;
 	// background
-	g->addTexture("assets/bg.png", "test");
-	g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
-
-	//		static motion
-	ag = new AnimationGroup(true, false, true);
-	g->addAnimationGroup("testbg", "idleStatic", _IDLE, ag);
-
-	ae = new AnimationEvent(1, Animations::staticMotion);
-	g->addAnimationEvent("testbg", "idleStatic", ae);
+	if (g->addTexture("assets/bg.png", "test")) {
+		if (g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg")) {
+			//		static motion
+			ag = new AnimationGroup(true, false, true);
+			if (g->addAnimationGroup("testbg", "idleStatic", _IDLE, ag)) {
+				ae = new AnimationEvent(1, Animations::staticMotion);
+				g->addAnimationEvent("testbg", "idleStatic", ae);
+			}
+		}
+	}
 
 	// test logo
-	int w, h;
-	g->addTexture("assets/buh.png", "test2");
-	SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
-	SDL_FRect* r = new SDL_FRect{ (float)(rm * (1920 - w) / 2), (float)(rm * (1080 - h) / 2), (float)rm * w, (float)rm * h };
-	g->addSprite(g->getTexture("test2"), nullptr, r, _FOREGROUND, "testfg");
+	if (g->addTexture("assets/buh.png", "test2")) {
+		SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
+		SDL_FRect* r = new SDL_FRect{ (rm * (1920 - w) * 0.75f), (rm * (1080 - h) * 0.5f), (float)rm * w, (float)rm * h };
+		if (g->addSprite(g->getTexture("test2"), nullptr, r, _FOREGROUND, "testfg")) {
+			// pop out from center of screen
+			cycle = 30;
+			ag = new AnimationGroup(false, true, true);
+			if (g->addAnimationGroup("testfg", "introPopOut", _INTRO, ag)) {
+				ae = new AnimationEvent(cycle, Animations::resizeCenteredMotion);
+				ae->setFloat("startSize", 0.0);
+				ae->setFloat("endSize", 1.0);
+				g->addAnimationEvent("testfg", "introPopOut", ae);
 
-	// pop out from center of screen
-	cycle = 30;
-	ag = new AnimationGroup(false, true, true);
-	g->addAnimationGroup("testfg", "introPopOut", _INTRO, ag);
-	ae = new AnimationEvent(cycle, Animations::resizeCenteredMotion);
-	ae->setFloat("startSize", 0.0);
-	ae->setFloat("endSize", 1.0);
-	g->addAnimationEvent("testfg", "introPopOut", ae);
+				// and move 128 pixels to the left for 24 frames
+				cycle = 24;
+				ae = new AnimationEvent(cycle, Animations::linearMotion);
+				ae->setChar("axis", 'x');
+				ae->setBool("baseMove", false);
+				ae->setFloat("speed", (float)rm * 128 / cycle * -1);
+				g->addAnimationEvent("testfg", "introPopOut", ae);
+			}
 
+			// idle in circular rotation / motion
+			ag = new AnimationGroup(true, false, true);
+			if (g->addAnimationGroup("testfg", "idleSpin", _IDLE, ag)) {
+				// rotation
+				cycle = 80;
+				ae = new AnimationEvent(cycle * 2, Animations::sincosRotation);
+				ae->setFloat("a", 6);
+				ae->setFloat("b", (float)(1.0 / cycle));
+				ae->setChar("func", 's');
+				g->addAnimationEvent("testfg", "idleSpin", ae);
 
-	// and move 128 pixels to the left for 24 frames
-	cycle = 24;
-	ae = new AnimationEvent(cycle, Animations::linearMotion);
-	ae->setChar("axis", 'x');
-	ae->setBool("baseMove", false);
-	ae->setFloat("speed", (float)rm * 128 / cycle * -1);
-	g->addAnimationEvent("testfg", "introPopOut", ae);
+				// motion (x axis)
+				cycle = 120;
+				ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
+				ae->setFloat("a", 128.0f * rm);
+				ae->setFloat("b", 1.0f / cycle);
+				ae->setChar("axis", 'x');
+				ae->setChar("func", 'c');
+				g->addAnimationEvent("testfg", "idleSpin", ae);
 
-	// idle in circular rotation / motion
-	ag = new AnimationGroup(true, false, true);
-	g->addAnimationGroup("testfg", "idleSpin", _IDLE, ag);
-	
-		// rotation
-	cycle = 80;
-	ae = new AnimationEvent(cycle * 2, Animations::sincosRotation);
-	ae->setFloat("a", 6);
-	ae->setFloat("b", (float)(1.0 / cycle));
-	ae->setChar("func", 's');
-	g->addAnimationEvent("testfg", "idleSpin", ae);
+				// motion (y axis)
+				cycle = 120;
+				ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
+				ae->setFloat("a", 128.0f * rm);
+				ae->setFloat("b", 1.0f / cycle);
+				ae->setChar("axis", 'y');
+				ae->setChar("func", 's');
+				g->addAnimationEvent("testfg", "idleSpin", ae);
+			}
 
-		// motion (x axis)
-	cycle = 120;
-	ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
-	ae->setFloat("a", 128.0f * rm);
-	ae->setFloat("b", 1.0f / cycle);
-	ae->setChar("axis", 'x');
-	ae->setChar("func", 'c');
-	g->addAnimationEvent("testfg", "idleSpin", ae);
-
-		// motion (y axis)
-	cycle = 120;
-	ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
-	ae->setFloat("a", 128.0f * rm);
-	ae->setFloat("b", 1.0f / cycle);
-	ae->setChar("axis", 'y');
-	ae->setChar("func", 's');
-	g->addAnimationEvent("testfg", "idleSpin", ae);
+		}
+		else {
+			delete r;
+		}
+	}
 }
 
 Command StateTitle::update() {
@@ -96,12 +101,7 @@ Command StateTitle::update() {
 		}
 	}
 
-	// test
-	for (auto obj : *(i->getHoveredObject())) {
-		if (obj == "testfg") {
-			std::cout << "a";
-		}
-	}
+	//for (auto obj : *(i->getHoveredObject())) {}
 
 	FMOD::Channel* ch;
 	for (auto obj : *(i->getClickedObject())) {

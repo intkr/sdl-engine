@@ -7,11 +7,11 @@
 
 class StateManager {
 public:
-	StateManager(int n, Graphics* _g, Input* _i, Audio* _a);
+	StateManager(StateType _s, Graphics* _g, Input* _i, Audio* _a);
 	~StateManager();
 	void update();
 private:
-	void setState();
+	void setState(StateType state);
 
 	// Returns false if _command currently has a certain type.
 	//	(ex. _CMD_STATE - game is under state transition)
@@ -24,5 +24,5 @@ private:
 	Audio* a;
 
 	Command _command;
-	int currentState;
+	StateType currentState;
 };

@@ -22,10 +22,10 @@ void Animations::sincosMotion(Sprite* _s, AnimationEvent* _e) {
 	float delta;
 	switch (func) {
 	case 's': // sine
-		delta = sin(currentFrame * M_PI * b) * a;
+		delta = (float)sin(currentFrame * M_PI * b) * a;
 		break;
 	case 'c': // cosine
-		delta = cos(currentFrame * M_PI * b) * a;
+		delta = (float)cos(currentFrame * M_PI * b) * a;
 		break;
 	default:
 		printf("sincos - invalid func : %c\n", func);

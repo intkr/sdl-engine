@@ -40,6 +40,8 @@ public:
 	bool deleteTexture(std::string name);
 	bool deleteSprite(std::string name, SpriteType type);
 
+	bool setSpriteTexture(std::string spriteName, std::string textureName);
+
 	bool addAnimationGroup(std::string spriteName, std::string groupName, AnimationType type, AnimationGroup* g);
 	// Adds animation to group 'groupName' in _sprites. Returns true if successful, false otherwise.
 	//

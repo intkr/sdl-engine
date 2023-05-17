@@ -24,15 +24,34 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 	else return nullptr;
 }
 
+bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName) {
+	Sprite* s = nullptr;
+	for (int i = 3; i; i--) {
+		if (_sprites[i - 1]->count(spriteName) > 0) s = (*_sprites[i - 1])[spriteName];
+	}
+	if (s == nullptr) return false;
+
+	SDL_Texture* t = nullptr;
+	if (_textures.count(textureName) > 0) t = _textures[textureName];
+	if (t == nullptr) return false;
+
+	s->setTexture(t);
+	return true;
+}
+
 bool Graphics::addTexture(std::string path, std::string name) {
 	// Check if identifier 'name' is already being used.
-	if (_textures.find(name) != _textures.end())
+	if (_textures.find(name) != _textures.end()) {
+		std::cout << "adding texture \"" << name << "\" failed.\n";
 		return false;
+	}
 
 	// Check if image path 'path' exists and can be loaded successfully
 	SDL_Surface* bgSurface = IMG_Load(path.c_str());
-	if (bgSurface == nullptr)
+	if (bgSurface == nullptr) {
+		std::cout << "adding texture \"" << name << "\" failed.\n";
 		return false;
+	}
 	
 	// Create texture and add to _textures
 	SDL_Texture* bgTexture = SDL_CreateTextureFromSurface(_renderer, bgSurface);
@@ -44,11 +63,15 @@ bool Graphics::addTexture(std::string path, std::string name) {
 
 bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
 	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
-	if (tex == nullptr)
+	if (tex == nullptr) {
+		std::cout << "adding sprite \"" << name << "\" failed.\n";
 		return false;
+	}
 
-	if (_sprites[type]->count(name) > 0)
+	if (_sprites[type]->count(name) > 0) {
+		std::cout << "adding sprite \"" << name << "\" failed.\n";
 		return false;
+	}
 
 	// Create sprite and add to _sprites
 	(*_sprites[type])[name] = new Sprite(tex, src, dst, angle);

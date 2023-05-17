@@ -6,7 +6,7 @@ class Input;
 class Audio;
 class Graphics;
 
-enum StateName {
+enum StateType {
 	_STATE_TEST = 999, _STATE_TITLE = 1,
 	_GAME_PAIR = 101
 };
