@@ -28,6 +28,7 @@ void Animations::sincosMotion(Sprite* _s, AnimationEvent* _e) {
 		delta = (float)cos(currentFrame * M_PI * b) * a;
 		break;
 	default:
+		delta = 0;
 		printf("sincos - invalid func : %c\n", func);
 		break;
 	}
@@ -78,7 +79,7 @@ void Animations::resizeCenteredMotion(Sprite* _s, AnimationEvent* _e) {
 		return;
 	}
 
-	int aniLength = _e->getAnimationLength(), currentFrame = _e->getCurrentFrame();
+	int aniLength = _e->getMaxFrames(), currentFrame = _e->getCurrentFrame();
 	int remainingFrames = aniLength - currentFrame;
 	SDL_FRect* dstRect = _s->getDstRect();
 	SDL_FRect* baseRect = _s->getBaseRect();
@@ -106,15 +107,22 @@ void Animations::sincosRotation(Sprite* _s, AnimationEvent* _e) {
 	_s->setAngle(angle);
 }
 
-//void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
-//	std::vector<double>* p = _e->getParameter();
-//	int a = (int)(*p)[0], b = (int)(*p)[1];
-//	unsigned int cf = _e->getCurrentFrame();
-//	unsigned int mf = _e->getAnimationLength();
-//	if (mf == 1) {
-//		SDL_SetTextureAlphaMod(_s->getTexture(), a);
-//	}
-//	else {
-//		SDL_SetTextureAlphaMod(_s->getTexture(), (b * cf + a * (mf - cf)) / mf);
-//	}
-//}
+void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
+	unsigned int currentFrame = _e->getCurrentFrame();
+	unsigned int maxFrames = _e->getMaxFrames();
+
+	float a = _e->getFloat("a");
+	if (a > 1.0f) a = 1.0f;
+	else if (a < 0.0f) a = 0.0f;
+	
+	if (maxFrames == 1) {
+		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)a);
+	}
+	else {
+		float b = _e->getFloat("b");
+		if (b > 1.0f) b = 1.0f;
+		else if (b < 0.0f) b = 0.0f;
+
+		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)((b * currentFrame + a * (maxFrames - currentFrame)) / maxFrames));
+	}
+}

@@ -45,25 +45,18 @@ bool Sprite::updateSprite() {
 	if (status == _END) return false;
 
 	AniContainer* list = _animations[status];
-
+	bool finished = true;
 	for (auto aniGroup = list->begin(); aniGroup != list->end();) {
 		if (aniGroup->second->animate(this)) {
-			switch (status) {
-			case _INTRO:
-				status = _IDLE;
-				break;
-			case _IDLE:
-				status = _OUTRO;
-				break;
-			case _OUTRO:
-				status = _END;
-				break;
-			}
+			//finished = true;
 		}
-		
+		else finished = false;
 		aniGroup++;
 	}
 
+	if (finished) {
+		++status;
+	}
 	return status != _END;
 }
 

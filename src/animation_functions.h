@@ -49,11 +49,12 @@ namespace Animations {
 	// 'func' (char) : 's'(sine) or 'c'(cosine), the type of the function.
 	void sincosRotation(Sprite* _s, AnimationEvent* _e);
 
-	// Sets the opacity of the sprite across a set amount of frames. If it equals 1, opacity is static.
-	// If opacity is static, it's set to a. Otherwise, it changes from a to b. (a,b = 0~255)
-	// This animation is NOT compoundable.
+	// The opacity of the sprite changes in a linear function.
 	// WARNING - This affects the texture, not the sprite. All sprites that uses the same texture will be affected.
-	//void opacity(Sprite* _s, AnimationEvent* _e);
-	// TODO: fix this ^
+	//			 If multiple sprites using the same texture requires varying opacity, use the same function for each sprite.
+	// 'a' : Initial opacity.
+	// 'b' : Final opacity.
+	// If maxFrames is 1, opacity stays static with value a.
+	void opacity(Sprite* _s, AnimationEvent* _e);
 }
 

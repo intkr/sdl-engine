@@ -7,7 +7,7 @@ class Sprite;
 
 class AnimationEvent {
 public:
-	AnimationEvent(int length, void (*func)(Sprite*, AnimationEvent*)) : animationLength(length), currentFrame(0), f(func) {}
+	AnimationEvent(int length, void (*func)(Sprite*, AnimationEvent*)) : maxFrames(length), currentFrame(0), f(func) {}
 	~AnimationEvent() {}
 
 	// Processes the sprite's animation.
@@ -18,7 +18,7 @@ public:
 	void reset() { currentFrame = 0; }
 	
 	unsigned int getCurrentFrame() { return currentFrame; }
-	unsigned int getAnimationLength() { return animationLength; }
+	unsigned int getMaxFrames() { return maxFrames; }
 
 	bool setBool(std::string name, bool value) {
 		if (paramBool.count(name) > 0) return false;
@@ -43,12 +43,12 @@ public:
 private:
 	void (*f)(Sprite*, AnimationEvent*);
 
-	// Value range is [0 ~ animationLength).
+	// Value range is [0 ~ maxFrames).
 	// Value is changed after animation is processed.
 	unsigned int currentFrame;
 
 	// Length is set assuming game runs at 60 FPS.
-	unsigned int animationLength;
+	unsigned int maxFrames;
 
 	std::map<std::string, float> paramFloat;
 	std::map<std::string, char> paramChar;

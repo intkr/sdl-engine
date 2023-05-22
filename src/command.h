@@ -6,8 +6,8 @@ enum CommandType {
 
 class Command {
 public:
-	Command();
-	Command(CommandType t, int v);
+	Command() : _type(_CMD_NONE), _value(0) {}
+	Command(CommandType t, int v) : _type(t), _value(v) {}
 	void operator=(const Command& cmd);
 
 	void setCommand(CommandType t, int v);

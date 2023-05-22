@@ -11,6 +11,12 @@
 // _INTRO, _IDLE, _OUTRO, _END
 enum AnimationType { _INTRO, _IDLE, _OUTRO, _END };
 
+inline AnimationType operator++(AnimationType& a) {
+	if (a == _END) return a;
+	a = static_cast<AnimationType>(a + 1);
+	return a;
+}
+
 // _BACKGROUND, _FOREGROUND, _POPUP
 enum SpriteType { _BACKGROUND, _FOREGROUND, _POPUP };
 

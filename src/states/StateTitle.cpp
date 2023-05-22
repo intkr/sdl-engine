@@ -54,6 +54,7 @@ void StateTitle::init() {
 				ae->setFloat("speed", (float)rm * 128 / cycle * -1);
 				g->addAnimationEvent("testfg", "introPopOut", ae);
 			}
+			else delete ag;
 
 			// idle in circular rotation / motion
 			ag = new AnimationGroup(true, false, true);
@@ -84,7 +85,15 @@ void StateTitle::init() {
 				ae->setChar("func", 's');
 				g->addAnimationEvent("testfg", "idleSpin", ae);
 			}
+			else delete ag;
 
+			// low opacity (active when clicked)
+			ag = new AnimationGroup(true, false, false);
+			if (g->addAnimationGroup("testfg", "idleOpacity", _IDLE, ag)) {
+				ae = new AnimationEvent(1, Animations::opacity);
+				ae->setFloat("a", 0.1f);
+			}
+			else delete ag;
 		}
 		else {
 			delete r;

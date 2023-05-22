@@ -55,11 +55,9 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Make the pair minigame - utilize TDD for minigame development
-	
-	Implment state transition system
-
 	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
+
+	Make the pair minigame - utilize TDD for minigame development
 
 	Make coherent error/exception prompts
 */
