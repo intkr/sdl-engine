@@ -102,33 +102,11 @@ void StateTitle::init() {
 }
 
 Command StateTitle::update() {
-	for (auto key : *(i->getPressedKeys())) {
-		// Trigger screen transition on any key press
-		if (key.second == false) {
-			g->reset();
-			return Command(_CMD_NONE, 1);
-		}
-	}
-
-	//for (auto obj : *(i->getHoveredObject())) {}
-
-	FMOD::Channel* ch;
-	for (auto obj : *(i->getClickedObject())) {
-		if (obj.first == "testfg" && obj.second == false) {
-			// *vine boom*
-			std::string vine = "vine", path = "assets/Vine Boom.ogg";
-			ch = a->addSound(path, vine, false, false, _AUDIO_SFX, 100);
-			ch->setPaused(false);
-
-			return Command(_CMD_TRANSITION, _GAME_PAIR);
-		}
-	}
-
-	return Command(_CMD_NONE, 1);
+	return Command{ _CMD_NONE, 1 };
 }
 
-void StateTitle::free(Command& cmd) {
-	switch (cmd.getValue()) {
+void StateTitle::exitState(Command& cmd) {
+	switch (cmd.value) {
 	case _GAME_PAIR:
 		freeSpecifics();
 		break;
@@ -138,7 +116,7 @@ void StateTitle::free(Command& cmd) {
 }
 
 bool StateTitle::isStateRunning() {
-	return true;
+	return test;
 }
 
 void StateTitle::freeAll() {
@@ -146,4 +124,19 @@ void StateTitle::freeAll() {
 }
 
 void StateTitle::freeSpecifics() {
+	test = false;
+}
+
+
+Command StateTitle::handleClick(std::string name, bool active) {
+	if (name == "testfg" && active) {
+		// *vine boom*
+		FMOD::Channel* ch;
+		std::string vine = "vine", path = "assets/Vine Boom.ogg";
+		ch = a->addSound(path, vine, false, false, _AUDIO_SFX, 100);
+		ch->setPaused(false);
+
+		return Command{ _CMD_TRANSITION, _GAME_PAIR };
+	}
+	return Command();
 }

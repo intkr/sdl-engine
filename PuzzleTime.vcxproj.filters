@@ -86,9 +86,6 @@
     <ClCompile Include="src\states\GamePair.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\animation_functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

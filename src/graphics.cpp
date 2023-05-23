@@ -115,7 +115,7 @@ void Graphics::renderScreen() {
 			}
 			else {
 				// Do not erase sprites here, it may be reused later.
-				// Sprites should only be deallocated by State::free().
+				// Sprites should only be deallocated by State::exitState().
 
 				//delete s;
 				//_sprites[i]->erase(iter++);

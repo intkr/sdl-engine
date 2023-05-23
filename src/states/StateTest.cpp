@@ -30,7 +30,7 @@ Command StateTest::update() {
 	return Command();
 }
 
-void StateTest::free(Command& cmd) {
+void StateTest::exitState(Command& cmd) {
 }
 
 bool StateTest::isStateRunning() {

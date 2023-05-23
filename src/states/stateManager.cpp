@@ -1,5 +1,6 @@
 #include "stateManager.h"
 #include "../graphics.h"
+#include "../input.h"
 
 StateManager::StateManager(StateType _s, Graphics* _g, Input* _i, Audio* _a) : g(_g), i(_i), a(_a), currentState(_s) {
 	setState(_s);
@@ -9,6 +10,7 @@ StateManager::~StateManager() {}
 
 void StateManager::setState(StateType state) {
 	delete s;
+	std::queue<Command>().swap(cmdQueue);
 
 	switch (state) {
 	case _STATE_TITLE:
@@ -30,49 +32,61 @@ void StateManager::setState(StateType state) {
 }
 
 void StateManager::update() {
-	// Return value is ignored under certain situations
-	Command returnCmd = s->update();
+	pollInput();
 
-	if (isCmdUpdatable()) {
-		_command = returnCmd;
+	if (cmdQueue.empty()) return;
+	Command& cmd = cmdQueue.front();
+	
+	while (!cmdQueue.empty()) {
+		cmd = cmdQueue.front();
 
-		switch (_command.getType()) {
-		case _CMD_TRANSITION:
-			
-			// idk how to implement this rn
-			//break;
-
+		switch (cmd.type) {
 		case _CMD_STATE:
-			s->free(_command);
-			setState((StateType)_command.getValue());
-			break;
-
-		case _CMD_NONE:
+			if (s->isStateRunning()) s->exitState(cmd);
+			else setState((StateType)cmd.value);
+			return;
+		case _CMD_TRANSITION:
+			cmdQueue.push(Command{ _CMD_STATE, cmd.value });
 		default:
 			break;
 		}
-	}
 
-	// fix when Command is implemented
-	//if (currentState > 0 && 0) {
-	//	currentState = 0;
-	//	//g->triggerOutro();
-	//}
-	//if (currentState < 0) {
-	//	if (s->isStateRunning()) {
-	//		currentState = 0 - currentState;
-	//		setState();
-	//	}
-	//}
+		cmdQueue.pop();
+	}
 }
 
-bool StateManager::isCmdUpdatable() {
-	switch (_command.getType()) {
-	case _CMD_STATE:
-	case _CMD_TRANSITION:
-		return false;
-		break;
-	default:
-		return true;
+void StateManager::pollInput() {
+	Command cmd;
+	SDL_Scancode id;
+	std::string objName;
+	bool active;
+
+	for (auto& key : *i->getPressedKeys()) {
+		id = key.first, active = key.second;
+		cmd = s->handleKey(id, active);
+		pushCommand(cmd);
+	}
+
+	for (auto& obj : *i->getHoveredObject()) {
+		cmd = s->handleHover(obj);
+		pushCommand(cmd);
+	}
+
+	for (auto& obj : *i->getClickedObject()) {
+		objName = obj.first, active = obj.second;
+		cmd = s->handleClick(objName, active);
+		pushCommand(cmd);
+	}
+
+	for (auto& obj : *i->getReleasedObject()) {
+		cmd = s->handleRelease(obj);
+		pushCommand(cmd);
+	}
+}
+
+void StateManager::pushCommand(Command& cmd) {
+	if (cmd.type == _CMD_NONE) return;
+	if (!cmdEnabled) {
+		cmdQueue.push(cmd);
 	}
 }

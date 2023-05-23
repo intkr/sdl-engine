@@ -1,4 +1,8 @@
 #pragma once
+#include <string>
+
+#include <SDL.h>
+
 #include "../command.h"
 #include "../animation_functions.h"
 
@@ -25,14 +29,25 @@ public:
 
 	// Deallocates sprites and textures.
 	// In most cases (if not all), _CMD_STATE or _CMD_TRANSITION is assumed.
-	virtual void free(Command& cmd) = 0;
+	virtual void exitState(Command& cmd) = 0;
 
 	// Checks for sprite and audio data.
 	// If there are no sprites available and no sound is playing,
 	// assume the game is going to transition into a new state and return false.
 	// Otherwise, return true.
 	virtual bool isStateRunning() = 0;
+
+	// Handles a specific portion of user input, and returns a Command object.
+	// Command type is _CMD_NONE if nothing of value should be returned.
+	// In such cases, the return value should be ignored.
+
+	virtual Command handleKey(SDL_Scancode key, bool active);
+	virtual Command handleHover(std::string name);
+	virtual Command handleClick(std::string name, bool active);
+	virtual Command handleRelease(std::string name);
+
 protected:
+
 	Graphics* g;
 	Input* i;
 	Audio* a;

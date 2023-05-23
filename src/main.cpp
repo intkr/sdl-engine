@@ -55,9 +55,11 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
+	Poll input system
 
 	Make the pair minigame - utilize TDD for minigame development
 
+	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
+		in the meantime, develop with fixed 60fps
 	Make coherent error/exception prompts
 */

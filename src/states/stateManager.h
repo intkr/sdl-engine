@@ -1,4 +1,6 @@
 #pragma once
+#include <queue>
+
 #include "StateTitle.h"
 #include "StateTest.h"
 
@@ -10,19 +12,26 @@ public:
 	StateManager(StateType _s, Graphics* _g, Input* _i, Audio* _a);
 	~StateManager();
 	void update();
+
 private:
+	void pollInput();
+
+	void pushCommand(Command& cmd);
+
 	void setState(StateType state);
 
-	// Returns false if _command currently has a certain type.
+	// Returns false if the first item in queue currently has a certain type.
 	//	(ex. _CMD_STATE - game is under state transition)
 	// Otherwise, returns true.
-	bool isCmdUpdatable();
+	bool cmdEnabled;
 
 	State* s;
 	Graphics* g;
 	Input* i;
 	Audio* a;
 
-	Command _command;
+	// Used to poll all inputs for each frame.
+	std::queue<Command> cmdQueue;
+
 	StateType currentState;
 };

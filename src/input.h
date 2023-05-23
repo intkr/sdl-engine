@@ -26,14 +26,14 @@ public:
 	
 	// Contains all keyboard scancodes that has been pressed.
 	// map.first : Object name identifier
-	// map.second : Click status (false = active, true = passive)
+	// map.second : Click status (true = active, false = passive)
 	std::map<SDL_Scancode, bool>* getPressedKeys();
 
 	// NOTE: Add released keys if needed
 	
 	// Contains all object identifiers that has been clicked.
 	// map.first : Object name identifier
-	// map.second : Click status (false = active, true = passive)
+	// map.second : Click status (true = active, false = passive)
 	std::map<std::string, bool>* getClickedObject();
 
 	// Contains all object identifiers that were released this frame.

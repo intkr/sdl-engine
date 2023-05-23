@@ -7,10 +7,14 @@ public:
 	~StateTitle();
 	void init() override;
 	Command update() override;
-	void free(Command& cmd) override;
+	void exitState(Command& cmd) override;
 	bool isStateRunning() override;
 
 private:
+	Command handleClick(std::string name, bool active);
+
 	void freeAll();
 	void freeSpecifics(); // rename to something better
+
+	bool test = true;
 };

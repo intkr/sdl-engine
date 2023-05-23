@@ -98,10 +98,10 @@ void Input::process(SDL_Event& e) {
 
 void Input::flushInput() {
 	for (auto key = pressedKeys.begin(); key != pressedKeys.end();) {
-		key++->second = true;
+		key++->second = false;
 	}
 	for (auto obj = clickedObject.begin(); obj != clickedObject.end();) {
-		obj++->second = true;
+		obj++->second = false;
 	}
 
 	hoveredObject.clear();
@@ -113,7 +113,7 @@ void Input::pollInput(SDL_Scancode inputKey, Uint32 type) {
 	switch (type) {
 	case SDL_KEYDOWN:
 		if (pressedKeys.find(inputKey) == pressedKeys.end()) {
-			pressedKeys[inputKey] = false;
+			pressedKeys[inputKey] = true;
 		}
 		break;
 	case SDL_KEYUP:
@@ -156,7 +156,7 @@ void Input::pollInput(int x, int y) {
 				std::string t = iter->first;
 				
 				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
-					clickedObject[t] = false;
+					clickedObject[t] = true;
 
 					// click test
 					if (t != "testfg" && t != "testbg") {
@@ -177,7 +177,7 @@ void Input::pollInput(int x, int y) {
 				std::string t = iter->first;
 
 				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
-					clickedObject[t] = true;
+					clickedObject[t] = false;
 				}
 				else if (clickedObject.count(t) > 0) {
 					clickedObject.erase(t);
