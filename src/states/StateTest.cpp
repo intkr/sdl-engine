@@ -4,8 +4,6 @@
 
 #include "StateTest.h"
 
-extern float rm;
-
 StateTest::StateTest(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
 	init();
 }

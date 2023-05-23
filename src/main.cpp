@@ -13,7 +13,6 @@
 #include "states/stateManager.h"
 
 extern const int fps = 60; // Not actually FPS
-float rm = 0.6666666667f; // 1280x720 : 0.6666666667, 1600x900 : 0.8333333333, 1920x1080 : 1.0
 
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
 	// remove comment to enable console output
@@ -23,7 +22,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
-	Graphics* g = new Graphics((int)(1920 * rm), (int)(1080 * rm));
+	Graphics* g = new Graphics(1440, 720);
 	Input* i = new Input(g);
 	Audio* a = new Audio();
 	StateManager* s = new StateManager(_STATE_TITLE, g, i, a);

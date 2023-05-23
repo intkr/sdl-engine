@@ -1,10 +1,8 @@
 #include "graphics.h"
 
-extern float rm;
-
 Graphics::Graphics(int w, int h) {
-	rm = w / 1920.0f;
-	SDL_CreateWindowAndRenderer((int)(1920 * rm), (int)(1080 * rm), SDL_WINDOW_INPUT_FOCUS, &_window, &_renderer);
+	SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_RESIZABLE, &_window, &_renderer);
+	SDL_RenderSetLogicalSize(_renderer, 1920, 1080);
 	SDL_SetWindowTitle(_window, "Puzzle Time");
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 	_sprites[0] = &backgroundSprites;

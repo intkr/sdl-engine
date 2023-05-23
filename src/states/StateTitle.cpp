@@ -6,8 +6,6 @@
 
 #include "StateTitle.h"
 
-extern float rm;
-
 StateTitle::StateTitle(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
 	init();
 }
@@ -35,7 +33,7 @@ void StateTitle::init() {
 	// test logo
 	if (g->addTexture("assets/buh.png", "test2")) {
 		SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
-		SDL_FRect* r = new SDL_FRect{ (rm * (1920 - w) * 0.75f), (rm * (1080 - h) * 0.5f), (float)rm * w, (float)rm * h };
+		SDL_FRect* r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
 		if (g->addSprite(g->getTexture("test2"), nullptr, r, _FOREGROUND, "testfg")) {
 			// pop out from center of screen
 			cycle = 30;
@@ -51,7 +49,7 @@ void StateTitle::init() {
 				ae = new AnimationEvent(cycle, Animations::linearMotion);
 				ae->setChar("axis", 'x');
 				ae->setBool("baseMove", false);
-				ae->setFloat("speed", (float)rm * 128 / cycle * -1);
+				ae->setFloat("speed", 128.0f / cycle * -1);
 				g->addAnimationEvent("testfg", "introPopOut", ae);
 			}
 			else delete ag;
@@ -70,7 +68,7 @@ void StateTitle::init() {
 				// motion (x axis)
 				cycle = 120;
 				ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
-				ae->setFloat("a", 128.0f * rm);
+				ae->setFloat("a", 128.0f);
 				ae->setFloat("b", 1.0f / cycle);
 				ae->setChar("axis", 'x');
 				ae->setChar("func", 'c');
@@ -79,7 +77,7 @@ void StateTitle::init() {
 				// motion (y axis)
 				cycle = 120;
 				ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
-				ae->setFloat("a", 128.0f * rm);
+				ae->setFloat("a", 128.0f);
 				ae->setFloat("b", 1.0f / cycle);
 				ae->setChar("axis", 'y');
 				ae->setChar("func", 's');
