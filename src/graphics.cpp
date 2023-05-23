@@ -76,6 +76,15 @@ bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, Sprite
 	return true;
 }
 
+Sprite* Graphics::getSprite(std::string name) {
+	for (int i = 3; i; i--) {
+		if ((*_sprites[i - 1]).count(name) > 0) {
+			return (*_sprites[i - 1])[name];
+		}
+	}
+	return NULL;
+}
+
 bool Graphics::hasSprites() {
 	for (int i = 0; i < 3; i++) {
 		if (_sprites[i]->size() > 0)
@@ -157,42 +166,6 @@ void Graphics::emptyTextures() {
 		_textures.erase(it++);
 	}
 }
-
-bool Graphics::addAnimationGroup(std::string spriteName, std::string groupName, AnimationType type, AnimationGroup* g) {
-	if (g == nullptr) return false;
-	int index = -1;
-	for (int i = 0; i < 3; i++) {
-		if (_sprites[i]->count(spriteName) > 0) {
-			index = i;
-			break;
-		}
-	}
-	if (index == -1) {
-		std::cout << "Sprite \"" << spriteName << "\" doesn't exist, failed to add animation group.\n";
-		return false;
-	}
-
-	(*_sprites[index])[spriteName]->addAnimationGroup(groupName, type, g);
-	return true;
-}
-
-bool Graphics::addAnimationEvent(std::string spriteName, std::string groupName, AnimationEvent* e) {
-	int index = -1;
-	for (int i = 0; i < 3; i++) {
-		if (_sprites[i]->count(spriteName) > 0) {
-			index = i;
-			break;
-		}
-	}
-	if (index == -1) {
-		std::cout << "Sprite \"" << spriteName << "\" doesn't exist, failed to add animation event.\n";
-		return false;
-	}
-
-	(*_sprites[index])[spriteName]->addAnimationEvent(groupName, e);
-	return true;
-}
-
 
 bool Graphics::deleteSprite(std::string name, SpriteType type) {
 	auto sprite = _sprites[type]->find(name);

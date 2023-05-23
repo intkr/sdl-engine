@@ -23,6 +23,8 @@ public:
 	// If no such texture exists, returns nullptr.
 	SDL_Texture* getTexture(std::string name);
 
+	Sprite* getSprite(std::string name);
+
 	// Stores texture on memory. Returns true if successful, false otherwise.
 	// 
 	// path : File path of the image asset.
@@ -38,17 +40,10 @@ public:
 	bool addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
 
 	bool deleteTexture(std::string name);
+
 	bool deleteSprite(std::string name, SpriteType type);
 
 	bool setSpriteTexture(std::string spriteName, std::string textureName);
-
-	bool addAnimationGroup(std::string spriteName, std::string groupName, AnimationType type, AnimationGroup* g);
-	// Adds animation to group 'groupName' in _sprites. Returns true if successful, false otherwise.
-	//
-	// spriteName : Sprite object identifier.
-	// groupName : Animation group object identifier.
-	// e : Animation event object. Must be dynamically allocated.
-	bool addAnimationEvent(std::string spriteName, std::string groupName, AnimationEvent* e);
 
 	void renderScreen();
 
