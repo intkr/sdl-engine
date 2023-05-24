@@ -39,7 +39,6 @@ void GamePair::init() {
 
 	ae = new AnimationEvent(1, Animations::staticMotion);
 	g->getSprite("testbg")->addAnimationEvent("idleStatic", ae);
-}
 		}
 	}
 
@@ -152,7 +151,6 @@ void GamePair::newPuzzle() {
 	}
 }
 
-void GamePair::exitState(Command& cmd) {
 void GamePair::createCard(int pos, int type) {
 	if (type == -1) return;
 	int w, h;
