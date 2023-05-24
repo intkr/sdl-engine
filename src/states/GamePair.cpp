@@ -90,8 +90,18 @@ Command GamePair::update() {
 
 		newPuzzle();
 	}
-
-
+	else {
+		switch ((displayTimer > 0) - (displayTimer < 0)) {
+		case 0: // timer == 0
+			hideCards();
+		case 1: // timer > 0
+			displayTimer--;
+			break;
+		case -1: // timer < 0
+		default:
+			break;
+		}
+	}
 
 	return Command();
 }
@@ -106,6 +116,11 @@ bool GamePair::isStateRunning() {
 Command GamePair::handleClick(std::string name, bool active) {
 	if (name == "testfg" && active) {
 		newPuzzle();
+	}
+
+	size_t pos = name.find("card-bg-");
+	if (pos == 0) {
+		showCard(atoi(name.substr(8).c_str()));
 	}
 	return Command();
 }
@@ -155,7 +170,7 @@ void GamePair::createCard(int pos, int type) {
 	g->addSprite(g->getTexture(textureName), nullptr, rect, _FOREGROUND, spriteName);
 	Sprite* s = g->getSprite(spriteName);
 	if (s != nullptr) {
-		ag = new AnimationGroup(true, false, true);
+		ag = new AnimationGroup(true, true, true);
 		if (s->addAnimationGroup("static", _IDLE, ag)) {
 			ae = new AnimationEvent(1, Animations::staticMotion);
 			s->addAnimationEvent("static", ae);
@@ -175,3 +190,29 @@ void GamePair::deleteCards() {
 	cards.clear();
 }
 
+void GamePair::hideCards() {
+	std::string name;
+	for (int i = (int)cards.size(); i; i--) {
+		if (cards[i - 1] != -1) {
+			name = "card-card-";
+			name.append(std::to_string(i - 1));
+			g->getSprite(name)->toggleAnimationGroup("static", _IDLE, false);
+		}
+	}
+}
+
+void GamePair::showCard(int pos) {
+	if (displayTimer > 0) {
+		hideCards();
+		displayTimer = -1;
+	}
+
+	std::string name;
+	if (cards[pos] != -1) {
+		name = "card-card-";
+		name.append(std::to_string(pos));
+		Sprite* s = g->getSprite(name);
+		s->setStatus(_IDLE);
+		s->toggleAnimationGroup("static", _IDLE, true);
+	}
+}

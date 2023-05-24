@@ -25,6 +25,8 @@ private:
 	// pos : [0,size)
 	void createCard(int pos, int type);
 	void deleteCards();
+	void hideCards();
+	void showCard(int pos);
 
 	const int displayFrames = 120; // 2 seconds
 	int displayTimer;
