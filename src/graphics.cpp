@@ -126,6 +126,7 @@ void Graphics::renderScreen() {
 
 				//delete s;
 				//_sprites[i]->erase(iter++);
+				iter++;
 			}
 		}
 	}

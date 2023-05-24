@@ -33,7 +33,7 @@ void StateManager::setState(StateType state) {
 
 void StateManager::update() {
 	pollInput();
-
+	s->update();
 	if (cmdQueue.empty()) return;
 	Command& cmd = cmdQueue.front();
 	
