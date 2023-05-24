@@ -75,6 +75,7 @@ bool AnimationGroup::animate(Sprite* sprite) {
 }
 
 void AnimationGroup::reset() {
+	currentAnimation = 0;
 	for (auto animation : animationList) {
 		animation->reset();
 	}

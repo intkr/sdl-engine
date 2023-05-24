@@ -45,6 +45,8 @@ public:
 	// false if its animations have all finished playing.
 	bool updateSprite();
 
+	void setStatus(AnimationType type) { status = type; }
+
 	void setTexture(SDL_Texture* texture) { _texture = texture; }
 	// Adds animation group to _animations. Returns true if successful, false otherwise.
 	//

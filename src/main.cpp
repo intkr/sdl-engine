@@ -15,11 +15,11 @@
 extern const int fps = 60; // Not actually FPS
 
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
-	// remove comment to enable console output
-	AllocConsole();
-	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+	// remove or add comment to toggle console output for debug purposes
+	//AllocConsole();
+	//freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+	
 	srand((unsigned int)time(NULL));
-
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
 	Graphics* g = new Graphics(1440, 720);
