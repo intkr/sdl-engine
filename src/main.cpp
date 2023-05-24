@@ -39,12 +39,15 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		s->update();
 		g->renderScreen();
 
+		if (i->isQuitTriggered()) gaming = false;
+
 		frameEndMS = clock();
 		if (frameEndMS - frameStartMS < 1000 / fps) {
 			SDL_Delay(1000 / fps - (frameEndMS - frameStartMS));
 		}
 	}
 
+	delete s;
 	delete a;
 	delete i;
 	delete g;
@@ -54,7 +57,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Poll input system
+	Quitting with X button
 
 	Make the pair minigame - utilize TDD for minigame development
 

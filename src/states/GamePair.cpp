@@ -27,10 +27,10 @@ void GamePair::init() {
 
 	//		static motion
 	ag = new AnimationGroup(true, false, true);
-	g->addAnimationGroup("testbg", "idleStatic", _IDLE, ag);
+	g->getSprite("testbg")->addAnimationGroup("idleStatic", _IDLE, ag);
 
 	ae = new AnimationEvent(1, Animations::staticMotion);
-	g->addAnimationEvent("testbg", "idleStatic", ae);
+	g->getSprite("testbg")->addAnimationEvent("idleStatic", ae);
 }
 
 Command GamePair::update() {
@@ -51,7 +51,7 @@ Command GamePair::update() {
 	return Command();
 }
 
-void GamePair::free(Command& cmd) {
+void GamePair::exitState(Command& cmd) {
 }
 
 bool GamePair::isStateRunning() {

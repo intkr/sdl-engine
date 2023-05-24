@@ -4,7 +4,8 @@ Input::Input(Graphics* g) {
 	_g = g;
 	mouseStatus = 0;
 	curX = curY = 0;
-	
+	quitTriggered = false;
+
 	// default keybinds
 	leftKeybinds[0][0] = SDL_SCANCODE_2;
 	leftKeybinds[0][1] = SDL_SCANCODE_3;
@@ -62,6 +63,7 @@ void Input::process(SDL_Event& e) {
 		switch (e.type) {
 		case SDL_QUIT:
 			//gaming = false;
+			quitTriggered = true;
 			break;
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:

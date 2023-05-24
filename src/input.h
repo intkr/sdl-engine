@@ -41,6 +41,7 @@ public:
 
 	std::vector<std::string>* getHoveredObject();
 
+	bool isQuitTriggered() { return quitTriggered; }
 private:
 	// Handles keyboard input.
 	// type should be either SDL_KEYDOWN or SDL_KEYUP.
@@ -77,4 +78,7 @@ private:
 	std::vector<std::string> releasedObject;
 
 	std::vector<std::string> hoveredObject;
+
+	// There's probably a better idea to implement this but idk at the time being
+	bool quitTriggered;
 };
