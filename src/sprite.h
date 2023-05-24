@@ -59,7 +59,7 @@ public:
 	// groupName : Animation group object identifier.
 	bool addAnimationEvent(std::string groupName, AnimationEvent* e);
 
-	bool enableAnimationGroup(std::string groupName, AnimationType type);
+	bool toggleAnimationGroup(std::string groupName, AnimationType type, bool status);
 
 private:
 	SDL_Texture* _texture;

@@ -22,7 +22,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	srand((unsigned int)time(NULL));
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
-	Graphics* g = new Graphics(1440, 720);
+	Graphics* g = new Graphics(1280, 720);
 	Input* i = new Input(g);
 	Audio* a = new Audio();
 	StateManager* s = new StateManager(_STATE_TITLE, g, i, a);

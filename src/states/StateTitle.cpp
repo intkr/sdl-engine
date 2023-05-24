@@ -96,6 +96,7 @@ void StateTitle::init() {
 			if (s->addAnimationGroup("idleOpacity", _IDLE, ag)) {
 				ae = new AnimationEvent(1, Animations::opacity);
 				ae->setFloat("a", 0.1f);
+				s->addAnimationEvent("idleOpacity", ae);
 			}
 			else delete ag;
 		}
@@ -128,7 +129,7 @@ void StateTitle::freeAll() {
 }
 
 void StateTitle::freeSpecifics() {
-	
+	g->getSprite("testfg")->toggleAnimationGroup("idleOpacity", _IDLE, true);
 	test = false;
 }
 

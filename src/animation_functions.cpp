@@ -116,13 +116,13 @@ void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
 	else if (a < 0.0f) a = 0.0f;
 	
 	if (maxFrames == 1) {
-		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)a);
+		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)(a * 255));
 	}
 	else {
 		float b = _e->getFloat("b");
 		if (b > 1.0f) b = 1.0f;
 		else if (b < 0.0f) b = 0.0f;
 
-		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)((b * currentFrame + a * (maxFrames - currentFrame)) / maxFrames));
+		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)((b * currentFrame + a * (maxFrames - currentFrame)) / maxFrames * 255));
 	}
 }
