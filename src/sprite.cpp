@@ -84,9 +84,9 @@ bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
 	return true;
 }
 
-bool Sprite::toggleAnimationGroup(std::string groupName, AnimationType type, bool status) {
+bool Sprite::toggleAnimationGroup(std::string groupName, AnimationType type, bool enable) {
 	if (_animations[type]->count(groupName) > 0) {
-		if (status) (*_animations[type])[groupName]->enableGroup();
+		if (enable) (*_animations[type])[groupName]->enableGroup();
 		else (*_animations[type])[groupName]->disableGroup();
 		return true;
 	}
