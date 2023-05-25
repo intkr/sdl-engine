@@ -57,6 +57,7 @@ void GamePair::init() {
 				s->addAnimationEvent("idleStatic", ae);
 			}
 		}
+		s->setStatus(_END);
 	}
 
 	if (g->addTexture("assets/bad.png", "bad")) {
@@ -72,6 +73,7 @@ void GamePair::init() {
 				s->addAnimationEvent("idleStatic", ae);
 			}
 		}
+		s->setStatus(_END);
 	}
 
 	// card background
@@ -119,7 +121,6 @@ Command GamePair::update() {
 		newPuzzle();
 	}
 	else {
-		std::cout << "\t" << displayTimer << "\n";
 		switch ((displayTimer > 0) - (displayTimer < 0)) {
 		case 0: // timer == 0
 			if (displayStatus) {
