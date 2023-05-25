@@ -162,7 +162,7 @@ void Input::pollInput(int x, int y) {
 
 					// click test
 					if (t != "testfg" && t != "testbg") {
-						//std::cout << "clicked : \t" << t << "\n";
+						std::cout << "clicked : \t" << t << "\n";
 					}
 				}
 				iter++;

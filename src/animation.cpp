@@ -52,7 +52,7 @@ bool AnimationGroup::animate(Sprite* sprite) {
 			// Non-sequential animation group, iterate through animationList and process them all at once
 			if ((*animation)->animate(sprite)) {
 				// Animation has finished
-				if (looping && enabled) {
+				if (looping) {
 					(*animation)->reset();
 					finished = false;
 				}

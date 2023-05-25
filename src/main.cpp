@@ -16,8 +16,8 @@ extern const int fps = 60; // Not actually FPS
 
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
 	// remove or add comment to toggle console output for debug purposes
-	AllocConsole();
-	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+	//AllocConsole();
+	//freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 	
 	srand((unsigned int)time(NULL));
 	SDL_Init(SDL_INIT_VIDEO);
@@ -57,9 +57,9 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Make the pair minigame - utilize TDD for minigame development
+	Quitting with X button
 
-	Consider scrapping the 12-key "fully keyboard-only playable" support for higher difficulty ceilings
+	Make the pair minigame - utilize TDD for minigame development
 
 	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
 		in the meantime, develop with fixed 60fps

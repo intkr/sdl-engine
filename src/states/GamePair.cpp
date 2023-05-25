@@ -37,37 +37,9 @@ void GamePair::init() {
 				s->addAnimationEvent("idleStatic", ae);
 			}
 
-	// thumbs
-	if (g->addTexture("assets/good.png", "good")) {
-		SDL_QueryTexture(g->getTexture("good"), nullptr, nullptr, &w, &h);
-		rect = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
-		g->addSprite(g->getTexture("good"), nullptr, rect, _FOREGROUND, "goodjob");
-		s = g->getSprite("goodjob");
-		if (s != nullptr) {
-			//	static motion
-			ag = new AnimationGroup(false, false, false);
-			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
-				ae = new AnimationEvent(60, Animations::staticMotion);
-				s->addAnimationEvent("idleStatic", ae);
-			}
+	ae = new AnimationEvent(1, Animations::staticMotion);
+	g->getSprite("testbg")->addAnimationEvent("idleStatic", ae);
 		}
-		s->setStatus(_END);
-	}
-
-	if (g->addTexture("assets/bad.png", "bad")) {
-		SDL_QueryTexture(g->getTexture("good"), nullptr, nullptr, &w, &h);
-		rect = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
-		g->addSprite(g->getTexture("bad"), nullptr, rect, _FOREGROUND, "badjob");
-		s = g->getSprite("badjob");
-		if (s != nullptr) {
-			//	static motion
-			ag = new AnimationGroup(false, false, false);
-			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
-				ae = new AnimationEvent(60, Animations::staticMotion);
-				s->addAnimationEvent("idleStatic", ae);
-			}
-		}
-		s->setStatus(_END);
 	}
 
 	// card background
@@ -118,7 +90,6 @@ Command GamePair::update() {
 		newPuzzle();
 	}
 	else {
-		//std::cout << "\t" << displayTimer << "\n";
 		switch ((displayTimer > 0) - (displayTimer < 0)) {
 		case 0: // timer == 0
 			hideCards();
