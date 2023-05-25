@@ -46,6 +46,7 @@ public:
 	bool updateSprite();
 
 	void setStatus(AnimationType type) { status = type; }
+	AnimationType getStatus() { return status; }
 
 	void setTexture(SDL_Texture* texture) { _texture = texture; }
 	// Adds animation group to _animations. Returns true if successful, false otherwise.

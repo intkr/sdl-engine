@@ -157,7 +157,7 @@ void Input::pollInput(int x, int y) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 				
-				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
+				if (s->getStatus() != _END && (s->getDstRect() == nullptr || checkCollision(p, s))) {
 					clickedObject[t] = true;
 
 					// click test
