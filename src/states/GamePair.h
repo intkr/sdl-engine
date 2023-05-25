@@ -38,7 +38,7 @@ private:
 	void winLevel();
 	void loseLevel();
 
-	const int cardDisplayFrames = 120; // 2 seconds
+	const int cardDisplayFrames = 120; // 2 seconds - maybe allow shrinking this for difficulty
 	const int resultDisplayFrames = 30; // 0.5 seconds
 	int displayTimer;
 	int displayStatus; // 0 : card, 1 : result (temporary)

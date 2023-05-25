@@ -16,7 +16,7 @@ void GamePair::init() {
 	playing = false;
 	displayTimer = 0;
 	displayStatus = 0;
-	difficulty = 4;
+	difficulty = 2;
 	remainingPairs = 0;
 	lastCard = -1;
 
@@ -25,6 +25,7 @@ void GamePair::init() {
 
 	AnimationGroup* ag;
 	AnimationEvent* ae;
+	SDL_FRect* rect;
 	Sprite* s;
 	int cycle, w, h;
 
@@ -44,7 +45,9 @@ void GamePair::init() {
 
 	// thumbs
 	if (g->addTexture("assets/good.png", "good")) {
-		g->addSprite(g->getTexture("good"), nullptr, nullptr, _BACKGROUND, "goodjob");
+		SDL_QueryTexture(g->getTexture("good"), nullptr, nullptr, &w, &h);
+		rect = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
+		g->addSprite(g->getTexture("good"), nullptr, rect, _FOREGROUND, "goodjob");
 		s = g->getSprite("goodjob");
 		if (s != nullptr) {
 			//	static motion
@@ -57,7 +60,9 @@ void GamePair::init() {
 	}
 
 	if (g->addTexture("assets/bad.png", "bad")) {
-		g->addSprite(g->getTexture("bad"), nullptr, nullptr, _BACKGROUND, "badjob");
+		SDL_QueryTexture(g->getTexture("good"), nullptr, nullptr, &w, &h);
+		rect = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
+		g->addSprite(g->getTexture("bad"), nullptr, rect, _FOREGROUND, "badjob");
 		s = g->getSprite("badjob");
 		if (s != nullptr) {
 			//	static motion
@@ -72,7 +77,6 @@ void GamePair::init() {
 	// card background
 	if (g->addTexture("assets/pair/card-bg.png", "card-bg")) {
 		std::string name;
-		SDL_FRect* rect;
 		SDL_QueryTexture(g->getTexture("card-bg"), nullptr, nullptr, &w, &h);
 
 		for (int i = _PAIR_HEIGHT; i; i--) {
@@ -115,10 +119,14 @@ Command GamePair::update() {
 		newPuzzle();
 	}
 	else {
+		std::cout << "\t" << displayTimer << "\n";
 		switch ((displayTimer > 0) - (displayTimer < 0)) {
 		case 0: // timer == 0
 			if (displayStatus) {
 				// hide result image
+				g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE,  false);
+				g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
+
 				newPuzzle();
 			}
 			else hideCards();
@@ -142,6 +150,9 @@ bool GamePair::isStateRunning() {
 }
 
 Command GamePair::handleClick(std::string name, bool active) {
+	// if there's a thumb on display disable clicking
+	if (displayStatus == 1) return Command();
+
 	if (name == "testfg" && active) {
 		newPuzzle();
 	}
@@ -176,12 +187,18 @@ Command GamePair::handleClick(std::string name, bool active) {
 
 void GamePair::winLevel() {
 	std::cout << "yippee\n\n";
-
+	displayStatus = 1;
+	g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
+	g->getSprite("goodjob")->setStatus(_IDLE);
+	displayTimer = resultDisplayFrames;
 }
 
 void GamePair::loseLevel() {
 	std::cout << "nooooo\n\n";
-
+	displayStatus = 1;
+	g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
+	g->getSprite("badjob")->setStatus(_IDLE);
+	displayTimer = resultDisplayFrames;
 }
 
 void GamePair::newPuzzle() {
