@@ -9,6 +9,12 @@
 #define _PAIR_HEIGHT 4
 #define _PAIR_WIDTH 3
 
+struct PairCard {
+	int type;
+	bool opened;
+	PairCard(int n) : type(n), opened(false) {}
+};
+
 class GamePair : public State {
 public:
 	GamePair(Graphics* _g, Input* _i, Audio* _a);
@@ -26,13 +32,22 @@ private:
 	void createCard(int pos, int type);
 	void deleteCards();
 	void hideCards();
-	void showCard(int pos);
+	void openCard(int pos);
+	bool validatePair(int a, int b);
 
-	const int displayFrames = 120; // 2 seconds
+	void winLevel();
+	void loseLevel();
+
+	const int cardDisplayFrames = 120; // 2 seconds - maybe allow shrinking this for difficulty
+	const int resultDisplayFrames = 30; // 0.5 seconds
 	int displayTimer;
+	int displayStatus; // 0 : card, 1 : result (temporary)
 	bool playing;
 
 	int cardTypes;
 	int difficulty;
-	std::vector<int> cards;
+	std::vector<PairCard> cards;
+
+	int remainingPairs;
+	int lastCard;
 };

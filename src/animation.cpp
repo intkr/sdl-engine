@@ -32,7 +32,7 @@ bool AnimationGroup::animate(Sprite* sprite) {
 			//}
 
 			if (++currentAnimation >= animationList.size()) {
-				if (looping) {
+				if (looping && enabled) {
 					reset();
 					return false;
 				}
@@ -81,6 +81,12 @@ void AnimationGroup::reset() {
 	}
 }
 
+void AnimationGroup::enableGroup() {
+	enabled = true;
+	for (auto e : animationList) {
+		e->reset();
+	}
+}
 //////////////////////////////////////////
 
 bool AnimationEvent::animate(Sprite* sprite) {

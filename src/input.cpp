@@ -159,11 +159,6 @@ void Input::pollInput(int x, int y) {
 				
 				if (s->getStatus() != _END && (s->getDstRect() == nullptr || checkCollision(p, s))) {
 					clickedObject[t] = true;
-
-					// click test
-					if (t != "testfg" && t != "testbg") {
-						//std::cout << "clicked : \t" << t << "\n";
-					}
 				}
 				iter++;
 			}
