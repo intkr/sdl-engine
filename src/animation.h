@@ -74,7 +74,7 @@ public:
 
 	void update();
 
-	void enableGroup() { enabled = true; }
+	void enableGroup();
 	void disableGroup() { enabled = false; }
 
 private:

@@ -81,6 +81,12 @@ void AnimationGroup::reset() {
 	}
 }
 
+void AnimationGroup::enableGroup() {
+	enabled = true;
+	for (auto e : animationList) {
+		e->reset();
+	}
+}
 //////////////////////////////////////////
 
 bool AnimationEvent::animate(Sprite* sprite) {
