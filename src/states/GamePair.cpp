@@ -15,7 +15,10 @@ GamePair::~GamePair() {}
 void GamePair::init() {
 	playing = false;
 	displayTimer = 0;
-	difficulty = 0;
+	displayStatus = 0;
+	difficulty = 4;
+	remainingPairs = 0;
+	lastCard = -1;
 
 	// probably shouldn't comment below but doing it for now
 	//g->reset();
@@ -36,9 +39,33 @@ void GamePair::init() {
 				ae = new AnimationEvent(1, Animations::staticMotion);
 				s->addAnimationEvent("idleStatic", ae);
 			}
+		}
+	}
 
-	ae = new AnimationEvent(1, Animations::staticMotion);
-	g->getSprite("testbg")->addAnimationEvent("idleStatic", ae);
+	// thumbs
+	if (g->addTexture("assets/good.png", "good")) {
+		g->addSprite(g->getTexture("good"), nullptr, nullptr, _BACKGROUND, "goodjob");
+		s = g->getSprite("goodjob");
+		if (s != nullptr) {
+			//	static motion
+			ag = new AnimationGroup(false, false, false);
+			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
+				ae = new AnimationEvent(60, Animations::staticMotion);
+				s->addAnimationEvent("idleStatic", ae);
+			}
+		}
+	}
+
+	if (g->addTexture("assets/bad.png", "bad")) {
+		g->addSprite(g->getTexture("bad"), nullptr, nullptr, _BACKGROUND, "badjob");
+		s = g->getSprite("badjob");
+		if (s != nullptr) {
+			//	static motion
+			ag = new AnimationGroup(false, false, false);
+			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
+				ae = new AnimationEvent(60, Animations::staticMotion);
+				s->addAnimationEvent("idleStatic", ae);
+			}
 		}
 	}
 
@@ -84,15 +111,17 @@ void GamePair::init() {
 
 Command GamePair::update() {
 	if (!playing) {
-		displayTimer = displayFrames;
 		playing = true;
-
 		newPuzzle();
 	}
 	else {
 		switch ((displayTimer > 0) - (displayTimer < 0)) {
 		case 0: // timer == 0
-			hideCards();
+			if (displayStatus) {
+				// hide result image
+				newPuzzle();
+			}
+			else hideCards();
 		case 1: // timer > 0
 			displayTimer--;
 			break;
@@ -116,17 +145,50 @@ Command GamePair::handleClick(std::string name, bool active) {
 	if (name == "testfg" && active) {
 		newPuzzle();
 	}
-
 	size_t pos = name.find("card-bg-");
-	if (pos == 0) {
-		showCard(atoi(name.substr(8).c_str()));
+	if (pos == (size_t)0) { // doesn't check for activeness so you can select cards in one mouse press
+		int pickedCard = atoi(name.substr(8).c_str());
+
+		if (!cards[pickedCard].opened) {
+			//std::cout << name << "opened\n";
+			openCard(pickedCard);
+
+			if (lastCard == -1) {
+				lastCard = pickedCard;
+			}
+			else {
+				if (validatePair(lastCard, pickedCard)) {
+					//std::cout << name << " pair found.\n";
+					if (--remainingPairs == 0) {
+						winLevel();
+					}
+				}
+				else {
+					loseLevel();
+				}
+
+				lastCard = -1;
+			}
+		}
 	}
 	return Command();
 }
 
+void GamePair::winLevel() {
+	std::cout << "yippee\n\n";
+
+}
+
+void GamePair::loseLevel() {
+	std::cout << "nooooo\n\n";
+
+}
 
 void GamePair::newPuzzle() {
 	deleteCards();
+	displayTimer = cardDisplayFrames;
+	displayStatus = 0;
+	lastCard = -1;
 	// set cards based on difficulty
 	// NOTE: this is for test purposes, recalibrate this later
 	for (int i = 4 - difficulty; i; i--) {
@@ -135,7 +197,8 @@ void GamePair::newPuzzle() {
 	}
 
 	int n;
-	for (int i = difficulty + 2; i; i--) {
+	remainingPairs = difficulty + 2;
+	for (int i = remainingPairs; i; i--) {
 		n = rand() % cardTypes;
 		cards.push_back(n);
 		cards.push_back(n);
@@ -147,7 +210,7 @@ void GamePair::newPuzzle() {
 	
 	// create card sprites
 	for (int i = _PAIR_WIDTH * _PAIR_HEIGHT; i; i--) {
-		createCard(i - 1, cards[i - 1]);
+		createCard(i - 1, cards[i - 1].type);
 	}
 }
 
@@ -179,7 +242,7 @@ void GamePair::createCard(int pos, int type) {
 void GamePair::deleteCards() {
 	std::string name;
 	for (int i = (int)cards.size(); i; i--) {
-		if (cards[i - 1] != -1) {
+		if (cards[i - 1].type != -1) {
 			name = "card-card-";
 			name.append(std::to_string(i - 1));
 			g->deleteSprite(name, _FOREGROUND);
@@ -191,7 +254,7 @@ void GamePair::deleteCards() {
 void GamePair::hideCards() {
 	std::string name;
 	for (int i = (int)cards.size(); i; i--) {
-		if (cards[i - 1] != -1) {
+		if (cards[i - 1].type != -1) {
 			name = "card-card-";
 			name.append(std::to_string(i - 1));
 			g->getSprite(name)->toggleAnimationGroup("static", _IDLE, false);
@@ -199,18 +262,23 @@ void GamePair::hideCards() {
 	}
 }
 
-void GamePair::showCard(int pos) {
+void GamePair::openCard(int pos) {
 	if (displayTimer > 0) {
 		hideCards();
 		displayTimer = -1;
 	}
 
 	std::string name;
-	if (cards[pos] != -1) {
+	if (cards[pos].type != -1) {
+		cards[pos].opened = true;
 		name = "card-card-";
 		name.append(std::to_string(pos));
 		Sprite* s = g->getSprite(name);
 		s->setStatus(_IDLE);
 		s->toggleAnimationGroup("static", _IDLE, true);
 	}
+}
+
+bool GamePair::validatePair(int a, int b) {
+	return (cards[a].type == cards[b].type);
 }
