@@ -15,11 +15,11 @@ enum StateType {
 	_GAME_PAIR = 101
 };
 
-// base class, add more stuff in the future if necessary
+// Base class for game states
 class State {
 public:
-	State(Graphics* _g, Input* _i, Audio* _a);
-	~State();
+	State(Graphics* _g, Input* _i, Audio* _a) : g(_g), i(_i), a(_a) {}
+	virtual ~State() {}
 
 	virtual void init() = 0;
 	
@@ -46,12 +46,13 @@ public:
 	virtual Command handleClick(std::string name, bool active);
 	virtual Command handleRelease(std::string name);
 
+	void toggleInteractivity(bool status) { interactable = status; }
+	bool isInteractable() { return interactable; }
 protected:
-
 	Graphics* g;
 	Input* i;
 	Audio* a;
 
 private:
-	
+	bool interactable;
 };

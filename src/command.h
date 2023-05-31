@@ -12,3 +12,12 @@ struct Command {
 	CommandType type;
 	int value;
 };
+
+// _INTRO, _IDLE, _OUTRO, _END
+enum TimelineType { _INTRO, _IDLE, _OUTRO, _END };
+
+inline TimelineType operator++(TimelineType& a) {
+	if (a == _END) return a;
+	a = static_cast<TimelineType>(a + 1);
+	return a;
+}

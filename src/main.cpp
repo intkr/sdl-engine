@@ -22,7 +22,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	srand((unsigned int)time(NULL));
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
-	Graphics* g = new Graphics(1280, 720);
+	Graphics* g = new Graphics(720, 480);
 	Input* i = new Input(g);
 	Audio* a = new Audio();
 	StateManager* s = new StateManager(_STATE_TITLE, g, i, a);
@@ -57,11 +57,11 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
-	Make the pair minigame - utilize TDD for minigame development
+	-- idk do it when youf eel like it
+	12-key support
 
-	Consider scrapping the 12-key "fully keyboard-only playable" support for higher difficulty ceilings
-
-	Fix "FPS" so it actually means FPS << fix all animations so that it scales with FPS
-		in the meantime, develop with fixed 60fps
-	Make coherent error/exception prompts
+	-- endgame stuff
+	Fix "FPS"
+	Insert error prompts
+	SDL / FMOD licensing check
 */

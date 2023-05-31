@@ -26,6 +26,7 @@
     <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\sprite.h" />
+    <ClInclude Include="src\states\game.h" />
     <ClInclude Include="src\states\GamePair.h" />
     <ClInclude Include="src\states\state.h" />
     <ClInclude Include="src\states\stateManager.h" />
@@ -40,6 +41,7 @@
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sprite.cpp" />
+    <ClCompile Include="src\states\game.cpp" />
     <ClCompile Include="src\states\GamePair.cpp" />
     <ClCompile Include="src\states\state.cpp" />
     <ClCompile Include="src\states\stateManager.cpp" />

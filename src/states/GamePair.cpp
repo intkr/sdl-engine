@@ -6,16 +6,15 @@
 
 #include "GamePair.h"
 
-GamePair::GamePair(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
+GamePair::GamePair(Graphics* _g, Input* _i, Audio* _a) : Game(_g, _i, _a) {
 	init();
 }
 
 GamePair::~GamePair() {}
 
 void GamePair::init() {
-	playing = false;
+	gameTimeline = _INTRO;
 	displayTimer = 0;
-	displayStatus = 0;
 	difficulty = 2;
 	remainingPairs = 0;
 	lastCard = -1;
@@ -27,7 +26,7 @@ void GamePair::init() {
 	AnimationEvent* ae;
 	SDL_FRect* rect;
 	Sprite* s;
-	int cycle, w, h;
+	int w, h;
 
 	// background
 	if (g->addTexture("assets/bg.png", "test")) {
@@ -116,17 +115,18 @@ void GamePair::init() {
 }
 
 Command GamePair::update() {
-	if (!playing) {
-		playing = true;
+	switch (gameTimeline) {
+	case _INTRO:
+		gameTimeline = _IDLE;
 		newPuzzle();
-	}
-	else {
-		//std::cout << "\t" << displayTimer << "\n";
+		break;
+
+	case _IDLE:
 		switch ((displayTimer > 0) - (displayTimer < 0)) {
 		case 0: // timer == 0
-			if (displayStatus) {
+			if (!isInteractable()) {
 				// hide result image
-				g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE,  false);
+				g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
 				g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
 
 				newPuzzle();
@@ -139,6 +139,11 @@ Command GamePair::update() {
 		default:
 			break;
 		}
+		break;
+
+	case _OUTRO:
+	case _END:
+		break;
 	}
 
 	return Command();
@@ -153,7 +158,7 @@ bool GamePair::isStateRunning() {
 
 Command GamePair::handleClick(std::string name, bool active) {
 	// if there's a thumb on display disable clicking
-	if (displayStatus == 1) return Command();
+	if (!isInteractable()) return Command();
 
 	if (name == "testfg" && active) {
 		newPuzzle();
@@ -163,24 +168,29 @@ Command GamePair::handleClick(std::string name, bool active) {
 		int pickedCard = atoi(name.substr(8).c_str());
 
 		if (!cards[pickedCard].opened) {
-			//std::cout << name << "opened\n";
-			openCard(pickedCard);
-
-			if (lastCard == -1) {
-				lastCard = pickedCard;
-			}
+			// If there's no card to select, count as a loss
+			if (cards[pickedCard].type == -1) loseLevel();
 			else {
-				if (validatePair(lastCard, pickedCard)) {
-					//std::cout << name << " pair found.\n";
-					if (--remainingPairs == 0) {
-						winLevel();
-					}
+				// open card
+				openCard(pickedCard);
+
+				// handle selected pair
+				if (lastCard == -1) {
+					lastCard = pickedCard;
 				}
 				else {
-					loseLevel();
-				}
+					if (validatePair(lastCard, pickedCard)) {
+						//std::cout << name << " pair found.\n";
+						if (--remainingPairs == 0) {
+							winLevel();
+						}
+					}
+					else {
+						loseLevel();
+					}
 
-				lastCard = -1;
+					lastCard = -1;
+				}
 			}
 		}
 	}
@@ -189,7 +199,7 @@ Command GamePair::handleClick(std::string name, bool active) {
 
 void GamePair::winLevel() {
 	std::cout << "yippee\n\n";
-	displayStatus = 1;
+	toggleInteractivity(false);
 	g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
 	g->getSprite("goodjob")->setStatus(_IDLE);
 	displayTimer = resultDisplayFrames;
@@ -197,7 +207,7 @@ void GamePair::winLevel() {
 
 void GamePair::loseLevel() {
 	std::cout << "nooooo\n\n";
-	displayStatus = 1;
+	toggleInteractivity(false);
 	g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
 	g->getSprite("badjob")->setStatus(_IDLE);
 	displayTimer = resultDisplayFrames;
@@ -206,17 +216,17 @@ void GamePair::loseLevel() {
 void GamePair::newPuzzle() {
 	deleteCards();
 	displayTimer = cardDisplayFrames;
-	displayStatus = 0;
+	toggleInteractivity(true);
 	lastCard = -1;
 	// set cards based on difficulty
-	// NOTE: this is for test purposes, recalibrate this later
-	for (int i = 4 - difficulty; i; i--) {
+	// TODO: this is for test purposes, recalibrate this later
+	for (int i = 4 - (int)difficulty; i; i--) {
 		cards.push_back(-1);
 		cards.push_back(-1);
 	}
 
 	int n;
-	remainingPairs = difficulty + 2;
+	remainingPairs = (int)difficulty + 2;
 	for (int i = remainingPairs; i; i--) {
 		n = rand() % cardTypes;
 		cards.push_back(n);

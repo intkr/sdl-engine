@@ -7,15 +7,7 @@
 #include "SDL_image.h"
 
 #include "animation.h"
-
-// _INTRO, _IDLE, _OUTRO, _END
-enum AnimationType { _INTRO, _IDLE, _OUTRO, _END };
-
-inline AnimationType operator++(AnimationType& a) {
-	if (a == _END) return a;
-	a = static_cast<AnimationType>(a + 1);
-	return a;
-}
+#include "command.h"
 
 // _BACKGROUND, _FOREGROUND, _POPUP
 enum SpriteType { _BACKGROUND, _FOREGROUND, _POPUP };
@@ -45,22 +37,22 @@ public:
 	// false if its animations have all finished playing.
 	bool updateSprite();
 
-	void setStatus(AnimationType type) { status = type; }
-	AnimationType getStatus() { return status; }
+	void setStatus(TimelineType type) { status = type; }
+	TimelineType getStatus() { return status; }
 
 	void setTexture(SDL_Texture* texture) { _texture = texture; }
 	// Adds animation group to _animations. Returns true if successful, false otherwise.
 	//
 	// name : Animation group object identifier.
 	// a : Animation group object.
-	bool addAnimationGroup(std::string name, AnimationType type, AnimationGroup* g);
+	bool addAnimationGroup(std::string name, TimelineType type, AnimationGroup* g);
 
 	// Adds animation event to an animation group.
 	// 
 	// groupName : Animation group object identifier.
 	bool addAnimationEvent(std::string groupName, AnimationEvent* e);
 
-	bool toggleAnimationGroup(std::string groupName, AnimationType type, bool enable);
+	bool toggleAnimationGroup(std::string groupName, TimelineType type, bool enable);
 
 private:
 	SDL_Texture* _texture;
@@ -77,7 +69,7 @@ private:
 	AniContainer idleAnimations;
 	AniContainer outroAnimations;
 	AniContainer* _animations[3];
-	AnimationType status;
+	TimelineType status;
 };
 
 

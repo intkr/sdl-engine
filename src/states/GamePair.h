@@ -4,7 +4,7 @@
 #include <random>
 #include <chrono>
 
-#include "state.h"
+#include "game.h"
 
 #define _PAIR_HEIGHT 4
 #define _PAIR_WIDTH 3
@@ -15,7 +15,7 @@ struct PairCard {
 	PairCard(int n) : type(n), opened(false) {}
 };
 
-class GamePair : public State {
+class GamePair : public Game {
 public:
 	GamePair(Graphics* _g, Input* _i, Audio* _a);
 	~GamePair();
@@ -25,8 +25,12 @@ public:
 	bool isStateRunning() override;
 
 	Command handleClick(std::string name, bool active) override;
+
 private:
-	void newPuzzle();
+	void newPuzzle() override;
+	void winLevel() override;
+	void loseLevel() override;
+	void adjustDifficulty() override;
 
 	// pos : [0,size)
 	void createCard(int pos, int type);
@@ -35,17 +39,13 @@ private:
 	void openCard(int pos);
 	bool validatePair(int a, int b);
 
-	void winLevel();
-	void loseLevel();
 
-	const int cardDisplayFrames = 120; // 2 seconds - maybe allow shrinking this for difficulty
-	const int resultDisplayFrames = 30; // 0.5 seconds
+	int cardDisplayFrames = 90;		// default : 1.5 seconds
+	int resultDisplayFrames = 30;	// default : 0.5 seconds
+
 	int displayTimer;
-	int displayStatus; // 0 : card, 1 : result (temporary)
-	bool playing;
 
 	int cardTypes;
-	int difficulty;
 	std::vector<PairCard> cards;
 
 	int remainingPairs;
