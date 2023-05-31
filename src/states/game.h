@@ -5,7 +5,7 @@
 class Game : public State {
 public:
 	Game(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a),
-											   difficulty(0.0f) {}
+											   difficulty(0.0f), gameTimeline(_INTRO), gameplayTimer(5 * 60) {}
 	virtual ~Game() {}
 
 protected:
@@ -18,6 +18,8 @@ protected:
 
 	TimelineType gameTimeline;
 
+	// Timer for gameplay, in frames
+	int gameplayTimer;
 private:
 
 };

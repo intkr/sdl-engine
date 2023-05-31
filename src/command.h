@@ -11,6 +11,8 @@ enum CommandType {
 struct Command {
 	CommandType type;
 	int value;
+	Command() : type(_CMD_NONE), value(0) {}
+	Command(CommandType t, int v) : type(t), value(v) {}
 };
 
 // _INTRO, _IDLE, _OUTRO, _END

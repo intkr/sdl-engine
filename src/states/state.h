@@ -18,14 +18,14 @@ enum StateType {
 // Base class for game states
 class State {
 public:
-	State(Graphics* _g, Input* _i, Audio* _a) : g(_g), i(_i), a(_a) {}
+	State(Graphics* _g, Input* _i, Audio* _a) : g(_g), i(_i), a(_a), interactable(true) {}
 	virtual ~State() {}
 
 	virtual void init() = 0;
 	
 	// Returns 0 if the screen state shouldn't change;
 	// otherwise returns screen state key value
-	virtual Command update() = 0;
+	virtual Command update();
 
 	// Deallocates sprites and textures.
 	// In most cases (if not all), _CMD_STATE or _CMD_TRANSITION is assumed.

@@ -46,6 +46,10 @@ bool Sprite::updateSprite() {
 
 	AniContainer* list = _animations[status];
 	bool finished = true;
+
+	// set default texture opacity to 100%
+	SDL_SetTextureAlphaMod(getTexture(), 255);
+
 	for (auto aniGroup = list->begin(); aniGroup != list->end();) {
 		if (aniGroup->second->animate(this)) {
 			//finished = true;

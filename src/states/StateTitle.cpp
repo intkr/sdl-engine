@@ -13,7 +13,7 @@ StateTitle::StateTitle(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
 StateTitle::~StateTitle() {}
 
 void StateTitle::init() {
-	g->reset();
+	//g->reset();
 
 	AnimationGroup* ag;
 	AnimationEvent* ae;
@@ -102,6 +102,13 @@ void StateTitle::init() {
 		}
 		else {
 			delete r;
+		}
+	}
+	else {
+		// if sprite already exists, disable 10% opacity
+		s = g->getSprite("testfg");
+		if (s != nullptr) {
+			s->toggleAnimationGroup("idleOpacity", _IDLE, false);
 		}
 	}
 }
