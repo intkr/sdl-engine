@@ -10,8 +10,10 @@ public:
 	void exitState(Command& cmd) override;
 	bool isStateRunning() override;
 
+	Command handleClick(std::string name, bool active) override;
+	Command handleKey(SDL_Scancode key, bool active) override;
+
 private:
-	Command handleClick(std::string name, bool active);
 
 	void freeAll();
 	void freeSpecifics(); // rename to something better

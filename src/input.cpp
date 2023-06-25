@@ -7,31 +7,31 @@ Input::Input(Graphics* g) {
 	quitTriggered = false;
 
 	// default keybinds
-	leftKeybinds[0][0] = SDL_SCANCODE_2;
-	leftKeybinds[0][1] = SDL_SCANCODE_3;
-	leftKeybinds[0][2] = SDL_SCANCODE_4;
-	leftKeybinds[1][0] = SDL_SCANCODE_W;
-	leftKeybinds[1][1] = SDL_SCANCODE_E;
-	leftKeybinds[1][2] = SDL_SCANCODE_R;
-	leftKeybinds[2][0] = SDL_SCANCODE_S;
-	leftKeybinds[2][1] = SDL_SCANCODE_D;
-	leftKeybinds[2][2] = SDL_SCANCODE_F;
-	leftKeybinds[3][0] = SDL_SCANCODE_X;
-	leftKeybinds[3][1] = SDL_SCANCODE_C;
-	leftKeybinds[3][2] = SDL_SCANCODE_V;
+	lefthandKeys[0][0] = SDL_SCANCODE_T;
+	lefthandKeys[0][1] = SDL_SCANCODE_Y;
+	lefthandKeys[0][2] = SDL_SCANCODE_U;
+	lefthandKeys[1][0] = SDL_SCANCODE_T;
+	lefthandKeys[1][1] = SDL_SCANCODE_Y;
+	lefthandKeys[1][2] = SDL_SCANCODE_U;
+	lefthandKeys[2][0] = SDL_SCANCODE_T;
+	lefthandKeys[2][1] = SDL_SCANCODE_Y;
+	lefthandKeys[2][2] = SDL_SCANCODE_U;
+	lefthandKeys[3][0] = SDL_SCANCODE_T;
+	lefthandKeys[3][1] = SDL_SCANCODE_Y;
+	lefthandKeys[3][2] = SDL_SCANCODE_U;
 
-	rightKeybinds[0][0] = SDL_SCANCODE_7;
-	rightKeybinds[0][1] = SDL_SCANCODE_8;
-	rightKeybinds[0][2] = SDL_SCANCODE_9;
-	rightKeybinds[1][0] = SDL_SCANCODE_U;
-	rightKeybinds[1][1] = SDL_SCANCODE_I;
-	rightKeybinds[1][2] = SDL_SCANCODE_O;
-	rightKeybinds[2][0] = SDL_SCANCODE_J;
-	rightKeybinds[2][1] = SDL_SCANCODE_K;
-	rightKeybinds[2][2] = SDL_SCANCODE_L;
-	rightKeybinds[3][0] = SDL_SCANCODE_M;
-	rightKeybinds[3][1] = SDL_SCANCODE_COMMA;
-	rightKeybinds[3][2] = SDL_SCANCODE_PERIOD;
+	righthandKeys[0][0] = SDL_SCANCODE_KP_7;
+	righthandKeys[0][1] = SDL_SCANCODE_KP_8;
+	righthandKeys[0][2] = SDL_SCANCODE_KP_9;
+	righthandKeys[1][0] = SDL_SCANCODE_KP_4;
+	righthandKeys[1][1] = SDL_SCANCODE_KP_5;
+	righthandKeys[1][2] = SDL_SCANCODE_KP_6;
+	righthandKeys[2][0] = SDL_SCANCODE_KP_1;
+	righthandKeys[2][1] = SDL_SCANCODE_KP_2;
+	righthandKeys[2][2] = SDL_SCANCODE_KP_3;
+	righthandKeys[3][0] = SDL_SCANCODE_KP_0;
+	righthandKeys[3][1] = SDL_SCANCODE_KP_PERIOD;
+	righthandKeys[3][2] = SDL_SCANCODE_KP_ENTER;
 }
 
 Input::~Input() {
@@ -187,4 +187,15 @@ void Input::pollInput(int x, int y) {
 		// shouldn't happen
 		break;
 	}
+}
+
+int Input::checkKeybinds(SDL_Scancode key) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (key == lefthandKeys[i][j] || key == righthandKeys[i][j]) {
+				return i * 3 + j;
+			}
+		}
+	}
+	return -1;
 }

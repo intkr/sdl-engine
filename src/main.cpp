@@ -22,7 +22,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	srand((unsigned int)time(NULL));
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
-	Graphics* g = new Graphics(720, 480);
+	Graphics* g = new Graphics(853, 480);
 	Input* i = new Input(g);
 	Audio* a = new Audio();
 	StateManager* s = new StateManager(_STATE_TITLE, g, i, a);
@@ -57,11 +57,17 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
+	devise a game difficulty calculation formula
+	fix sprite opacity changes - especially fade ins and fade outs
+
+	road direction puzzle
+
 	-- idk do it when youf eel like it
 	12-key support
 
 	-- endgame stuff
 	Fix "FPS"
+	Multithreading on places where it makes sense
 	Insert error prompts
 	SDL / FMOD licensing check
 */

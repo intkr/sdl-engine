@@ -153,3 +153,10 @@ Command StateTitle::handleClick(std::string name, bool active) {
 	}
 	return Command();
 }
+
+Command StateTitle::handleKey(SDL_Scancode key, bool active) {
+	if (key == SDL_SCANCODE_SPACE && active) {
+		return Command{ _CMD_TRANSITION, _GAME_PAIR };
+	}
+	return Command();
+}

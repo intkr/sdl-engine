@@ -40,14 +40,14 @@ bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName)
 bool Graphics::addTexture(std::string path, std::string name) {
 	// Check if identifier 'name' is already being used.
 	if (_textures.find(name) != _textures.end()) {
-		std::cout << "adding texture \"" << name << "\" failed.\n";
+		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
 		return false;
 	}
 
 	// Check if image path 'path' exists and can be loaded successfully
 	SDL_Surface* bgSurface = IMG_Load(path.c_str());
 	if (bgSurface == nullptr) {
-		std::cout << "adding texture \"" << name << "\" failed.\n";
+		std::cout << "adding texture \"" << name << "\" failed. (null image)\n";
 		return false;
 	}
 	
@@ -62,12 +62,12 @@ bool Graphics::addTexture(std::string path, std::string name) {
 bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
 	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
 	if (tex == nullptr) {
-		std::cout << "adding sprite \"" << name << "\" failed.\n";
+		std::cout << "adding sprite \"" << name << "\" failed. (null texture)\n";
 		return false;
 	}
 
 	if (_sprites[type]->count(name) > 0) {
-		std::cout << "adding sprite \"" << name << "\" failed.\n";
+		std::cout << "adding sprite \"" << name << "\" failed. (duplicate sprite name)\n";
 		return false;
 	}
 

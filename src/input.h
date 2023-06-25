@@ -41,7 +41,15 @@ public:
 
 	std::vector<std::string>* getHoveredObject();
 
+	// TODO: Function name kinda sucks, rewrite it to a better one later
+	//
+	// Checks if the Scancode corresponds to any of the 12-keys for both hands
+	// If found, returns the index of said key (row * 3 + column, 0~11)
+	// Otherwise, returns -1.
+	int checkKeybinds(SDL_Scancode key);
+
 	bool isQuitTriggered() { return quitTriggered; }
+
 private:
 	// Handles keyboard input.
 	// type should be either SDL_KEYDOWN or SDL_KEYUP.
@@ -57,8 +65,8 @@ private:
 	short mouseStatus;
 
 	int curX, curY;
-	SDL_Scancode leftKeybinds[4][3];
-	SDL_Scancode rightKeybinds[4][3];
+	SDL_Scancode lefthandKeys[4][3];
+	SDL_Scancode righthandKeys[4][3];
 
 	// Pointer to the Graphics object to access sprite objects.
 	const Graphics* _g;

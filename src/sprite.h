@@ -37,22 +37,22 @@ public:
 	// false if its animations have all finished playing.
 	bool updateSprite();
 
-	void setStatus(TimelineType type) { status = type; }
-	TimelineType getStatus() { return status; }
+	void setStatus(StatusType _status) { status = _status; }
+	StatusType getStatus() { return status; }
 
 	void setTexture(SDL_Texture* texture) { _texture = texture; }
 	// Adds animation group to _animations. Returns true if successful, false otherwise.
 	//
 	// name : Animation group object identifier.
 	// a : Animation group object.
-	bool addAnimationGroup(std::string name, TimelineType type, AnimationGroup* g);
+	bool addAnimationGroup(std::string name, StatusType type, AnimationGroup* g);
 
 	// Adds animation event to an animation group.
 	// 
 	// groupName : Animation group object identifier.
 	bool addAnimationEvent(std::string groupName, AnimationEvent* e);
 
-	bool toggleAnimationGroup(std::string groupName, TimelineType type, bool enable);
+	bool toggleAnimationGroup(std::string groupName, StatusType type, bool enable);
 
 private:
 	SDL_Texture* _texture;
@@ -69,7 +69,7 @@ private:
 	AniContainer idleAnimations;
 	AniContainer outroAnimations;
 	AniContainer* _animations[3];
-	TimelineType status;
+	StatusType status;
 };
 
 

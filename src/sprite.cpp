@@ -64,7 +64,7 @@ bool Sprite::updateSprite() {
 	return status != _END;
 }
 
-bool Sprite::addAnimationGroup(std::string name, TimelineType type, AnimationGroup* g) {
+bool Sprite::addAnimationGroup(std::string name, StatusType type, AnimationGroup* g) {
 	if (type == _END) return false;
 	if (g == nullptr) return false;
 	if ((*_animations[type]).count(name) > 0) return false;
@@ -88,7 +88,7 @@ bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
 	return true;
 }
 
-bool Sprite::toggleAnimationGroup(std::string groupName, TimelineType type, bool enable) {
+bool Sprite::toggleAnimationGroup(std::string groupName, StatusType type, bool enable) {
 	if (_animations[type]->count(groupName) > 0) {
 		if (enable) (*_animations[type])[groupName]->enableGroup();
 		else (*_animations[type])[groupName]->disableGroup();
