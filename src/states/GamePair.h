@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+#include <math.h>
 
 #include "game.h"
 
@@ -25,12 +26,13 @@ public:
 	bool isStateRunning() override;
 
 	Command handleClick(std::string name, bool active) override;
+	Command handleKey(SDL_Scancode key, bool active) override;
 
 private:
 	void newPuzzle() override;
 	void winLevel() override;
 	void loseLevel() override;
-	void adjustDifficulty() override;
+	void adjustDifficulty(bool won) override;
 
 	// pos : [0,size)
 	void createCard(int pos, int type);
@@ -38,12 +40,12 @@ private:
 	void hideCards();
 	void openCard(int pos);
 	bool validatePair(int a, int b);
+	void interactCard(int cardPos);
 
-
-	int cardDisplayFrames = 90;		// default : 1.5 seconds
-	int resultDisplayFrames = 30;	// default : 0.5 seconds
-
+	const int cardDisplayFrames = 120; // 2 seconds - maybe allow shrinking this for difficulty
+	const int resultDisplayFrames = 30; // 0.5 seconds
 	int displayTimer;
+	bool playing;
 
 	int cardTypes;
 	std::vector<PairCard> cards;
