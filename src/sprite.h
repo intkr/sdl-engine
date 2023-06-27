@@ -23,6 +23,7 @@ public:
 	SDL_Rect* getSrcRect() { return srcRect; }
 	SDL_FRect* getDstRect() { return dstRect; }
 	SDL_FRect* getBaseRect() { return baseRect; }
+	void resetRect();
 	double getAngle() { return angle; }
 	bool isVisible() { return visibility; }
 

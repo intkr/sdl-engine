@@ -95,6 +95,26 @@ void GamePair::init() {
 						ae = new AnimationEvent(1, Animations::staticMotion);
 						s->addAnimationEvent("static", ae);
 					}
+
+					ag = new AnimationGroup(false, false, false);
+					if (s->addAnimationGroup("show", _IDLE, ag)) {
+						ae = new AnimationEvent(6, Animations::linearScale);
+						ae->setChar("axis", 'w');
+						ae->setFloat("a", 0.0f);
+						ae->setFloat("b", (float)w);
+						ae->setBool("centered", true);
+						s->addAnimationEvent("show", ae);
+					}
+
+					ag = new AnimationGroup(false, false, false);
+					if (s->addAnimationGroup("hide", _IDLE, ag)) {
+						ae = new AnimationEvent(6, Animations::linearScale);
+						ae->setChar("axis", 'w');
+						ae->setFloat("a", (float)w);
+						ae->setFloat("b", 0.0f);
+						ae->setBool("centered", true);
+						s->addAnimationEvent("hide", ae);
+					}
 				}
 			}
 		}
@@ -316,6 +336,16 @@ void GamePair::newPuzzle() {
 
 	lastCard = -1;
 
+	// reset card background
+	std::string name;
+	Sprite* s;
+	for (int i = 0; i < _PAIR_HEIGHT * _PAIR_WIDTH; i++) {
+		name = "card-bg-";
+		name.append(std::to_string(i));
+		s = g->getSprite(name);
+		s->resetRect();
+	}
+
 	// insert empty cards
 	for (int i = 4 - (int)difficulty; i; i--) {
 		cards.push_back(-1);
@@ -369,6 +399,26 @@ void GamePair::createCard(int pos, int type) {
 			ae = new AnimationEvent(1, Animations::staticMotion);
 			s->addAnimationEvent("static", ae);
 		}
+
+		ag = new AnimationGroup(false, false, false);
+		if (s->addAnimationGroup("hide", _IDLE, ag)) {
+			ae = new AnimationEvent(6, Animations::linearScale);
+			ae->setChar("axis", 'w');
+			ae->setFloat("a", (float)w);
+			ae->setFloat("b", 0.0f);
+			ae->setBool("centered", true);
+			s->addAnimationEvent("hide", ae);
+		}
+
+		ag = new AnimationGroup(false, false, false);
+		if (s->addAnimationGroup("show", _IDLE, ag)) {
+			ae = new AnimationEvent(6, Animations::linearScale);
+			ae->setChar("axis", 'w');
+			ae->setFloat("a", 0.0f);
+			ae->setFloat("b", (float)w);
+			ae->setBool("centered", true);
+			s->addAnimationEvent("show", ae);
+		}
 	}
 }
 
@@ -391,6 +441,10 @@ void GamePair::hideCards() {
 			name = "card-card-";
 			name.append(std::to_string(i - 1));
 			g->getSprite(name)->toggleAnimationGroup("static", _IDLE, false);
+			g->getSprite(name)->toggleAnimationGroup("hide", _IDLE, true);
+			name = "card-bg-";
+			name.append(std::to_string(i - 1));
+			g->getSprite(name)->toggleAnimationGroup("show", _IDLE, true);
 		}
 	}
 }
@@ -409,6 +463,12 @@ void GamePair::openCard(int pos) {
 		Sprite* s = g->getSprite(name);
 		s->setStatus(_IDLE);
 		s->toggleAnimationGroup("static", _IDLE, true);
+		s->toggleAnimationGroup("show", _IDLE, true);
+
+		name = "card-bg-";
+		name.append(std::to_string(pos));
+		s = g->getSprite(name);
+		s->toggleAnimationGroup("hide", _IDLE, true);
 	}
 }
 

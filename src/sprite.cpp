@@ -34,6 +34,13 @@ Sprite::~Sprite() {
 	}
 }
 
+void Sprite::resetRect() {
+	dstRect->x = baseRect->x;
+	dstRect->y = baseRect->y;
+	dstRect->w = baseRect->w;
+	dstRect->h = baseRect->h;
+}
+
 void Sprite::setAngle(double a) {
 	while (a > 180 || a < -180) { // normalize angle to -180 ~ 180
 		a += 360 * (a < 0 ? 1 : -1);
@@ -46,6 +53,10 @@ bool Sprite::updateSprite() {
 
 	AniContainer* list = _animations[status];
 	bool finished = true;
+	if (list->size() == 0) {
+		++status;
+		return false;
+	}
 
 	// set default texture opacity to 100%
 	SDL_SetTextureAlphaMod(getTexture(), 255);
@@ -94,7 +105,10 @@ bool Sprite::toggleAnimationGroup(std::string groupName, StatusType type, bool e
 		else (*_animations[type])[groupName]->disableGroup();
 		return true;
 	}
-	else return false;
+	else {
+		std::cout << "Animation group \"" << groupName << "\" toggle failed. (Invalid name)\n";
+		return false;
+	}
 }
 
 bool checkCollision(SDL_FPoint point, Sprite* sprite) {

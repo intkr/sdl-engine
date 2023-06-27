@@ -126,3 +126,22 @@ void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
 		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)((b * currentFrame + a * (maxFrames - currentFrame)) / maxFrames * 255));
 	}
 }
+
+void Animations::linearScale(Sprite* _s, AnimationEvent* _e) {
+	unsigned int currentFrame = _e->getCurrentFrame();
+	unsigned int maxFrames = _e->getMaxFrames();
+	char axis = _e->getChar("axis");
+	bool centered = _e->getBool("centered");
+	float a = _e->getFloat("a"), b = _e->getFloat("b");
+
+	SDL_FRect* baseRect = _s->getBaseRect(), * dstRect = _s->getDstRect();
+
+	if (axis == 'w') {
+		dstRect->w = (a * (maxFrames - currentFrame) + b * currentFrame) / maxFrames;
+		if (centered) dstRect->x = baseRect->x + abs(dstRect->w - baseRect->w) / 2;
+	}
+	else if (axis == 'h') {
+		dstRect->h = (a * (maxFrames - currentFrame) + b * currentFrame) / maxFrames;
+		if (centered) dstRect->y = baseRect->y + abs(dstRect->h - baseRect->h) / 2;
+	}
+}

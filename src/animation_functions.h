@@ -4,6 +4,7 @@ class Sprite;
 class AnimationEvent;
 
 namespace Animations {
+
 	// Sprite has no movement.
 	void staticMotion(Sprite* _s, AnimationEvent* _e);
 
@@ -52,9 +53,15 @@ namespace Animations {
 	// The opacity of the sprite changes in a linear function.
 	// WARNING - This affects the texture, not the sprite. All sprites that uses the same texture will be affected.
 	//			 If multiple sprites using the same texture requires varying opacity, use the same function for each sprite.
-	// 'a' : Initial opacity.
-	// 'b' : Final opacity.
-	// If maxFrames is 1, opacity stays static with value a.
+	// 'a' (float) : Initial opacity.
+	// 'b' (float) : Final opacity.
 	void opacity(Sprite* _s, AnimationEvent* _e);
+
+	// The width or height of the sprite changes from length a to b in a linear function.
+	// 'axis' (char) : 'w' (width) or 'h' (height), defines the property to scale.
+	// 'a' (float) : Initial length.
+	// 'b' (float) : Final length.
+	// 'centered' (bool) : If true, the sprite scales based on its center point.
+	void linearScale(Sprite* _s, AnimationEvent* _e);
 }
 
