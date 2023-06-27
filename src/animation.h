@@ -15,35 +15,23 @@ public:
 	// Otherwise, return false.
 	bool animate(Sprite* s);
 
-	void reset() { currentFrame = 0; }
+	void reset() { currentFrame = 1; }
 	
 	unsigned int getCurrentFrame() { return currentFrame; }
 	unsigned int getMaxFrames() { return maxFrames; }
 
-	bool setBool(std::string name, bool value) {
-		if (paramBool.count(name) > 0) return false;
-		paramBool[name] = value;
-		return true;
-	}
-	bool setFloat(std::string name, float value) {
-		if (paramFloat.count(name) > 0) return false;
-		paramFloat[name] = value;
-		return true;
-	}
-	bool setChar(std::string name, char value) {
-		if (paramChar.count(name) > 0) return false;
-		paramChar[name] = value;
-		return true;
-	}
+	bool setBool(std::string name, bool value);
+	bool setChar(std::string name, char value);
+	bool setFloat(std::string name, float value);
 
-	bool getBool(std::string name) { return paramBool[name]; }
-	float getFloat(std::string name) { return paramFloat[name]; }
-	char getChar(std::string name) { return paramChar[name]; }
+	bool getBool(std::string name);
+	char getChar(std::string name);
+	float getFloat(std::string name);
 
 private:
 	void (*f)(Sprite*, AnimationEvent*);
 
-	// Value range is [0 ~ maxFrames).
+	// Value range is [1 ~ maxFrames].
 	// Value is changed after animation is processed.
 	unsigned int currentFrame;
 

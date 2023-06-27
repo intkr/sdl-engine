@@ -92,11 +92,45 @@ void AnimationGroup::enableGroup() {
 bool AnimationEvent::animate(Sprite* sprite) {
 	f(sprite, this);
 
-	if (++currentFrame >= maxFrames) {
+	if (++currentFrame > maxFrames) {
 		// Animation has finished
 		
 		//currentFrame = 0;
 		return true;
 	}
 	return false;
+}
+
+bool AnimationEvent::setBool(std::string name, bool value) {
+	if (paramBool.count(name) > 0) return false;
+	paramBool[name] = value;
+	return true;
+}
+
+bool AnimationEvent::setChar(std::string name, char value) {
+	if (paramChar.count(name) > 0) return false;
+	paramChar[name] = value;
+	return true;
+}
+
+bool AnimationEvent::setFloat(std::string name, float value) {
+	if (paramFloat.count(name) > 0) return false;
+	paramFloat[name] = value;
+	return true;
+}
+
+bool AnimationEvent::getBool(std::string name) {
+	if (paramBool.count(name) == 0) return false;
+	return paramBool[name];
+}
+
+
+char AnimationEvent::getChar(std::string name) {
+	if (paramChar.count(name) == 0) return '\0';
+	return paramChar[name];
+}
+
+float AnimationEvent::getFloat(std::string name) {
+	if (paramFloat.count(name) == 0) return 0.0f;
+	return paramFloat[name];
 }
