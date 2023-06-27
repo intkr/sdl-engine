@@ -4,6 +4,7 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 
 #include "sprite.h"
 #include "animation.h"
@@ -25,11 +26,17 @@ public:
 
 	Sprite* getSprite(std::string name);
 
+	TTF_Font* getFont() { return _font; }
+	SDL_Color& getColor(std::string name) { return _colors[name]; }
+
+	SDL_Surface* getTextSurface(std::wstring text, std::string color, int wrapLength);
+
 	// Stores texture on memory. Returns true if successful, false otherwise.
 	// 
 	// path : File path of the image asset.
 	// name : Texture object identifier.
 	bool addTexture(std::string path, std::string name);
+	bool addTexture(SDL_Texture* texture, std::string name);
 	
 	// Adds sprite to memory. Returns true if successful, false otherwise.
 	// 
@@ -55,6 +62,9 @@ public:
 private:
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
+
+	TTF_Font* _font;
+	std::map<std::string, SDL_Color> _colors;
 
 	std::map<std::string, SDL_Texture*> _textures;
 	std::map<std::string, Sprite*> backgroundSprites;

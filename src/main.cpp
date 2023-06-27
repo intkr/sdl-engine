@@ -20,8 +20,11 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 	
 	srand((unsigned int)time(NULL));
+	
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
+	TTF_Init();
+
 	Graphics* g = new Graphics(853, 480);
 	Input* i = new Input(g);
 	Audio* a = new Audio();

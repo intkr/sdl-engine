@@ -8,6 +8,10 @@ Graphics::Graphics(int w, int h) {
 	_sprites[0] = &backgroundSprites;
 	_sprites[1] = &foregroundSprites;
 	_sprites[2] = &popupSprites;
+
+	_font = TTF_OpenFont("assets/fonts/ns_eb.ttf", 70);
+
+	_colors["white"] = SDL_Color{ 255, 255, 255, 255 };
 }
 
 Graphics::~Graphics() {
@@ -20,6 +24,16 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 		return _textures[name];
 	}
 	else return nullptr;
+}
+
+SDL_Surface* Graphics::getTextSurface(std::wstring text, std::string color, int wrapLength) {
+	int usize = text.size() + 1;
+	Uint16* utext = new Uint16[usize];
+	for (; usize; usize--) {
+		utext[usize - 1] = text[usize - 1];
+	}
+
+	return TTF_RenderUNICODE_Blended_Wrapped(getFont(), utext, getColor(color), wrapLength);
 }
 
 bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName) {
@@ -56,6 +70,17 @@ bool Graphics::addTexture(std::string path, std::string name) {
 	SDL_SetTextureBlendMode(bgTexture, SDL_BLENDMODE_BLEND);
 	SDL_FreeSurface(bgSurface);
 	_textures[name] = bgTexture;
+	return true;
+}
+
+bool Graphics::addTexture(SDL_Texture* texture, std::string name) {
+	// Check if identifier 'name' is already being used.
+	if (_textures.find(name) != _textures.end()) {
+		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
+		return false;
+	}
+
+	_textures[name] = texture;
 	return true;
 }
 

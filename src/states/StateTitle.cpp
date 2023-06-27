@@ -18,6 +18,7 @@ void StateTitle::init() {
 	AnimationGroup* ag;
 	AnimationEvent* ae;
 	Sprite* s;
+	SDL_FRect* r;
 	int cycle, w, h;
 	// background
 	if (g->addTexture("assets/bg.png", "test")) {
@@ -33,10 +34,33 @@ void StateTitle::init() {
 		}
 	}
 
+	std::wstring test = L"°¡³ª´Ù¡ÚABC";
+	SDL_Surface* textSurface = g->getTextSurface(test, "white", 800);
+	if (textSurface != nullptr) {
+		SDL_Texture* textTexture = SDL_CreateTextureFromSurface(g->getRenderer(), textSurface);
+		SDL_FreeSurface(textSurface);
+
+		if (g->addTexture(textTexture, "testText")) {
+			SDL_QueryTexture(textTexture, nullptr, nullptr, &w, &h);
+			r = new SDL_FRect{ 100.0f, 100.0f, (float)w, (float)h };
+			if (g->addSprite(g->getTexture("testText"), nullptr, r, _FOREGROUND, "text")) {
+				s = g->getSprite("text");
+				if (s != nullptr) {
+					// static motion
+					ag = new AnimationGroup(true, false, true);
+					if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
+						ae = new AnimationEvent(1, Animations::staticMotion);
+						s->addAnimationEvent("idleStatic", ae);
+					}
+				}
+			}
+		}
+	}
+
 	// test logo
 	if (g->addTexture("assets/buh.png", "test2")) {
 		SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
-		SDL_FRect* r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
+		r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
 
 		g->addSprite(g->getTexture("test2"), nullptr, r, _FOREGROUND, "testfg");
 		s = g->getSprite("testfg");
