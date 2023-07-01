@@ -25,6 +25,8 @@
     <ClInclude Include="src\command.h" />
     <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\input.h" />
+    <ClInclude Include="src\jsoncpp\json.h" />
+    <ClInclude Include="src\player.h" />
     <ClInclude Include="src\sprite.h" />
     <ClInclude Include="src\states\game.h" />
     <ClInclude Include="src\states\GamePair.h" />
@@ -39,7 +41,9 @@
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\input.cpp" />
+    <ClCompile Include="src\jsoncpp\jsoncpp.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\sprite.cpp" />
     <ClCompile Include="src\states\game.cpp" />
     <ClCompile Include="src\states\GamePair.cpp" />

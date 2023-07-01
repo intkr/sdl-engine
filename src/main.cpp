@@ -10,6 +10,7 @@
 #include "graphics.h"
 #include "audio.h"
 #include "input.h"
+#include "player.h"
 #include "states/stateManager.h"
 
 extern const int fps = 60; // Not actually FPS
@@ -25,6 +26,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	IMG_Init(IMG_INIT_JPG);
 	TTF_Init();
 
+	Player* p = new Player("data.json");
 	Graphics* g = new Graphics(853, 480);
 	Input* i = new Input(g);
 	Audio* a = new Audio();
@@ -34,6 +36,8 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	clock_t frameStartMS, frameEndMS;
 	bool gaming = true;
 	
+	p->saveData();
+
 	while (gaming) {
 		frameStartMS = clock();
 
@@ -50,23 +54,26 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 	}
 
+	delete p;
 	delete s;
 	delete a;
 	delete i;
 	delete g;
+	TTF_Quit();
+	IMG_Quit();
 	SDL_Quit();
 	return 0;
 }
 
 /*
 TODO:
-	devise a game difficulty calculation formula
-	fix sprite opacity changes - especially fade ins and fade outs
+	user data file save / load
+		+ non-messy way to use user data throughout multiple objects
 
+	-- idk do it when you feel like it
+	
+	-- puzzle ideas
 	road direction puzzle
-
-	-- idk do it when youf eel like it
-	12-key support
 
 	-- endgame stuff
 	Fix "FPS"
