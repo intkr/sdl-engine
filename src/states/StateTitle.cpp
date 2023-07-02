@@ -3,10 +3,11 @@
 #include "../graphics.h"
 #include "../audio.h"
 #include "../input.h"
+#include "score.h"
 
 #include "StateTitle.h"
 
-StateTitle::StateTitle(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
+StateTitle::StateTitle(SCore* _core) : State(_core) {
 	init();
 }
 
@@ -20,6 +21,9 @@ void StateTitle::init() {
 	Sprite* s;
 	SDL_FRect* r;
 	int cycle, w, h;
+
+	Graphics* g = core->getGraphics();
+	
 	// background
 	if (g->addTexture("assets/bg.png", "test")) {
 		g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
@@ -137,22 +141,19 @@ void StateTitle::init() {
 	}
 }
 
-Command StateTitle::update() {
-	return Command{ _CMD_NONE, 1 };
+void StateTitle::update() {
+	return;
 }
 
-void StateTitle::exitState(Command& cmd) {
-	switch (cmd.value) {
+void StateTitle::exitState(StateType targetState) {
+	switch (targetState) {
 	case _GAME_PAIR:
 		freeSpecifics();
 		break;
 	default:
 		freeAll();
 	}
-}
-
-bool StateTitle::isStateRunning() {
-	return test;
+	core->changeState(targetState);
 }
 
 void StateTitle::freeAll() {
@@ -160,27 +161,28 @@ void StateTitle::freeAll() {
 }
 
 void StateTitle::freeSpecifics() {
+	Graphics* g = core->getGraphics();
 	g->getSprite("testfg")->toggleAnimationGroup("idleOpacity", _IDLE, true);
 	test = false;
 }
 
 
-Command StateTitle::handleClick(std::string name, bool active) {
+void StateTitle::handleClick(std::string name, bool active) {
+	Audio* a = core->getAudio();
 	if (name == "testfg" && active) {
 		// *vine boom*
 		FMOD::Channel* ch;
 		std::string vine = "vine", path = "assets/Vine Boom.ogg";
 		ch = a->addSound(path, vine, false, false, _AUDIO_SFX, 100);
 		ch->setPaused(false);
-
-		return Command{ _CMD_TRANSITION, _GAME_PAIR };
+		exitState(_GAME_PAIR);
 	}
-	return Command();
+	return;
 }
 
-Command StateTitle::handleKey(SDL_Scancode key, bool active) {
+void StateTitle::handleKey(SDL_Scancode key, bool active) {
 	if (key == SDL_SCANCODE_SPACE && active) {
-		return Command{ _CMD_TRANSITION, _GAME_PAIR };
+		exitState(_GAME_PAIR);
 	}
-	return Command();
+	return;
 }

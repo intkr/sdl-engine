@@ -1,16 +1,19 @@
 #include "graphics.h"
 
-Graphics::Graphics(int w, int h) {
+Graphics::Graphics(Core* _core) : core(_core) {
+	// TODO: Fetch screen size data from player
+	int w = 1280, h = 720;
+
 	SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_RESIZABLE, &_window, &_renderer);
 	SDL_RenderSetLogicalSize(_renderer, 1920, 1080);
 	SDL_SetWindowTitle(_window, "Puzzle Time");
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
+
 	_sprites[0] = &backgroundSprites;
 	_sprites[1] = &foregroundSprites;
 	_sprites[2] = &popupSprites;
 
 	_font = TTF_OpenFont("assets/fonts/ns_eb.ttf", 70);
-
 	_colors["white"] = SDL_Color{ 255, 255, 255, 255 };
 }
 
@@ -51,54 +54,55 @@ bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName)
 	return true;
 }
 
-bool Graphics::addTexture(std::string path, std::string name) {
+SDL_Texture* Graphics::addTexture(std::string path, std::string name) {
 	// Check if identifier 'name' is already being used.
 	if (_textures.find(name) != _textures.end()) {
 		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
-		return false;
+		return nullptr;
 	}
 
 	// Check if image path 'path' exists and can be loaded successfully
-	SDL_Surface* bgSurface = IMG_Load(path.c_str());
-	if (bgSurface == nullptr) {
+	SDL_Surface* surface = IMG_Load(path.c_str());
+	if (surface == nullptr) {
 		std::cout << "adding texture \"" << name << "\" failed. (null image)\n";
-		return false;
+		return nullptr;
 	}
 	
 	// Create texture and add to _textures
-	SDL_Texture* bgTexture = SDL_CreateTextureFromSurface(_renderer, bgSurface);
-	SDL_SetTextureBlendMode(bgTexture, SDL_BLENDMODE_BLEND);
-	SDL_FreeSurface(bgSurface);
-	_textures[name] = bgTexture;
-	return true;
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+	SDL_FreeSurface(surface);
+	_textures[name] = texture;
+	return texture;
 }
 
-bool Graphics::addTexture(SDL_Texture* texture, std::string name) {
+SDL_Texture* Graphics::addTexture(SDL_Texture* texture, std::string name) {
 	// Check if identifier 'name' is already being used.
 	if (_textures.find(name) != _textures.end()) {
 		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
-		return false;
+		return nullptr;
 	}
 
 	_textures[name] = texture;
-	return true;
+	return texture;
 }
 
-bool Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
+Sprite* Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
 	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
 	if (tex == nullptr) {
 		std::cout << "adding sprite \"" << name << "\" failed. (null texture)\n";
-		return false;
+		return nullptr;
 	}
 
 	if (_sprites[type]->count(name) > 0) {
 		std::cout << "adding sprite \"" << name << "\" failed. (duplicate sprite name)\n";
-		return false;
+		return nullptr;
 	}
 
 	// Create sprite and add to _sprites
-	(*_sprites[type])[name] = new Sprite(tex, src, dst, angle);
-	return true;
+	Sprite* s = new Sprite(tex, src, dst, angle);
+	(*_sprites[type])[name] = s;
+	return s;
 }
 
 Sprite* Graphics::getSprite(std::string name) {

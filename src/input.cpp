@@ -1,7 +1,6 @@
 #include "input.h"
 
-Input::Input(Graphics* g) {
-	_g = g;
+Input::Input(Core* _core) : core(_core) {
 	mouseStatus = 0;
 	curX = curY = 0;
 	quitTriggered = false;
@@ -55,9 +54,13 @@ std::vector<std::string>* Input::getHoveredObject() {
 	return &hoveredObject;
 }
 
-void Input::process(SDL_Event& e) {
+void Input::update(SDL_Event& e) {
 	flushInput();
+	pollInput(e);
+	handleInput();
+}
 
+void Input::pollInput(SDL_Event& e) {
 	// Handle key presses and mouse events
 	while (SDL_PollEvent(&e)) {
 		switch (e.type) {
@@ -67,7 +70,7 @@ void Input::process(SDL_Event& e) {
 			break;
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
-			pollInput(e.key.keysym.scancode, e.type);
+			pollKey(e.key.keysym.scancode, e.type);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (e.button.button == SDL_BUTTON_LEFT) {
@@ -95,7 +98,7 @@ void Input::process(SDL_Event& e) {
 		}
 	}
 
-	pollInput(curX, curY);
+	pollMouse(curX, curY);
 }
 
 void Input::flushInput() {
@@ -111,7 +114,7 @@ void Input::flushInput() {
 }
 
 
-void Input::pollInput(SDL_Scancode inputKey, Uint32 type) {
+void Input::pollKey(SDL_Scancode inputKey, Uint32 type) {
 	switch (type) {
 	case SDL_KEYDOWN:
 		if (pressedKeys.find(inputKey) == pressedKeys.end()) {
@@ -124,12 +127,12 @@ void Input::pollInput(SDL_Scancode inputKey, Uint32 type) {
 	}
 }
 
-void Input::pollInput(int x, int y) {
+void Input::pollMouse(int x, int y) {
 	SDL_FPoint p = { (float)x, (float)y };
-
+	SpriteMap** map = core->getSpriteMaps();
 	// Handle hover
 	for (int i = 3; i; i--) {
-		for (auto iter = (*_g->_sprites[i - 1]).cbegin(); iter != (*_g->_sprites[i - 1]).cend();) {
+		for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
 			Sprite* s = iter->second;
 			std::string t = iter->first;
 
@@ -153,7 +156,7 @@ void Input::pollInput(int x, int y) {
 
 	case _MOUSE_ACTIVE:
 		for (int i = 3; i; i--) {
-			for (auto iter = (*_g->_sprites[i - 1]).cbegin(); iter != (*_g->_sprites[i - 1]).cend();) {
+			for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 				
@@ -168,8 +171,8 @@ void Input::pollInput(int x, int y) {
 		break;
 
 	case _MOUSE_PASSIVE:
-		for (int i = 2; i >= 0; i--) {
-			for (auto iter = (*_g->_sprites[i]).cbegin(); iter != (*_g->_sprites[i]).cend();) {
+		for (int i = 3; i; i--) {
+			for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
 				Sprite* s = iter->second;
 				std::string t = iter->first;
 
@@ -198,4 +201,28 @@ int Input::checkKeybinds(SDL_Scancode key) {
 		}
 	}
 	return -1;
+}
+
+void Input::handleInput() {
+	SDL_Scancode id;
+	std::string objName;
+	bool active;
+
+	for (auto& key : pressedKeys) {
+		id = key.first, active = key.second;
+		core->handleKey(id, active);
+	}
+
+	for (auto& obj : hoveredObject) {
+		core->handleHover(obj);
+	}
+
+	for (auto& obj : clickedObject) {
+		objName = obj.first, active = obj.second;
+		core->handleClick(objName, active);
+	}
+
+	for (auto& obj : releasedObject) {
+		core->handleRelease(obj);
+	}
 }

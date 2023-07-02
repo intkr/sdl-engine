@@ -3,10 +3,9 @@
 
 class StateTest : public State {
 public:
-	StateTest(Graphics* _g, Input* _i, Audio* _a);
+	StateTest(SCore* _core);
 	~StateTest();
 	void init() override;
-	Command update() override;
-	void exitState(Command& cmd) override;
-	bool isStateRunning() override;
+	void update() override;
+	void exitState(StateType targetState) override;
 };

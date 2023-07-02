@@ -1,36 +1,21 @@
 #include "../graphics.h"
 #include "../audio.h"
 #include "../input.h"
+#include "score.h"
 
 #include "StateTest.h"
 
-StateTest::StateTest(Graphics* _g, Input* _i, Audio* _a) : State(_g, _i, _a) {
+StateTest::StateTest(SCore* _core) : State(_core) {
 	init();
 }
 
 StateTest::~StateTest() {}
 
 void StateTest::init() {
+	Graphics* g = core->getGraphics();
 	g->reset();
 }
 
-Command StateTest::update() {
-	auto pressedKeys = i->getPressedKeys();
-	if (pressedKeys->size() > 0) {
-		return Command();
-	}
+void StateTest::update() {}
 
-	auto clickedObject = i->getClickedObject();
-	if (clickedObject->size() > 0) {
-		return Command();
-	}
-
-	return Command();
-}
-
-void StateTest::exitState(Command& cmd) {
-}
-
-bool StateTest::isStateRunning() {
-	return true;
-}
+void StateTest::exitState(StateType targetState) {}

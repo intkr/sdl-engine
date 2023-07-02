@@ -30,7 +30,7 @@
     <ClInclude Include="src\states\state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\states\stateManager.h">
+    <ClInclude Include="src\states\score.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\states\StateTest.h">
@@ -40,9 +40,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\states\GamePair.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\command.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\graphics.h">
@@ -58,6 +55,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\jsoncpp\json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,7 +86,7 @@
     <ClCompile Include="src\states\state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\states\stateManager.cpp">
+    <ClCompile Include="src\states\score.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\states\StateTest.cpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\jsoncpp\jsoncpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

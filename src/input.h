@@ -5,6 +5,7 @@
 
 #include "SDL.h"
 
+#include "core.h"
 #include "graphics.h"
 #include "sprite.h"
 
@@ -14,15 +15,13 @@ enum MouseStatus {
 
 class Input {
 public:
-	Input(Graphics* g);
+	friend class Core;
+
+	Input(Core* _core);
 	~Input();
 
 	// Gets mouse / keyboard input from SDL2, and stores its data accordingly.
-	void process(SDL_Event& e);
-
-	// Updates all active keys/objects in pressedKeys and clickedObjects to passive ones.
-	// Erases all previously released objects from releasedObjects.
-	void flushInput();
+	void update(SDL_Event& e);
 	
 	// Contains all keyboard scancodes that has been pressed.
 	// map.first : Object name identifier
@@ -51,12 +50,20 @@ public:
 	bool isQuitTriggered() { return quitTriggered; }
 
 private:
+	// Updates all active keys/objects in pressedKeys and clickedObjects to passive ones.
+	// Erases all previously released objects from releasedObjects.
+	void flushInput();
+
+	void pollInput(SDL_Event& e);
+
 	// Handles keyboard input.
 	// type should be either SDL_KEYDOWN or SDL_KEYUP.
-	void pollInput(SDL_Scancode inputKey, Uint32 type);
+	void pollKey(SDL_Scancode inputKey, Uint32 type);
 
 	// Handles mouse input. (Currently left click only)
-	void pollInput(int x, int y);
+	void pollMouse(int x, int y);
+
+	void handleInput();
 
 	// Stores the current status of the left mouse button.
 	// 0 : Up
@@ -67,10 +74,7 @@ private:
 	int curX, curY;
 	SDL_Scancode lefthandKeys[4][3];
 	SDL_Scancode righthandKeys[4][3];
-
-	// Pointer to the Graphics object to access sprite objects.
-	const Graphics* _g;
-
+	
 	// Stores all keys that are being pressed.
 	// If it's an active key (it was just pressed this frame), then the bool value is false.
 	// If it's a passive key (it has been pressed since before), then the bool value is true.
@@ -89,4 +93,6 @@ private:
 
 	// There's probably a better idea to implement this but idk at the time being
 	bool quitTriggered;
+	
+	Core* core;
 };

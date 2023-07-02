@@ -1,6 +1,6 @@
 #include "audio.h"
 
-Audio::Audio() {
+Audio::Audio(Core* _core) : core(_core) {
 	fr = FMOD::System_Create(&fs);
 	fr = fs->init(512, FMOD_INIT_NORMAL, 0);
 	

@@ -7,6 +7,8 @@
 #include "fmod_output.h"
 #include "fmod_errors.h"
 
+#include "core.h"
+
 // random note : Channels are (presumably) released automatically when its Sound is released
 
 enum AudioType { _AUDIO_BGM = 1, _AUDIO_SFX = 2
@@ -14,7 +16,9 @@ enum AudioType { _AUDIO_BGM = 1, _AUDIO_SFX = 2
 
 class Audio {
 public:
-	Audio();
+	friend class Core;
+
+	Audio(Core* core);
 	~Audio();
 
 	FMOD::Channel* getBGMChannel(std::string& name);
@@ -51,6 +55,8 @@ private:
 
 	// used for _sounds["bgm"]
 	std::map<std::string, FMOD::Channel*> bgmChannels;
+
+	Core* core;
 };
 
 /*

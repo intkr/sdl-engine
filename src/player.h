@@ -7,9 +7,13 @@
 
 #include "jsoncpp/json.h"
 
+#include "core.h"
+
 class Player {
 public:
-	Player(std::string path);
+	friend class Core;
+
+	Player(Core* core);
 	~Player();
 	void saveData();
 
@@ -22,4 +26,6 @@ private:
 	Json::Value data;
 
 	std::fstream stream;
+
+	Core* core;
 };

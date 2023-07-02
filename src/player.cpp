@@ -1,12 +1,14 @@
 #include "player.h"
 
-Player::Player(std::string path) : path(path) {
+
+Player::Player(Core* _core) : core(_core) {
 	init();
 }
 
 Player::~Player() {}
 
 void Player::init() {
+	path = "data.json";
 	stream.open(path, std::fstream::in);
 	if (stream.is_open()) readData();
 	else newData();

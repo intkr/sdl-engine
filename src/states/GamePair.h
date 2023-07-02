@@ -18,15 +18,14 @@ struct PairCard {
 
 class GamePair : public Game {
 public:
-	GamePair(Graphics* _g, Input* _i, Audio* _a);
+	GamePair(SCore* _core);
 	~GamePair();
 	void init() override;
-	Command update() override;
-	void exitState(Command& cmd) override;
-	bool isStateRunning() override;
+	void update() override;
+	void exitState(StateType targetState) override;
 
-	Command handleClick(std::string name, bool active) override;
-	Command handleKey(SDL_Scancode key, bool active) override;
+	void handleClick(std::string name, bool active) override;
+	void handleKey(SDL_Scancode key, bool active) override;
 
 private:
 	void newPuzzle() override;

@@ -6,8 +6,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include "status.h"
 #include "animation.h"
-#include "command.h"
 
 // _BACKGROUND, _FOREGROUND, _POPUP
 enum SpriteType { _BACKGROUND, _FOREGROUND, _POPUP };

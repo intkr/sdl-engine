@@ -6,15 +6,17 @@
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 
+#include "core.h"
 #include "sprite.h"
 #include "animation.h"
 
+#define SpriteMap std::map<std::string, Sprite*>
 
 class Graphics {
 public:
-	friend class Input;
+	friend class Core;
 
-	Graphics(int w, int h);
+	Graphics(Core* core);
 	~Graphics();
 
 	SDL_Window* getWindow() { return _window; }
@@ -35,8 +37,8 @@ public:
 	// 
 	// path : File path of the image asset.
 	// name : Texture object identifier.
-	bool addTexture(std::string path, std::string name);
-	bool addTexture(SDL_Texture* texture, std::string name);
+	SDL_Texture* addTexture(std::string path, std::string name);
+	SDL_Texture* addTexture(SDL_Texture* texture, std::string name);
 	
 	// Adds sprite to memory. Returns true if successful, false otherwise.
 	// 
@@ -44,7 +46,7 @@ public:
 	// src / dst : Rect area used on sprite sheet / sprite render. Pass nullptr to use the entire area.
 	// name : Sprite object identifier.
 	// angle : Sprite rotation angle (clockwise).
-	bool addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
+	Sprite* addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
 
 	bool deleteTexture(std::string name);
 
@@ -59,7 +61,13 @@ public:
 
 	bool hasSprites();
 	bool doesPopupExist();
+
 private:
+	void emptySprites();
+	void emptyTextures();
+
+	void darkenScreen();
+
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
 
@@ -67,13 +75,10 @@ private:
 	std::map<std::string, SDL_Color> _colors;
 
 	std::map<std::string, SDL_Texture*> _textures;
-	std::map<std::string, Sprite*> backgroundSprites;
-	std::map<std::string, Sprite*> foregroundSprites;
-	std::map<std::string, Sprite*> popupSprites;
-	std::map<std::string, Sprite*>* _sprites[3];
+	SpriteMap backgroundSprites;
+	SpriteMap foregroundSprites;
+	SpriteMap popupSprites;
+	SpriteMap* _sprites[3];
 
-	void emptySprites();
-	void emptyTextures();
-
-	void darkenScreen();
+	Core* core;
 };
