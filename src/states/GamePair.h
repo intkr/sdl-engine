@@ -18,7 +18,7 @@ struct PairCard {
 
 class GamePair : public Game {
 public:
-	GamePair(SCore* _core);
+	GamePair(SCore* _score, Core* _core);
 	~GamePair();
 	void init() override;
 	void update() override;

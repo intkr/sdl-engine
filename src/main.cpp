@@ -26,8 +26,12 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 TODO:
+	work on class descriptions and member function comments
+
 	user data file save / load
 		+ non-messy way to use user data throughout multiple objects
+
+	fix this amalgated mess of object hierarchy communication bullshit
 
 	-- idk do it when you feel like it
 	

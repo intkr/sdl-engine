@@ -3,7 +3,7 @@
 
 class StateTest : public State {
 public:
-	StateTest(SCore* _core);
+	StateTest(SCore* _score, Core* _core);
 	~StateTest();
 	void init() override;
 	void update() override;

@@ -4,7 +4,7 @@
 // Base class specifically for minigames
 class Game : public State {
 public:
-	Game(SCore* _core) : State(_core),
+	Game(SCore* _score, Core* _core) : State(_score, _core),
 		difficulty(0.0f), gameStatus(_INTRO), gameTimer(60 * 60),
 		baseScore(1000), score(0), scoreExponent(1.0f), currentCombo(0), maximumCombo(0),
 		gameElapsedFrames(0), puzzleElapsedFrames(0) {}

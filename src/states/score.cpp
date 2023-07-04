@@ -9,20 +9,20 @@ SCore::SCore(Core* _core) : core(_core), currentState(_STATE_TITLE) {
 SCore::~SCore() {}
 
 void SCore::changeState(StateType state) {
-	delete s;
+	if (s != nullptr) delete s;
 
 	switch (state) {
 	case _STATE_TITLE:
 		std::cout << "Screen transitioned to title menu.\n";
-		s = new StateTitle(this);
+		s = new StateTitle(this, core);
 		break;
 	case _GAME_PAIR:
 		std::cout << "Screen transitioned to game \"Pair\".\n";
-		s = new GamePair(this);
+		s = new GamePair(this, core);
 		break;
 	case _STATE_TEST:
 		std::cout << "Screen transitioned to test menu.\n";
-		s = new StateTest(this);
+		s = new StateTest(this, core);
 		break;
 	default:
 		// shouldn't happen
@@ -70,14 +70,6 @@ void SCore::handleClick(std::string objName, bool active) {
 
 void SCore::handleRelease(std::string objName) {
 	s->handleRelease(objName);
-}
-
-Graphics* SCore::getGraphics() {
-	return core->getGraphics();
-}
-
-Audio* SCore::getAudio() {
-	return core->getAudio();
 }
 
 int SCore::checkKeybinds(SDL_Scancode key) {

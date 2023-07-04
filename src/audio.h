@@ -21,28 +21,25 @@ public:
 	Audio(Core* core);
 	~Audio();
 
-	FMOD::Channel* getBGMChannel(std::string& name);
-
 	// Creates a Sound object.
 	//
 	// path : Audio file path.
 	// name : Audio object identifier.
 	// isLoop : Decides if audio loops indefinitely.
 	// isStream : Decides if audio should be played through a stream. Set this to true for large audio files.
-	// type : ChannelGroup identifier for _sounds. ("bgm", "sfx")
+	// type : ChannelGroup identifier for _soundgroups. ("bgm", "sfx")
 	// volume : Volume of audio (0~100).
-	FMOD::Channel* addSound(std::string& path, const char* name, bool isLoop, bool isStream, AudioType type, int volume);
-	FMOD::Channel* addSound(std::string& path, std::string& name, bool isLoop, bool isStream, AudioType type, int volume);
+	bool addSound(std::string path, std::string name, bool isLoop, bool isStream, AudioType type, int volume);
+
+	bool playSound(std::string name, AudioType type, int volume);
+	bool pauseSound(std::string name);
+	bool stopSound();
+	bool stopSound(std::string name, AudioType type);
 
 	// Checks through all allocated audio objects and releases all that finished playing.
 	void update();
 
-	// Releases the sound with identifier 'name'.
-	// If there's no parameter, stop all sounds.
-	void stopBGM();
-	void stopBGM(std::string& name, AudioType type);
-
-	// Returns true if there are any items in _sounds.
+	// Returns true if there are any items in _soundgroups.
 	// Returns false otherwise.
 	bool hasSounds();
 
@@ -51,15 +48,11 @@ private:
 	FMOD_RESULT fr;
 
 	// "sfx" and "bgm" for now, divide this later for advanced adjustments
-	std::map<AudioType, FMOD::ChannelGroup*> _sounds;
+	std::map<AudioType, FMOD::ChannelGroup*> _soundgroups;
 
-	// used for _sounds["bgm"]
-	std::map<std::string, FMOD::Channel*> bgmChannels;
+	// used for _soundgroups["bgm"]
+	std::multimap<std::string, FMOD::Channel*> _channels;
 
+	std::map<std::string, FMOD::Sound*> _sounds;
 	Core* core;
 };
-
-/*
-a->addSound(PATH, NAME, LOOP, STREAM, VOLUME);
-a->getChannel(NAME)->setPaused(false);
-*/

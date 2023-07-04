@@ -30,7 +30,7 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 }
 
 SDL_Surface* Graphics::getTextSurface(std::wstring text, std::string color, int wrapLength) {
-	int usize = text.size() + 1;
+	size_t usize = text.size() + 1;
 	Uint16* utext = new Uint16[usize];
 	for (; usize; usize--) {
 		utext[usize - 1] = text[usize - 1];
@@ -58,7 +58,7 @@ SDL_Texture* Graphics::addTexture(std::string path, std::string name) {
 	// Check if identifier 'name' is already being used.
 	if (_textures.find(name) != _textures.end()) {
 		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
-		return nullptr;
+		return _textures[name];
 	}
 
 	// Check if image path 'path' exists and can be loaded successfully
@@ -79,7 +79,12 @@ SDL_Texture* Graphics::addTexture(std::string path, std::string name) {
 SDL_Texture* Graphics::addTexture(SDL_Texture* texture, std::string name) {
 	// Check if identifier 'name' is already being used.
 	if (_textures.find(name) != _textures.end()) {
-		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
+		//std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
+		return _textures[name];
+	}
+
+	if (texture == nullptr) {
+		std::cout << "adding texture \"" << name << "\" failed. (null texture)\n";
 		return nullptr;
 	}
 
@@ -87,20 +92,31 @@ SDL_Texture* Graphics::addTexture(SDL_Texture* texture, std::string name) {
 	return texture;
 }
 
-Sprite* Graphics::addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle) {
+Sprite* Graphics::addSprite(std::string texName, std::string spriteName, SDL_Rect* src, SDL_FRect* dst, SpriteType type, double angle) {
 	// Check if texture 'tex' is available, and if identifier 'name' is already being used.
-	if (tex == nullptr) {
-		std::cout << "adding sprite \"" << name << "\" failed. (null texture)\n";
-		return nullptr;
+	if (_sprites[type]->count(spriteName) > 0) {
+		//std::cout << "adding sprite \"" << spriteName << "\" failed. (duplicate sprite name)\n";
+		return (*_sprites[type])[spriteName];
 	}
 
-	if (_sprites[type]->count(name) > 0) {
-		std::cout << "adding sprite \"" << name << "\" failed. (duplicate sprite name)\n";
+	if (_textures.count(texName) == 0) {
+		std::cout << "adding sprite \"" << spriteName << "\" failed. (null texture)\n";
 		return nullptr;
 	}
 
 	// Create sprite and add to _sprites
-	Sprite* s = new Sprite(tex, src, dst, angle);
+	Sprite* s = new Sprite(_textures[texName], src, dst, angle);
+	(*_sprites[type])[spriteName] = s;
+	return s;
+}
+
+Sprite* Graphics::addSprite(std::string name, SpriteType type, Sprite* s) {
+	if (_sprites[type]->count(name) > 0) {
+		//std::cout << "adding sprite \"" << name << "\" failed. (duplicate sprite name)\n";
+		return (*_sprites[type])[name];
+	}
+
+	// Create sprite and add to _sprites
 	(*_sprites[type])[name] = s;
 	return s;
 }

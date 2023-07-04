@@ -7,7 +7,7 @@
 
 #include "GamePair.h"
 
-GamePair::GamePair(SCore* _core) : Game(_core) {
+GamePair::GamePair(SCore* _score, Core* _core) : Game(_score, _core) {
 	init();
 }
 
@@ -22,21 +22,19 @@ void GamePair::init() {
 	lastCard = -1;
 
 	//g->reset();
-
+	SDL_Texture* tex;
 	AnimationGroup* ag;
 	AnimationEvent* ae;
-	SDL_FRect* rect;
+	SDL_FRect* r;
 	Sprite* s;
-	int cycle, w, h;
-
-	Graphics* g = core->getGraphics();
+	int w, h;
 
 	// background
-	if (g->addTexture("assets/bg.png", "test")) {
-		g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
-		s = g->getSprite("testbg");
+	if (tex = core->addTexture("assets/bg.png", "test")) {
+		s = core->addSprite("testbg", _BACKGROUND, new Sprite(tex, nullptr, nullptr));
+
 		if (s != nullptr) {
-			//	static motion
+			// static motion
 			ag = new AnimationGroup(true, false, true);
 			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
 				ae = new AnimationEvent(1, Animations::staticMotion);
@@ -46,11 +44,11 @@ void GamePair::init() {
 	}
 
 	// thumbs
-	if (g->addTexture("assets/good.png", "good")) {
-		SDL_QueryTexture(g->getTexture("good"), nullptr, nullptr, &w, &h);
-		rect = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
-		g->addSprite(g->getTexture("good"), nullptr, rect, _FOREGROUND, "goodjob");
-		s = g->getSprite("goodjob");
+	if (tex = core->addTexture("assets/good.png", "good")) {
+		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+		r = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
+		s = core->addSprite("goodjob", _FOREGROUND, new Sprite(tex, nullptr, r));
+
 		if (s != nullptr) {
 			//	static motion
 			ag = new AnimationGroup(false, false, false);
@@ -62,11 +60,12 @@ void GamePair::init() {
 		s->setStatus(_END);
 	}
 
-	if (g->addTexture("assets/bad.png", "bad")) {
-		SDL_QueryTexture(g->getTexture("good"), nullptr, nullptr, &w, &h);
-		rect = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
-		g->addSprite(g->getTexture("bad"), nullptr, rect, _FOREGROUND, "badjob");
-		s = g->getSprite("badjob");
+
+	if (tex = core->addTexture("assets/bad.png", "bad")) {
+		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+		r = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
+		s = core->addSprite("badjob", _FOREGROUND, new Sprite(tex, nullptr, r));
+
 		if (s != nullptr) {
 			//	static motion
 			ag = new AnimationGroup(false, false, false);
@@ -79,7 +78,7 @@ void GamePair::init() {
 	}
 
 	// card background
-	if (g->addTexture("assets/pair/card-bg.png", "card-bg")) {
+	if (tex = core->addTexture("assets/pair/card-bg.png", "card-bg")) {
 		std::string name;
 		//SDL_QueryTexture(g->getTexture("card-bg"), nullptr, nullptr, &w, &h);
 		w = h = (int)(1080 * 0.1);
@@ -88,10 +87,9 @@ void GamePair::init() {
 			for (int j = _PAIR_WIDTH; j; j--) {
 				name = "card-bg-";
 				name.append(std::to_string((i - 1) * 3 + (j - 1)));
-				rect = new SDL_FRect{ (1920 * 0.5f - w * 1.75f) + (j - 1) * (w * 1.25f), (1080 * 0.5f - h * 2.375f) + (i - 1) * (h * 1.25f), (float)w, (float)h };
+				r = new SDL_FRect{ (1920 * 0.5f - w * 1.75f) + (j - 1) * (w * 1.25f), (1080 * 0.5f - h * 2.375f) + (i - 1) * (h * 1.25f), (float)w, (float)h };
+				s = core->addSprite(name, _FOREGROUND, new Sprite(tex, nullptr, r));
 
-				g->addSprite(g->getTexture("card-bg"), nullptr, rect, _FOREGROUND, name);
-				s = g->getSprite(name);
 				if (s != nullptr) {
 					ag = new AnimationGroup(true, false, true);
 					if (s->addAnimationGroup("static", _IDLE, ag)) {
@@ -134,7 +132,7 @@ void GamePair::init() {
 		name.append(std::to_string(cardTypes));
 		path.append(".png");
 		cardTypes++;
-	} while (g->addTexture(path, name));
+	} while (core->addTexture(path, name));
 	cardTypes--;
 }
 
@@ -161,9 +159,8 @@ void GamePair::update() {
 		case 0: // timer == 0
 			if (!isInteractable()) {
 				// hide result image
-				Graphics* g = core->getGraphics();
-				g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
-				g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
+				core->addSprite("badjob",  _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, false);
+				core->addSprite("goodjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, false);
 
 				newPuzzle();
 			}
@@ -192,20 +189,18 @@ void GamePair::update() {
 }
 
 void GamePair::exitState(StateType targetState) {
-	Graphics* g = core->getGraphics();
-
-	g->deleteSprite("goodjob", _FOREGROUND);
-	g->deleteSprite("badjob", _FOREGROUND);
+	core->deleteSprite("goodjob", _FOREGROUND);
+	core->deleteSprite("badjob", _FOREGROUND);
 	deleteCards();
 
-	g->deleteTexture("good");
-	g->deleteTexture("bad");
+	core->deleteTexture("good");
+	core->deleteTexture("bad");
 
 	std::string name;
 	while (cardTypes >= 0) {
 		name = "card-card-";
 		name.append(std::to_string(cardTypes));
-		g->deleteTexture(name);
+		core->deleteTexture(name);
 		cardTypes--;
 	}
 
@@ -213,14 +208,14 @@ void GamePair::exitState(StateType targetState) {
 		for (int j = _PAIR_WIDTH; j; j--) {
 			name = "card-bg-";
 			name.append(std::to_string((i - 1) * 3 + (j - 1)));
-			g->deleteSprite(name, _FOREGROUND);
+			core->deleteSprite(name, _FOREGROUND);
 		}
 	}
-	g->deleteTexture("card-bg");
+	core->deleteTexture("card-bg");
 
 	std::cout << "Score : " << score << "\tMax combo : " << maximumCombo << "\n";
 
-	core->changeState(_STATE_TITLE);
+	sCore->changeState(_STATE_TITLE);
 }
 
 void GamePair::handleClick(std::string name, bool active) {
@@ -242,6 +237,7 @@ void GamePair::handleKey(SDL_Scancode key, bool active) {
 	if (!isInteractable() || gameStatus != _IDLE) return;
 
 	if (key == SDL_SCANCODE_SPACE && active) {
+		core->playSound("vine", _AUDIO_SFX, 100);
 		newPuzzle();
 		return;
 	}
@@ -309,10 +305,8 @@ void GamePair::winLevel() {
 	toggleInteractivity(false);
 	adjustDifficulty(true);
 
-	Graphics* g = core->getGraphics();
-
-	g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
-	g->getSprite("goodjob")->setStatus(_IDLE);
+	core->addSprite("goodjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, true);
+	core->addSprite("goodjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
 
 	displayTimer = resultDisplayFrames;
 }
@@ -323,17 +317,13 @@ void GamePair::loseLevel() {
 	toggleInteractivity(false);
 	adjustDifficulty(false);
 
-	Graphics* g = core->getGraphics();
-
-	g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
-	g->getSprite("badjob")->setStatus(_IDLE);
+	core->addSprite("badjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, true);
+	core->addSprite("badjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
 
 	displayTimer = resultDisplayFrames;
 }
 
 void GamePair::newPuzzle() {
-	Graphics* g = core->getGraphics();
-
 	deleteCards();
 	displayTimer = cardDisplayFrames;
 	puzzleElapsedFrames = 0;
@@ -347,7 +337,7 @@ void GamePair::newPuzzle() {
 	for (int i = 0; i < _PAIR_HEIGHT * _PAIR_WIDTH; i++) {
 		name = "card-bg-";
 		name.append(std::to_string(i));
-		s = g->getSprite(name);
+		s = core->addSprite(name, _FOREGROUND, nullptr);
 		s->resetRect();
 	}
 
@@ -393,13 +383,11 @@ void GamePair::createCard(int pos, int type) {
 	spriteName.append(std::to_string(pos));
 	//SDL_QueryTexture(g->getTexture(textureName), nullptr, nullptr, &w, &h);
 	w = h = (int)(1080 * 0.1);
-	SDL_FRect* rect;
-
-	Graphics* g = core->getGraphics();
-
-	rect = new SDL_FRect{ (1920 * 0.5f - w * 1.75f) + (pos % _PAIR_WIDTH) * (w * 1.25f), (1080 * 0.5f - h * 2.375f) + (pos / _PAIR_WIDTH) * (h * 1.25f), (float)w, (float)h };
-	g->addSprite(g->getTexture(textureName), nullptr, rect, _FOREGROUND, spriteName);
-	Sprite* s = g->getSprite(spriteName);
+	SDL_FRect* r;
+	SDL_Texture* tex = core->addTexture(nullptr, textureName);
+	r = new SDL_FRect{ (1920 * 0.5f - w * 1.75f) + (pos % _PAIR_WIDTH) * (w * 1.25f), (1080 * 0.5f - h * 2.375f) + (pos / _PAIR_WIDTH) * (h * 1.25f), (float)w, (float)h };
+	Sprite* s = core->addSprite(spriteName, _FOREGROUND, new Sprite(tex, nullptr, r));
+	
 	if (s != nullptr) {
 		ag = new AnimationGroup(true, true, true);
 		if (s->addAnimationGroup("static", _IDLE, ag)) {
@@ -430,36 +418,33 @@ void GamePair::createCard(int pos, int type) {
 }
 
 void GamePair::deleteCards() {
-	Graphics* g = core->getGraphics();
 	std::string name;
 	for (int i = (int)cards.size(); i; i--) {
 		if (cards[i - 1].type != -1) {
 			name = "card-card-";
 			name.append(std::to_string(i - 1));
-			g->deleteSprite(name, _FOREGROUND);
+			core->deleteSprite(name, _FOREGROUND);
 		}
 	}
 	cards.clear();
 }
 
 void GamePair::hideCards() {
-	Graphics* g = core->getGraphics();
 	std::string name;
 	for (int i = (int)cards.size(); i; i--) {
 		if (cards[i - 1].type != -1) {
 			name = "card-card-";
 			name.append(std::to_string(i - 1));
-			g->getSprite(name)->toggleAnimationGroup("static", _IDLE, false);
-			g->getSprite(name)->toggleAnimationGroup("hide", _IDLE, true);
+			core->addSprite(name, _FOREGROUND, nullptr)->toggleAnimationGroup("static", _IDLE, false);
+			core->addSprite(name, _FOREGROUND, nullptr)->toggleAnimationGroup("hide", _IDLE, true);
 			name = "card-bg-";
 			name.append(std::to_string(i - 1));
-			g->getSprite(name)->toggleAnimationGroup("show", _IDLE, true);
+			core->addSprite(name, _FOREGROUND, nullptr)->toggleAnimationGroup("show", _IDLE, true);
 		}
 	}
 }
 
 void GamePair::openCard(int pos) {
-	Graphics* g = core->getGraphics();
 	if (displayTimer > 0) {
 		hideCards();
 		displayTimer = -1;
@@ -470,14 +455,14 @@ void GamePair::openCard(int pos) {
 		cards[pos].opened = true;
 		name = "card-card-";
 		name.append(std::to_string(pos));
-		Sprite* s = g->getSprite(name);
+		Sprite* s = core->addSprite(name, _FOREGROUND, nullptr);
 		s->setStatus(_IDLE);
 		s->toggleAnimationGroup("static", _IDLE, true);
 		s->toggleAnimationGroup("show", _IDLE, true);
 
 		name = "card-bg-";
 		name.append(std::to_string(pos));
-		s = g->getSprite(name);
+		s = core->addSprite(name, _FOREGROUND, nullptr);
 		s->toggleAnimationGroup("hide", _IDLE, true);
 	}
 }

@@ -1,5 +1,6 @@
 //#include <string.h>
 
+#include "../sprite.h"
 #include "../graphics.h"
 #include "../audio.h"
 #include "../input.h"
@@ -7,7 +8,7 @@
 
 #include "StateTitle.h"
 
-StateTitle::StateTitle(SCore* _core) : State(_core) {
+StateTitle::StateTitle(SCore* _score, Core* _core) : State(_score, _core) {
 	init();
 }
 
@@ -15,21 +16,19 @@ StateTitle::~StateTitle() {}
 
 void StateTitle::init() {
 	//g->reset();
-
+	SDL_Texture* tex;
 	AnimationGroup* ag;
 	AnimationEvent* ae;
 	Sprite* s;
 	SDL_FRect* r;
 	int cycle, w, h;
-
-	Graphics* g = core->getGraphics();
 	
 	// background
-	if (g->addTexture("assets/bg.png", "test")) {
-		g->addSprite(g->getTexture("test"), nullptr, nullptr, _BACKGROUND, "testbg");
-		s = g->getSprite("testbg");
+	if (tex = core->addTexture("assets/bg.png", "test")) {
+		s = core->addSprite("testbg", _BACKGROUND, new Sprite(tex, nullptr, nullptr));
+
 		if (s != nullptr) {
-			//		static motion
+			// static motion
 			ag = new AnimationGroup(true, false, true);
 			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
 				ae = new AnimationEvent(1, Animations::staticMotion);
@@ -38,36 +37,29 @@ void StateTitle::init() {
 		}
 	}
 
-	std::wstring test = L"가나다★ABC";
-	SDL_Surface* textSurface = g->getTextSurface(test, "white", 800);
-	if (textSurface != nullptr) {
-		SDL_Texture* textTexture = SDL_CreateTextureFromSurface(g->getRenderer(), textSurface);
-		SDL_FreeSurface(textSurface);
+	// text
+	tex = core->strToTexture(L"가나다ABC", "white", 800);
+	if (tex = core->addTexture(tex, "testText")) {
+		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+		r = new SDL_FRect{ 100.0f, 100.0f, (float)w, (float)h };
+		s = core->addSprite("txt", _FOREGROUND, new Sprite(tex, nullptr, r));
 
-		if (g->addTexture(textTexture, "testText")) {
-			SDL_QueryTexture(textTexture, nullptr, nullptr, &w, &h);
-			r = new SDL_FRect{ 100.0f, 100.0f, (float)w, (float)h };
-			if (g->addSprite(g->getTexture("testText"), nullptr, r, _FOREGROUND, "text")) {
-				s = g->getSprite("text");
-				if (s != nullptr) {
-					// static motion
-					ag = new AnimationGroup(true, false, true);
-					if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
-						ae = new AnimationEvent(1, Animations::staticMotion);
-						s->addAnimationEvent("idleStatic", ae);
-					}
-				}
+		if (s != nullptr) {
+			// static motion
+			ag = new AnimationGroup(true, false, true);
+			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
+				ae = new AnimationEvent(1, Animations::staticMotion);
+				s->addAnimationEvent("idleStatic", ae);
 			}
 		}
 	}
 
 	// test logo
-	if (g->addTexture("assets/buh.png", "test2")) {
-		SDL_QueryTexture(g->getTexture("test2"), 0, 0, &w, &h);
+	if (tex = core->addTexture("assets/buh.png", "test2")) {
+		SDL_QueryTexture(tex, 0, 0, &w, &h);
 		r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
+		s = core->addSprite("testfg", _FOREGROUND, new Sprite(tex, nullptr, r));
 
-		g->addSprite(g->getTexture("test2"), nullptr, r, _FOREGROUND, "testfg");
-		s = g->getSprite("testfg");
 		if (s != nullptr) {
 			// pop out from center of screen
 			cycle = 30;
@@ -134,11 +126,13 @@ void StateTitle::init() {
 	}
 	else {
 		// if sprite already exists, disable 10% opacity
-		s = g->getSprite("testfg");
+		s = core->addSprite("testfg", _FOREGROUND, nullptr);
 		if (s != nullptr) {
 			s->toggleAnimationGroup("idleOpacity", _IDLE, false);
 		}
 	}
+
+	core->addSound("assets/Vine Boom.ogg", "vine", false, false);
 }
 
 void StateTitle::update() {
@@ -153,7 +147,7 @@ void StateTitle::exitState(StateType targetState) {
 	default:
 		freeAll();
 	}
-	core->changeState(targetState);
+	sCore->changeState(targetState);
 }
 
 void StateTitle::freeAll() {
@@ -161,20 +155,15 @@ void StateTitle::freeAll() {
 }
 
 void StateTitle::freeSpecifics() {
-	Graphics* g = core->getGraphics();
-	g->getSprite("testfg")->toggleAnimationGroup("idleOpacity", _IDLE, true);
+	core->addSprite("testfg", _FOREGROUND, nullptr)->toggleAnimationGroup("idleOpacity", _IDLE, true);
 	test = false;
 }
 
 
 void StateTitle::handleClick(std::string name, bool active) {
-	Audio* a = core->getAudio();
 	if (name == "testfg" && active) {
 		// *vine boom*
-		FMOD::Channel* ch;
-		std::string vine = "vine", path = "assets/Vine Boom.ogg";
-		ch = a->addSound(path, vine, false, false, _AUDIO_SFX, 100);
-		ch->setPaused(false);
+		core->playSound("vine", _AUDIO_SFX, 100);
 		exitState(_GAME_PAIR);
 	}
 	return;
@@ -182,6 +171,7 @@ void StateTitle::handleClick(std::string name, bool active) {
 
 void StateTitle::handleKey(SDL_Scancode key, bool active) {
 	if (key == SDL_SCANCODE_SPACE && active) {
+		core->playSound("vine", _AUDIO_SFX, 100);
 		exitState(_GAME_PAIR);
 	}
 	return;

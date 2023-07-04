@@ -5,15 +5,14 @@
 
 #include "StateTest.h"
 
-StateTest::StateTest(SCore* _core) : State(_core) {
+StateTest::StateTest(SCore* _score, Core* _core) : State(_score, _core) {
 	init();
 }
 
 StateTest::~StateTest() {}
 
 void StateTest::init() {
-	Graphics* g = core->getGraphics();
-	g->reset();
+	//g->reset();
 }
 
 void StateTest::update() {}

@@ -3,7 +3,7 @@
 
 class StateTitle : public State {
 public:
-	StateTitle(SCore* _core);
+	StateTitle(SCore* _score, Core* _core);
 	~StateTitle();
 	void init() override;
 	void update() override;

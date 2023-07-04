@@ -29,16 +29,7 @@ public:
 
 	int checkKeybinds(SDL_Scancode key);
 
-	Graphics* getGraphics();
-	Audio* getAudio();
-
 private:
-
-	// Returns false if the first item in queue currently has a certain type.
-	//	(ex. _CMD_STATE - game is under state transition)
-	// Otherwise, returns true.
-	bool cmdEnabled;
-
 	State* s;
 
 	StateType currentState;

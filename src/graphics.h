@@ -33,6 +33,8 @@ public:
 
 	SDL_Surface* getTextSurface(std::wstring text, std::string color, int wrapLength);
 
+	// TODO: Fix the currently-used workaround of using addTexture/addSprite to get existing texture/sprite objects
+
 	// Stores texture on memory. Returns true if successful, false otherwise.
 	// 
 	// path : File path of the image asset.
@@ -42,11 +44,12 @@ public:
 	
 	// Adds sprite to memory. Returns true if successful, false otherwise.
 	// 
-	// tex : Texture to use for the sprite. Use getTexture().
+	// texName : Texture object identifier to use for the sprite.
+	// spriteName : Sprite object identifier.
 	// src / dst : Rect area used on sprite sheet / sprite render. Pass nullptr to use the entire area.
-	// name : Sprite object identifier.
 	// angle : Sprite rotation angle (clockwise).
-	Sprite* addSprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, SpriteType type, std::string name, double angle = 0.0);
+	Sprite* addSprite(std::string texName, std::string spriteName, SDL_Rect* src, SDL_FRect* dst, SpriteType type, double angle = 0.0);
+	Sprite* addSprite(std::string name, SpriteType type, Sprite* s);
 
 	bool deleteTexture(std::string name);
 

@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "../status.h"
+#include "../core.h"
 #include "../animation_functions.h"
 
 class SCore;
@@ -16,7 +17,8 @@ enum StateType {
 // Base class for game states
 class State {
 public:
-	State(SCore* _core) : core(_core), interactable(true) {}
+	State(SCore* _score, Core* _core) : sCore(_score), core(_core),
+										interactable(true) {}
 	virtual ~State() {}
 
 	virtual void init() = 0;
@@ -41,7 +43,10 @@ public:
 	void toggleInteractivity(bool status) { interactable = status; }
 	bool isInteractable() { return interactable; }
 protected:
-	SCore* core;
+	// TODO: find a better implementation
+
+	SCore* sCore;
+	Core* core;
 
 private:
 	bool interactable;
