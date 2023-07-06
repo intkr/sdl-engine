@@ -9,26 +9,22 @@
 
 #include "core.h"
 
-//extern const int fps = 60; // Not actually FPS
-
 INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
-	// remove or add comment to toggle console output for debug purposes
+	// Opens the console for debugging purposes.
 	AllocConsole();
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 	
 	srand((unsigned int)time(NULL));
 
-	Core* game = new Core();
-	game->gaming();
+	Core* core = new Core();
+	core->loop();
 
 	return 0;
 }
 
 /*
 TODO:
-	work on class descriptions and member function comments
-
-	user data file save / load
+	player class for user data file save / load
 		+ non-messy way to use user data throughout multiple objects
 
 	fix this amalgated mess of object hierarchy communication bullshit

@@ -1,13 +1,12 @@
 #pragma once
 #include <queue>
 
-#include "../core.h"
-
 #include "StateTitle.h"
 #include "StateTest.h"
 
 #include "GamePair.h"
 
+class Core;
 // State Core
 class SCore {
 public:
@@ -26,9 +25,6 @@ public:
 	void handleHover(std::string objName);
 	void handleClick(std::string objName, bool active);
 	void handleRelease(std::string objName);
-
-	int checkKeybinds(SDL_Scancode key);
-
 private:
 	State* s;
 

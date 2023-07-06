@@ -1,12 +1,8 @@
-//#include <string.h>
+#include "StateTitle.h"
 
-#include "../sprite.h"
-#include "../graphics.h"
-#include "../audio.h"
-#include "../input.h"
+#include "../core.h"
 #include "score.h"
 
-#include "StateTitle.h"
 
 StateTitle::StateTitle(SCore* _score, Core* _core) : State(_score, _core) {
 	init();
@@ -15,7 +11,7 @@ StateTitle::StateTitle(SCore* _score, Core* _core) : State(_score, _core) {
 StateTitle::~StateTitle() {}
 
 void StateTitle::init() {
-	//g->reset();
+	Graphics* g = core->getGraphics();
 	SDL_Texture* tex;
 	AnimationGroup* ag;
 	AnimationEvent* ae;
@@ -24,8 +20,8 @@ void StateTitle::init() {
 	int cycle, w, h;
 	
 	// background
-	if (tex = core->addTexture("assets/bg.png", "test")) {
-		s = core->addSprite("testbg", _BACKGROUND, new Sprite(tex, nullptr, nullptr));
+	if (tex = g->addTexture("assets/bg.png", "test")) {
+		s = g->addSprite("testbg", _BACKGROUND, new Sprite(tex, nullptr, nullptr));
 
 		if (s != nullptr) {
 			// static motion
@@ -38,11 +34,11 @@ void StateTitle::init() {
 	}
 
 	// text
-	tex = core->strToTexture(L"가나다ABC", "white", 800);
-	if (tex = core->addTexture(tex, "testText")) {
+	tex = g->getTextTexture(L"가나다ABC", "white", 800);
+	if (tex = g->addTexture(tex, "testText")) {
 		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
 		r = new SDL_FRect{ 100.0f, 100.0f, (float)w, (float)h };
-		s = core->addSprite("txt", _FOREGROUND, new Sprite(tex, nullptr, r));
+		s = g->addSprite("txt", _FOREGROUND, new Sprite(tex, nullptr, r));
 
 		if (s != nullptr) {
 			// static motion
@@ -55,10 +51,10 @@ void StateTitle::init() {
 	}
 
 	// test logo
-	if (tex = core->addTexture("assets/buh.png", "test2")) {
+	if (tex = g->addTexture("assets/buh.png", "test2")) {
 		SDL_QueryTexture(tex, 0, 0, &w, &h);
 		r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
-		s = core->addSprite("testfg", _FOREGROUND, new Sprite(tex, nullptr, r));
+		s = g->addSprite("testfg", _FOREGROUND, new Sprite(tex, nullptr, r));
 
 		if (s != nullptr) {
 			// pop out from center of screen
@@ -126,13 +122,14 @@ void StateTitle::init() {
 	}
 	else {
 		// if sprite already exists, disable 10% opacity
-		s = core->addSprite("testfg", _FOREGROUND, nullptr);
+		s = g->addSprite("testfg", _FOREGROUND, nullptr);
 		if (s != nullptr) {
 			s->toggleAnimationGroup("idleOpacity", _IDLE, false);
 		}
 	}
 
-	core->addSound("assets/Vine Boom.ogg", "vine", false, false);
+	Audio* a = core->getAudio();
+	a->addSound("assets/Vine Boom.ogg", "vine", false, false);
 }
 
 void StateTitle::update() {
@@ -155,23 +152,26 @@ void StateTitle::freeAll() {
 }
 
 void StateTitle::freeSpecifics() {
-	core->addSprite("testfg", _FOREGROUND, nullptr)->toggleAnimationGroup("idleOpacity", _IDLE, true);
+	Graphics* g = core->getGraphics();
+	g->addSprite("testfg", _FOREGROUND, nullptr)->toggleAnimationGroup("idleOpacity", _IDLE, true);
 	test = false;
 }
 
 
 void StateTitle::handleClick(std::string name, bool active) {
+	Audio* a = core->getAudio();
 	if (name == "testfg" && active) {
 		// *vine boom*
-		core->playSound("vine", _AUDIO_SFX, 100);
+		a->playSound("vine", _AUDIO_SFX, 100);
 		exitState(_GAME_PAIR);
 	}
 	return;
 }
 
 void StateTitle::handleKey(SDL_Scancode key, bool active) {
+	Audio* a = core->getAudio();
 	if (key == SDL_SCANCODE_SPACE && active) {
-		core->playSound("vine", _AUDIO_SFX, 100);
+		a->playSound("vine", _AUDIO_SFX, 100);
 		exitState(_GAME_PAIR);
 	}
 	return;

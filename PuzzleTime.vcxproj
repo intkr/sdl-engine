@@ -49,7 +49,6 @@
     <ClCompile Include="src\sprite.cpp" />
     <ClCompile Include="src\states\game.cpp" />
     <ClCompile Include="src\states\GamePair.cpp" />
-    <ClCompile Include="src\states\state.cpp" />
     <ClCompile Include="src\states\score.cpp" />
     <ClCompile Include="src\states\StateTest.cpp" />
     <ClCompile Include="src\states\StateTitle.cpp" />

@@ -11,36 +11,76 @@ public:
 	virtual ~Game() {}
 
 protected:
+	/// <summary>
+	/// Creates a new puzzle.
+	/// </summary>
 	virtual void newPuzzle() = 0;
+
+	/// <summary>
+	/// Adjusts the difficulty using several factors.
+	/// </summary>
+	/// <param name="win">: true if the last puzzle was solved correctly.</param>
+	virtual void adjustDifficulty(bool win) = 0;
+
 	virtual void winLevel();
 	virtual void loseLevel();
-	virtual void adjustDifficulty(bool won) = 0;
 
+	/// <summary>
+	/// Updates the state timers.
+	/// </summary>
 	void updateTime() { gameTimer--; gameElapsedFrames++; puzzleElapsedFrames++; }
 
+	/// <summary>
+	/// Current difficulty of the puzzle.<para/>
+	/// Difficulty range differs for every game.
+	/// </summary>
 	float difficulty;
+
+	/// <summary>
+	/// Current status of the game.<para/>
+	/// Used for cutscene purposes.
+	/// </summary>
 	StatusType gameStatus;
 
-	// Timer for gameplay, in frames.
-	// Timer starts at 60 seconds (3600 frames) on default.
+	/// <summary>
+	/// Gameplay timer, measured in frames.
+	/// Timer starts at 60 seconds (or 3600 frames) by default.
+	/// </summary>
 	int gameTimer;
 
-	// Elapsed frames for current game.
+	/// <summary>
+	/// Frames elapsed for the current game.
+	/// Excludes intro / outro cutscenes.
+	/// </summary>
 	int gameElapsedFrames;
 
-	// Elapsed frames for current puzzle.
-	// Used to adjust difficulty.
+	/// <summary>
+	/// Frames elapsed for the current puzzle.
+	/// </summary>
 	int puzzleElapsedFrames;
 
-	// User's game score.
+	/// <summary>
+	/// Current game score.
+	/// </summary>
 	int score;
 
-	// Base game score rewarded per puzzle.
+	/// <summary>
+	/// Base score rewarded per solved puzzle.
+	/// </summary>
 	int baseScore;
 
-	// Exponent value for combo-score calculation.
+	/// <summary>
+	/// Exponent value for combo-score calculation.
+	/// </summary>
 	float scoreExponent;
 
+	/// <summary>
+	/// Current combo.
+	/// </summary>
 	int currentCombo;
+
+	/// <summary>
+	/// Maximum combo achieved during the current game.
+	/// </summary>
 	int maximumCombo;
 };

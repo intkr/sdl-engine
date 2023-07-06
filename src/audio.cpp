@@ -1,52 +1,38 @@
 #include "audio.h"
 
+#include "core.h"
+
 Audio::Audio(Core* _core) : core(_core) {
 	fr = FMOD::System_Create(&fs);
 	fr = fs->init(512, FMOD_INIT_NORMAL, 0);
 
-	FMOD::ChannelGroup* cg;
-	fs->createChannelGroup("bgm", &cg);
-	_soundgroups[_AUDIO_BGM] = cg;
+	FMOD::ChannelGroup* bgm;
+	fs->createChannelGroup("bgm", &bgm);
+	_chgroups[_AUDIO_BGM] = bgm;
 
-	fs->createChannelGroup("sfx", &cg);
-	_soundgroups[_AUDIO_SFX] = cg;
+	FMOD::ChannelGroup* sfx;
+	fs->createChannelGroup("sfx", &sfx);
+	_chgroups[_AUDIO_SFX] = sfx;
 }
 
 Audio::~Audio() {
-
-	// Release all allocated audio objects
 	stopSound();
-
-	FMOD::Channel* channel;
-	FMOD::Sound* sound;
-	FMOD::ChannelGroup* cg = _soundgroups[_AUDIO_SFX];
-	int n;
-	cg->getNumChannels(&n);
-	for (; n; n--) {
-		cg->getChannel(n - 1, &channel);
-		channel->getCurrentSound(&sound);
-		sound->release();
-	}
-
+	// TODO: check how to delete FMOD::ChannelGroups
 	fs->close();
 	fs->release();
 }
 
-bool Audio::addSound(std::string path, std::string name, bool isLoop, bool isStream, AudioType type, int volume) {
-	// Setting audio boundaries
-	if (volume > 100) {
-		std::cout << "Warning: Sound \"" << name << "\" was set to volume " << volume << ", setting to 100 instead.\n";
-		volume = 100;
-	}
-	else if (volume < 0) {
-		std::cout << "Warning: Sound \"" << name << "\" was set to volume " << volume << ", setting to 0 instead.\n";
-		volume = 0;
+bool Audio::addSound(std::string path, std::string name, bool isLoop, bool isStream) {
+	if (_sounds.count(name) > 0) {
+		std::cout << "Failed to add sound \"" << name << "\". (Duplicate sound name)\n";
+		return false;
 	}
 
-	// Create sound object
 	FMOD::Sound* sound;
 	fr = fs->createSound(path.c_str(), (isLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF) | FMOD_2D | (isStream ? FMOD_CREATESTREAM : FMOD_CREATESAMPLE), nullptr, &sound);
 	if (fr != FMOD_OK) {
+		// TODO: add more descriptive error prompts
+		std::cout << "Failed to add sound \"" << name << "\". (Unknown error)\n";
 		return false;
 	}
 
@@ -56,10 +42,12 @@ bool Audio::addSound(std::string path, std::string name, bool isLoop, bool isStr
 
 bool Audio::playSound(std::string name, AudioType type, int volume) {
 	if (_sounds.count(name) == 0) {
+		std::cout << "Failed to play sound \"" << name << "\". (Nonexistent name)\n";
 		return false;
 	}
+
 	FMOD::Channel* channel;
-	fr = fs->playSound(_sounds[name], _soundgroups[type], false, &channel);
+	fr = fs->playSound(_sounds[name], _chgroups[type], false, &channel);
 
 	_channels.insert(std::make_pair(name, channel));
 	return true;
@@ -67,8 +55,10 @@ bool Audio::playSound(std::string name, AudioType type, int volume) {
 
 bool Audio::pauseSound(std::string name) {
 	if (_channels.count(name) == 0) {
+		std::cout << "Failed to pause sound \"" << name << "\". (Nonexistent name)\n";
 		return false;
 	}
+
 	_channels.find(name)->second->setPaused(true);
 	return true;
 }
@@ -85,7 +75,7 @@ bool Audio::stopSound(std::string name, AudioType type) {
 	FMOD::Channel* channel;
 
 	if (_channels.count(name) == 0) {
-		std::cout << "Sound name \"" << name << "\" doesn't exist, failed to delete.\n";
+		std::cout << "Failed to stop sound \"" << name << "\". (Nonexistent name)\n";
 		return false;
 	}
 
@@ -109,5 +99,5 @@ void Audio::update() {
 }
 
 bool Audio::hasSounds() {
-	return _soundgroups.size() > 0;
+	return _channels.size() > 0;
 }

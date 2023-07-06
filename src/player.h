@@ -7,12 +7,10 @@
 
 #include "jsoncpp/json.h"
 
-#include "core.h"
+class Core;
 
 class Player {
 public:
-	friend class Core;
-
 	Player(Core* core);
 	~Player();
 	void saveData();

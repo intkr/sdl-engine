@@ -1,6 +1,8 @@
 #include "score.h"
+
 #include "../graphics.h"
 #include "../input.h"
+#include "../core.h"
 
 SCore::SCore(Core* _core) : core(_core), currentState(_STATE_TITLE) {
 	changeState(currentState);
@@ -70,8 +72,4 @@ void SCore::handleClick(std::string objName, bool active) {
 
 void SCore::handleRelease(std::string objName) {
 	s->handleRelease(objName);
-}
-
-int SCore::checkKeybinds(SDL_Scancode key) {
-	return core->checkKeybinds(key);
 }

@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "core.h"
 
 Player::Player(Core* _core) : core(_core) {
 	init();

@@ -10,34 +10,63 @@ public:
 	AnimationEvent(int length, void (*func)(Sprite*, AnimationEvent*)) : maxFrames(length), currentFrame(0), f(func) {}
 	~AnimationEvent() {}
 
-	// Processes the sprite's animation.
-	// If an animation cycle has finished, reset the current frame timer and return true.
-	// Otherwise, return false.
+	/// <summary>
+	/// Animate the sprite by processing an animation event.
+	/// </summary>
+	/// <param name="s">: Sprite object.</param>
+	/// <returns>true if the animation event has finished, false otherwise.</returns>
 	bool animate(Sprite* s);
 
+	/// <summary>
+	/// Resets the animation event by resetting the current frame counter.
+	/// </summary>
 	void reset() { currentFrame = 1; }
 	
 	unsigned int getCurrentFrame() { return currentFrame; }
 	unsigned int getMaxFrames() { return maxFrames; }
 
+	/// <summary>
+	/// Sets a new animation parameter.
+	/// </summary>
+	/// <param name="name">: Parameter name.</param>
+	/// <param name="value">: Parameter value.</param>
+	/// <returns>true if successful, false otherwise.</returns>
 	bool setBool(std::string name, bool value);
 	bool setChar(std::string name, char value);
 	bool setFloat(std::string name, float value);
 
+	/// <summary>
+	/// Returns an animation parameter.<para/>
+	/// If an invalid parameter is requested, a default value listed as below is returned.<para/>
+	/// false (bool) / '\0' (char) / 0.0f (float)
+	/// </summary>
+	/// <param name="name">: Parameter name.</param>
+	/// <returns>Parameter value if successful, or default value otherwise.</returns>
 	bool getBool(std::string name);
 	char getChar(std::string name);
 	float getFloat(std::string name);
 
 private:
+	/// <summary>
+	/// Animation function defined within the namespace 'Animations'.
+	/// </summary>
 	void (*f)(Sprite*, AnimationEvent*);
 
-	// Value range is [1 ~ maxFrames].
-	// Value is changed after animation is processed.
+	/// <summary>
+	/// Current animation frame counter.<para/>
+	/// Value range is [1 ~ maxFrames].
+	/// </summary>
 	unsigned int currentFrame;
 
-	// Length is set assuming game runs at 60 FPS.
+	/// <summary>
+	/// Length of the animation in frames.<para/>
+	/// Assumes game runs at 60 FPS.
+	/// </summary>
 	unsigned int maxFrames;
 
+	/// <summary>
+	/// List of parameters.
+	/// </summary>
 	std::map<std::string, float> paramFloat;
 	std::map<std::string, char> paramChar;
 	std::map<std::string, bool> paramBool;
@@ -50,35 +79,60 @@ public:
 		: looping(_looping), sequential(_sequential), enabled(_enabled), currentAnimation((int)!_sequential) {}
 	~AnimationGroup();
 
-	// Resets all AnimationEvents to its initial state.
+	/// <summary>
+	/// Resets all AnimationEvents in the group to its initial state.
+	/// </summary>
 	void reset();
 
-	// Processes the sprite's animation group.
-	// If all animation has finished playing, return true.
-	// Otherwise, return false.
+	/// <summary>
+	/// Animates the sprite by processing all events in the group.
+	/// </summary>
+	/// <param name="s">: Sprite object.</param>
+	/// <returns>true if all animation events have finished, false otherwise.</returns>
 	bool animate(Sprite* s);
 
+	/// <summary>
+	/// Adds an animation event to the group.
+	/// </summary>
+	/// <param name="e">: Animation event object.</param>
+	/// <returns>true if successful, false otherwise.</returns>
 	bool addEvent(AnimationEvent* e);
 
-	void update();
-
+	/// <summary>
+	/// Enables the group, and resets all events in the group.
+	/// </summary>
 	void enableGroup();
+
+	/// <summary>
+	/// Disables the group.<para/>
+	/// Its events are not affected.
+	/// </summary>
 	void disableGroup() { enabled = false; }
 
 private:
-	// Vector containing all animation objects within the group.
+	/// <summary>
+	/// List of all animation events for the group.
+	/// </summary>
 	std::vector<AnimationEvent*> animationList;
 
-	// Index of the currently playing animation in _animationList.
-	// 
-	// Any non-negative value indicates that this animation group is sequential,
-	// so every AnimatinoEvent should be processed one-by-one.
-	//
-	// Negative values (ideally -1) indicates that this animation group is non-sequential,
-	// so every AnimationEvent should all be processed at once.
+	/// <summary>
+	/// Index of the currently playing animation event in _animationList, if the group is sequential.<para/>
+	/// -1 if the group is not sequential, indicating all events should be played simultaneously.
+	/// </summary>
 	unsigned int currentAnimation;
 
+	/// <summary>
+	/// If true, its animation events are processed.
+	/// </summary>
 	bool enabled;
+
+	/// <summary>
+	/// If true, all animation events restart when they are finished.
+	/// </summary>
 	bool looping;
+
+	/// <summary>
+	/// If true, the animation events in the group is processed one at a time.
+	/// </summary>
 	bool sequential;
 };

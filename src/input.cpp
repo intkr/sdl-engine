@@ -1,95 +1,61 @@
 #include "input.h"
 
+#include "core.h"
+
 Input::Input(Core* _core) : core(_core) {
-	mouseStatus = 0;
+	leftClickStatus = _MOUSE_UP;
 	curX = curY = 0;
-	quitTriggered = false;
 
-	// default keybinds
-	lefthandKeys[0][0] = SDL_SCANCODE_T;
-	lefthandKeys[0][1] = SDL_SCANCODE_Y;
-	lefthandKeys[0][2] = SDL_SCANCODE_U;
-	lefthandKeys[1][0] = SDL_SCANCODE_T;
-	lefthandKeys[1][1] = SDL_SCANCODE_Y;
-	lefthandKeys[1][2] = SDL_SCANCODE_U;
-	lefthandKeys[2][0] = SDL_SCANCODE_T;
-	lefthandKeys[2][1] = SDL_SCANCODE_Y;
-	lefthandKeys[2][2] = SDL_SCANCODE_U;
-	lefthandKeys[3][0] = SDL_SCANCODE_T;
-	lefthandKeys[3][1] = SDL_SCANCODE_Y;
-	lefthandKeys[3][2] = SDL_SCANCODE_U;
-
-	righthandKeys[0][0] = SDL_SCANCODE_KP_7;
-	righthandKeys[0][1] = SDL_SCANCODE_KP_8;
-	righthandKeys[0][2] = SDL_SCANCODE_KP_9;
-	righthandKeys[1][0] = SDL_SCANCODE_KP_4;
-	righthandKeys[1][1] = SDL_SCANCODE_KP_5;
-	righthandKeys[1][2] = SDL_SCANCODE_KP_6;
-	righthandKeys[2][0] = SDL_SCANCODE_KP_1;
-	righthandKeys[2][1] = SDL_SCANCODE_KP_2;
-	righthandKeys[2][2] = SDL_SCANCODE_KP_3;
-	righthandKeys[3][0] = SDL_SCANCODE_KP_0;
-	righthandKeys[3][1] = SDL_SCANCODE_KP_PERIOD;
-	righthandKeys[3][2] = SDL_SCANCODE_KP_ENTER;
+	// Keypad layout for my current setup
+	twelveKeys[0][0] = SDL_SCANCODE_KP_7;
+	twelveKeys[0][1] = SDL_SCANCODE_KP_8;
+	twelveKeys[0][2] = SDL_SCANCODE_KP_9;
+	twelveKeys[1][0] = SDL_SCANCODE_KP_4;
+	twelveKeys[1][1] = SDL_SCANCODE_KP_5;
+	twelveKeys[1][2] = SDL_SCANCODE_KP_6;
+	twelveKeys[2][0] = SDL_SCANCODE_KP_1;
+	twelveKeys[2][1] = SDL_SCANCODE_KP_2;
+	twelveKeys[2][2] = SDL_SCANCODE_KP_3;
+	twelveKeys[3][0] = SDL_SCANCODE_KP_0;
+	twelveKeys[3][1] = SDL_SCANCODE_KP_PERIOD;
+	twelveKeys[3][2] = SDL_SCANCODE_KP_ENTER;
 }
 
 Input::~Input() {
 	pressedKeys.clear();
-	clickedObject.clear();
+	clickedSprites.clear();
 }
 
-std::map<SDL_Scancode, bool>* Input::getPressedKeys() {
-	return &pressedKeys;
-}
-
-std::map<std::string, bool>* Input::getClickedObject() {
-	return &clickedObject;
-}
-
-std::vector<std::string>* Input::getReleasedObject() {
-	return &releasedObject;
-}
-
-std::vector<std::string>* Input::getHoveredObject() {
-	return &hoveredObject;
-}
-
-void Input::update(SDL_Event& e) {
+void Input::update() {
 	flushInput();
-	pollInput(e);
+	pollInput();
 	handleInput();
 }
 
-void Input::pollInput(SDL_Event& e) {
-	// Handle key presses and mouse events
+void Input::pollInput() {
+	SDL_Event e;
+	
 	while (SDL_PollEvent(&e)) {
 		switch (e.type) {
+		// Window X button
 		case SDL_QUIT:
-			//gaming = false;
-			quitTriggered = true;
+			core->quit();
 			break;
+
+		// Key press / release
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			pollKey(e.key.keysym.scancode, e.type);
 			break;
+
+		// Mouse click / release
 		case SDL_MOUSEBUTTONDOWN:
-			if (e.button.button == SDL_BUTTON_LEFT) {
-				mouseStatus = _MOUSE_ACTIVE;
-				curX = e.button.x;
-				curY = e.button.y;
-			}
-			break;
 		case SDL_MOUSEBUTTONUP:
 			if (e.button.button == SDL_BUTTON_LEFT) {
-				mouseStatus = _MOUSE_UP;
-				curX = e.button.x;
-				curY = e.button.y;
+				leftClickStatus = (e.type == SDL_MOUSEBUTTONUP) ? _MOUSE_UP : _MOUSE_ACTIVE;
 			}
-			break;
+		// Mouse movement
 		case SDL_MOUSEMOTION:
-			// SDL_MOUSEBUTTONDOWN event can get overridden if code below isn't commented
-			// 
-			//if (mouseStatus == _MOUSE_ACTIVE) mouseStatus = _MOUSE_PASSIVE;
 			curX = e.motion.x;
 			curY = e.motion.y;
 			break;
@@ -98,6 +64,7 @@ void Input::pollInput(SDL_Event& e) {
 		}
 	}
 
+	// Note: pollMouse needs to be called every frame to check mouse hover
 	pollMouse(curX, curY);
 }
 
@@ -105,12 +72,13 @@ void Input::flushInput() {
 	for (auto key = pressedKeys.begin(); key != pressedKeys.end();) {
 		key++->second = false;
 	}
-	for (auto obj = clickedObject.begin(); obj != clickedObject.end();) {
+	for (auto obj = clickedSprites.begin(); obj != clickedSprites.end();) {
 		obj++->second = false;
 	}
 
-	hoveredObject.clear();
-	releasedObject.clear();
+	hoveredSprites.clear();
+	releasedSprites.clear();
+	releasedKeys.clear();
 }
 
 
@@ -123,35 +91,41 @@ void Input::pollKey(SDL_Scancode inputKey, Uint32 type) {
 		break;
 	case SDL_KEYUP:
 		pressedKeys.erase(inputKey);
+		releasedKeys.push_back(inputKey);
+		break;
+	default:
+		// Shouldn't happen
+		std::cout << "Invalid input type while polling key events. (" << type << ")\n";
 		break;
 	}
 }
 
 void Input::pollMouse(int x, int y) {
 	SDL_FPoint p = { (float)x, (float)y };
-	SpriteMap** map = core->getSpriteMaps();
-	// Handle hover
+	SpriteMap** map = core->getGraphics()->getSpriteMap();
+
+	// Check mouse hover
 	for (int i = 3; i; i--) {
 		for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
 			Sprite* s = iter->second;
 			std::string t = iter->first;
 
 			if (s->getDstRect() == nullptr || checkCollision(p, s)) {
-				hoveredObject.push_back(t);
+				hoveredSprites.push_back(t);
 			}
 			iter++;
 		}
 	}
 
-	// Handle other mouse events
-	switch (mouseStatus) {
+	// Check other mouse events
+	switch (leftClickStatus) {
 	case _MOUSE_UP:
-		for (auto o = clickedObject.begin(); o != clickedObject.end();) {
+		for (auto o = clickedSprites.begin(); o != clickedSprites.end();) {
 			std::string t = o->first;
-			releasedObject.push_back(o->first);
+			releasedSprites.push_back(o->first);
 			o++;
 		}
-		clickedObject.clear();
+		clickedSprites.clear();
 		break;
 
 	case _MOUSE_ACTIVE:
@@ -161,13 +135,13 @@ void Input::pollMouse(int x, int y) {
 				std::string t = iter->first;
 				
 				if (s->getStatus() != _END && (s->getDstRect() == nullptr || checkCollision(p, s))) {
-					clickedObject[t] = true;
+					clickedSprites[t] = true;
 				}
 				iter++;
 			}
 		}
 
-		mouseStatus = _MOUSE_PASSIVE;
+		leftClickStatus = _MOUSE_PASSIVE;
 		break;
 
 	case _MOUSE_PASSIVE:
@@ -177,17 +151,14 @@ void Input::pollMouse(int x, int y) {
 				std::string t = iter->first;
 
 				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
-					clickedObject[t] = false;
+					clickedSprites[t] = false;
 				}
-				else if (clickedObject.count(t) > 0) {
-					clickedObject.erase(t);
+				else if (clickedSprites.count(t) > 0) {
+					clickedSprites.erase(t);
 				}
 				iter++;
 			}
 		}
-		break;
-	default:
-		// shouldn't happen
 		break;
 	}
 }
@@ -195,7 +166,7 @@ void Input::pollMouse(int x, int y) {
 int Input::checkKeybinds(SDL_Scancode key) {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 3; j++) {
-			if (key == lefthandKeys[i][j] || key == righthandKeys[i][j]) {
+			if (key == twelveKeys[i][j]) {
 				return i * 3 + j;
 			}
 		}
@@ -204,25 +175,21 @@ int Input::checkKeybinds(SDL_Scancode key) {
 }
 
 void Input::handleInput() {
-	SDL_Scancode id;
-	std::string objName;
-	bool active;
+	SCore* sc = core->getSCore();
 
 	for (auto& key : pressedKeys) {
-		id = key.first, active = key.second;
-		core->handleKey(id, active);
+		sc->handleKey(key.first, key.second);
 	}
 
-	for (auto& obj : hoveredObject) {
-		core->handleHover(obj);
+	for (auto& spr : hoveredSprites) {
+		sc->handleHover(spr);
 	}
 
-	for (auto& obj : clickedObject) {
-		objName = obj.first, active = obj.second;
-		core->handleClick(objName, active);
+	for (auto& spr : clickedSprites) {
+		sc->handleClick(spr.first, spr.second);
 	}
 
-	for (auto& obj : releasedObject) {
-		core->handleRelease(obj);
+	for (auto& spr : releasedSprites) {
+		sc->handleRelease(spr);
 	}
 }

@@ -22,15 +22,7 @@ bool AnimationGroup::animate(Sprite* sprite) {
 	if (!enabled) return true;
 
 	if (sequential) {
-		// Sequential animation group, process the currently playing animation.
 		if (animationList[currentAnimation]->animate(sprite)) {
-			// Animation has finished, move on to the next one.
-
-			//if (!looping) {
-			//	delete animationList[currentAnimation];
-			//	animationList.erase(animationList.begin() + currentAnimation--); // subtract 1 as compensation
-			//}
-
 			if (++currentAnimation >= animationList.size()) {
 				if (looping && enabled) {
 					reset();
@@ -40,18 +32,17 @@ bool AnimationGroup::animate(Sprite* sprite) {
 					enabled = false;
 					return true;
 				}
-				currentAnimation *= looping;
-				return !looping;
+				//currentAnimation *= looping;
+				//return !looping;
 			}
 		}
+		return false;
 	}
 	else {
 		bool finished = true;
 
 		for (auto animation = animationList.begin(); animation != animationList.end();) {
-			// Non-sequential animation group, iterate through animationList and process them all at once
 			if ((*animation)->animate(sprite)) {
-				// Animation has finished
 				if (looping && enabled) {
 					(*animation)->reset();
 					finished = false;
@@ -69,9 +60,6 @@ bool AnimationGroup::animate(Sprite* sprite) {
 
 		return finished;
 	}
-
-	// shouldn't reach here
-	return false;
 }
 
 void AnimationGroup::reset() {
@@ -87,6 +75,7 @@ void AnimationGroup::enableGroup() {
 		e->reset();
 	}
 }
+
 //////////////////////////////////////////
 
 bool AnimationEvent::animate(Sprite* sprite) {
@@ -102,35 +91,53 @@ bool AnimationEvent::animate(Sprite* sprite) {
 }
 
 bool AnimationEvent::setBool(std::string name, bool value) {
-	if (paramBool.count(name) > 0) return false;
+	if (paramBool.count(name) > 0) {
+		std::cout << "Failed to set bool parameter \"" << name << "\". (Duplicate parmeter name)\n";
+		return false;
+	}
 	paramBool[name] = value;
 	return true;
 }
 
 bool AnimationEvent::setChar(std::string name, char value) {
-	if (paramChar.count(name) > 0) return false;
+	if (paramChar.count(name) > 0) {
+		std::cout << "Failed to set char parameter \"" << name << "\". (Duplicate parmeter name)\n";
+		return false;
+	}
 	paramChar[name] = value;
 	return true;
 }
 
 bool AnimationEvent::setFloat(std::string name, float value) {
-	if (paramFloat.count(name) > 0) return false;
+	if (paramFloat.count(name) > 0) {
+		std::cout << "Failed to set float parameter \"" << name << "\". (Duplicate parmeter name)\n";
+		return false;
+	}
 	paramFloat[name] = value;
 	return true;
 }
 
 bool AnimationEvent::getBool(std::string name) {
-	if (paramBool.count(name) == 0) return false;
+	if (paramBool.count(name) == 0) {
+		std::cout << "Failed to get bool parameter \"" << name << "\". (Invalid parmeter name)\n";
+		return false;
+	}
 	return paramBool[name];
 }
 
 
 char AnimationEvent::getChar(std::string name) {
-	if (paramChar.count(name) == 0) return '\0';
+	if (paramChar.count(name) == 0) {
+		std::cout << "Failed to get char parameter \"" << name << "\". (Invalid parmeter name)\n";
+		return '\0';
+	}
 	return paramChar[name];
 }
 
 float AnimationEvent::getFloat(std::string name) {
-	if (paramFloat.count(name) == 0) return 0.0f;
+	if (paramFloat.count(name) == 0) {
+		std::cout << "Failed to get float parameter \"" << name << "\". (Invalid parmeter name)\n";
+		return 0.0f;
+	}
 	return paramFloat[name];
 }

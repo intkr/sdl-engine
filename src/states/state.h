@@ -4,10 +4,10 @@
 #include <SDL.h>
 
 #include "../status.h"
-#include "../core.h"
 #include "../animation_functions.h"
 
 class SCore;
+class Core;
 
 enum StateType {
 	_STATE_TEST = 999, _STATE_TITLE = 1,
@@ -21,19 +21,22 @@ public:
 										interactable(true) {}
 	virtual ~State() {}
 
+	/// <summary>
+	/// Initializes the state.
+	/// </summary>
 	virtual void init() = 0;
 	
-	// Returns 0 if the screen state shouldn't change;
-	// otherwise returns screen state key value
+	/// <summary>
+	/// Updates the state.
+	/// </summary>
 	virtual void update() = 0;
 
-	// Deallocates sprites and textures.
-	// In most cases (if not all), _CMD_STATE or _CMD_TRANSITION is assumed.
+	/// <summary>
+	/// Exits the state.<para/>
+	/// Sprites, textures, and sounds should be deallocated here.
+	/// </summary>
+	/// <param name="targetState"></param>
 	virtual void exitState(StateType targetState) = 0;
-
-	// Handles a specific portion of user input, and returns a Command object.
-	// Command type is _CMD_NONE if nothing of value should be returned.
-	// In such cases, the return value should be ignored.
 
 	virtual void handleKey(SDL_Scancode key, bool active) {}
 	virtual void handleHover(std::string name) {}
@@ -43,11 +46,12 @@ public:
 	void toggleInteractivity(bool status) { interactable = status; }
 	bool isInteractable() { return interactable; }
 protected:
-	// TODO: find a better implementation
-
 	SCore* sCore;
 	Core* core;
 
 private:
+	/// <summary>
+	/// If true, user can interact with the game.
+	/// </summary>
 	bool interactable;
 };

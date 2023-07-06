@@ -20,8 +20,6 @@ Sprite::Sprite(SDL_Texture* tex, SDL_Rect* src, SDL_FRect* dst, double a) {
 }
 
 Sprite::~Sprite() {
-	// do not destroy texture
-
 	if (srcRect != nullptr) delete srcRect;
 	if (baseRect != nullptr) delete baseRect;
 	if (dstRect != nullptr) delete dstRect;
@@ -34,7 +32,7 @@ Sprite::~Sprite() {
 	}
 }
 
-void Sprite::resetRect() {
+void Sprite::resetDstRect() {
 	dstRect->x = baseRect->x;
 	dstRect->y = baseRect->y;
 	dstRect->w = baseRect->w;
@@ -42,13 +40,13 @@ void Sprite::resetRect() {
 }
 
 void Sprite::setAngle(double a) {
-	while (a > 180 || a < -180) { // normalize angle to -180 ~ 180
+	while (a > 180 || a < -180) {
 		a += 360 * (a < 0 ? 1 : -1);
 	}
 	angle = a;
 }
 
-bool Sprite::updateSprite() {
+bool Sprite::update() {
 	if (status == _END) return false;
 
 	AniContainer* list = _animations[status];
@@ -76,16 +74,31 @@ bool Sprite::updateSprite() {
 }
 
 bool Sprite::addAnimationGroup(std::string name, StatusType type, AnimationGroup* g) {
-	if (type == _END) return false;
-	if (g == nullptr) return false;
-	if ((*_animations[type]).count(name) > 0) return false;
+	if (type == _END) {
+		std::cout << "Failed to add animation group \"" << name << "\". (StatusType == _END)\n";
+		return false;
+	}
+	
+	if (g == nullptr) {
+		std::cout << "Failed to add animation group \"" << name << "\". (Null group object)\n";
+		return false;
+	}
+
+	if ((*_animations[type]).count(name) > 0) {
+		std::cout << "Failed to add animation group \"" << name << "\". (Duplicate group name)\n";
+		return false;
+	}
 
 	(*_animations[type])[name] = g;
 	return true;
 }
 
 bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
-	if (e == nullptr) return false;
+	if (e == nullptr) {
+		std::cout << "Failed to add animation event to group \"" << groupName << "\". (Null event object)\n";
+		return false;
+	}
+
 	int index = -1;
 	for (int i = 0; i < 3; i++) {
 		if ((*_animations[i]).count(groupName) > 0) {
@@ -93,7 +106,10 @@ bool Sprite::addAnimationEvent(std::string groupName, AnimationEvent* e) {
 			break;
 		}
 	}
-	if (index == -1) return false;
+	if (index == -1) {
+		std::cout << "Failed to add animation event to group \"" << groupName << "\". (Invalid group name)\n";
+		return false;
+	}
 
 	(*_animations[index])[groupName]->addEvent(e);
 	return true;
@@ -106,34 +122,34 @@ bool Sprite::toggleAnimationGroup(std::string groupName, StatusType type, bool e
 		return true;
 	}
 	else {
-		std::cout << "Animation group \"" << groupName << "\" toggle failed. (Invalid name)\n";
+		std::cout << "Failed to toggle animation group \"" << groupName << "\". (Invalid group name or wrong StatusType)\n";
 		return false;
 	}
 }
 
 bool checkCollision(SDL_FPoint point, Sprite* sprite) {
-	// Because rectangle objects can't be rotated, the function "un-rotates the point" instead.
+	// Because SDL_FRect can't be rotated,
+	// the function "un-rotates the point" and checks the collision instead.
 
-	// Hitbox rect of sprite and its center point
-	SDL_FRect* rect = sprite->getDstRect();
-	SDL_FPoint rectCenter = { rect->x + rect->w / 2, rect->y + rect->h / 2 };
+	SDL_FRect* hitbox = sprite->getDstRect();
+	SDL_FPoint centroid = { hitbox->x + hitbox->w / 2, hitbox->y + hitbox->h / 2 };
 
-	// sprite'sprite rotation angle, converted to radians
+	// Sprite's rotation angle in radians.
 	float a = (float)(sprite->getAngle() * M_PI / 360);
 	
-	// Move point so it's related to (0, 0) instead of center of rect
-	point.x -= rectCenter.x;
-	point.y -= rectCenter.y;
+	// Move the point so it's related to (0, 0) instead of the hitbox's center.
+	// This is done to simply point rotation calculations.
+	point.x -= centroid.x;
+	point.y -= centroid.y;
 
 	// Rotate point
-	SDL_FPoint np; // new point
-	float c = atan2f(point.y, point.x); // rotation of point, radians
-	float d = sqrtf(point.x * point.x + point.y * point.y); // length of OP
-	np.x = d * cosf(a - c) + rectCenter.x;
-	np.y = d * sinf(a - c) + rectCenter.y;
+	float c = atan2f(point.y, point.x); // Rotation of point in radians
+	float d = sqrtf(point.x * point.x + point.y * point.y); // Length from (0, 0) to point
+	point.x = d * cosf(a - c) + centroid.x;
+	point.y = d * sinf(a - c) + centroid.y;
 
-	// Check if the un-rotated point is within rect
-	return SDL_PointInFRect(&np, rect);
+	// Check if the un-rotated point is within hitbox
+	return SDL_PointInFRect(&point, hitbox);
 }
 
 bool checkCollision(Sprite* s1, Sprite* s2) {

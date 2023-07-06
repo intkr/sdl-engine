@@ -1,9 +1,8 @@
-#include "../graphics.h"
-#include "../audio.h"
-#include "../input.h"
+#include "StateTest.h"
+
+#include "../core.h"
 #include "score.h"
 
-#include "StateTest.h"
 
 StateTest::StateTest(SCore* _score, Core* _core) : State(_score, _core) {
 	init();
