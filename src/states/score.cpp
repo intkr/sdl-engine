@@ -18,6 +18,10 @@ void SCore::changeState(StateType state) {
 		std::cout << "Screen transitioned to title menu.\n";
 		s = new StateTitle(this, core);
 		break;
+	case _STATE_SELECT:
+		std::cout << "Screen transitioned to minigame select menu.\n";
+		s = new StateSelect(this, core);
+		break;
 	case _GAME_PAIR:
 		std::cout << "Screen transitioned to game \"Pair\".\n";
 		s = new GamePair(this, core);

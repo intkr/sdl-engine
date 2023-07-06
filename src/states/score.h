@@ -2,6 +2,7 @@
 #include <queue>
 
 #include "StateTitle.h"
+#include "StateSelect.h"
 #include "StateTest.h"
 
 #include "GamePair.h"

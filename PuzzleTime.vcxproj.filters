@@ -63,6 +63,9 @@
     <ClInclude Include="src\status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\states\StateSelect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\animation.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\states\StateSelect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

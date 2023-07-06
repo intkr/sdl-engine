@@ -27,8 +27,6 @@ TODO:
 	player class for user data file save / load
 		+ non-messy way to use user data throughout multiple objects
 
-	fix this amalgated mess of object hierarchy communication bullshit
-
 	-- idk do it when you feel like it
 	
 	-- puzzle ideas
