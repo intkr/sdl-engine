@@ -129,7 +129,13 @@ void StateTitle::init() {
 	}
 
 	Audio* a = core->getAudio();
-	a->addSound("assets/Vine Boom.ogg", "vine", false, false);
+	if (a->addSound("assets/Vine Boom.ogg", "vine", false, false)) {
+		
+	}
+	if (a->addSound("assets/audio.mp3", "testbgm", true, true)) {
+		a->playSound("testbgm", _AUDIO_BGM, 10);
+	}
+	
 }
 
 void StateTitle::update() {
@@ -148,7 +154,9 @@ void StateTitle::exitState(StateType targetState) {
 }
 
 void StateTitle::freeAll() {
-	
+	Graphics* g = core->getGraphics();
+	g->deleteSprite("testfg", _FOREGROUND);
+	g->deleteSprite("txt", _FOREGROUND);
 }
 
 void StateTitle::freeSpecifics() {
@@ -163,7 +171,7 @@ void StateTitle::handleClick(std::string name, bool active) {
 	if (name == "testfg" && active) {
 		// *vine boom*
 		a->playSound("vine", _AUDIO_SFX, 100);
-		exitState(_GAME_PAIR);
+		exitState(_STATE_SELECT);
 	}
 	return;
 }
@@ -172,7 +180,7 @@ void StateTitle::handleKey(SDL_Scancode key, bool active) {
 	Audio* a = core->getAudio();
 	if (key == SDL_SCANCODE_SPACE && active) {
 		a->playSound("vine", _AUDIO_SFX, 100);
-		exitState(_GAME_PAIR);
+		exitState(_STATE_SELECT);
 	}
 	return;
 }

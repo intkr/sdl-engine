@@ -10,6 +10,8 @@ public:
 		gameElapsedFrames(0), puzzleElapsedFrames(0) {}
 	virtual ~Game() {}
 
+	virtual void init() override;
+
 protected:
 	/// <summary>
 	/// Creates a new puzzle.

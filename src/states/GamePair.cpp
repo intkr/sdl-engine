@@ -19,6 +19,7 @@ void GamePair::init() {
 	remainingPairs = 0;
 	lastCard = -1;
 
+	Graphics* g = core->getGraphics();
 	SDL_Texture* tex;
 	AnimationGroup* ag;
 	AnimationEvent* ae;
@@ -26,7 +27,7 @@ void GamePair::init() {
 	Sprite* s;
 	int w, h;
 
-	Graphics* g = core->getGraphics();
+	Game::init();
 
 	// background
 	if (tex = g->addTexture("assets/bg.png", "test")) {
@@ -40,40 +41,6 @@ void GamePair::init() {
 				s->addAnimationEvent("idleStatic", ae);
 			}
 		}
-	}
-
-	// thumbs
-	if (tex = g->addTexture("assets/good.png", "good")) {
-		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
-		r = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
-		s = g->addSprite("goodjob", _FOREGROUND, new Sprite(tex, nullptr, r));
-
-		if (s != nullptr) {
-			//	static motion
-			ag = new AnimationGroup(false, false, false);
-			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
-				ae = new AnimationEvent(60, Animations::staticMotion);
-				s->addAnimationEvent("idleStatic", ae);
-			}
-		}
-		s->setStatus(_END);
-	}
-
-
-	if (tex = g->addTexture("assets/bad.png", "bad")) {
-		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
-		r = new SDL_FRect{ (1920.0f - w) / 2, 1080 * 0.1f, (float)w, (float)h };
-		s = g->addSprite("badjob", _FOREGROUND, new Sprite(tex, nullptr, r));
-
-		if (s != nullptr) {
-			//	static motion
-			ag = new AnimationGroup(false, false, false);
-			if (s->addAnimationGroup("idleStatic", _IDLE, ag)) {
-				ae = new AnimationEvent(60, Animations::staticMotion);
-				s->addAnimationEvent("idleStatic", ae);
-			}
-		}
-		s->setStatus(_END);
 	}
 
 	// card background
@@ -312,6 +279,9 @@ void GamePair::winLevel() {
 	g->addSprite("goodjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, true);
 	g->addSprite("goodjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
 
+	Audio* a = core->getAudio();
+	a->playSound("goodsfx", _AUDIO_SFX, 30);
+
 	displayTimer = resultDisplayFrames;
 }
 
@@ -324,6 +294,9 @@ void GamePair::loseLevel() {
 	Graphics* g = core->getGraphics();
 	g->addSprite("badjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, true);
 	g->addSprite("badjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
+
+	Audio* a = core->getAudio();
+	a->playSound("badsfx", _AUDIO_SFX, 30);
 
 	displayTimer = resultDisplayFrames;
 }

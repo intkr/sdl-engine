@@ -33,6 +33,7 @@ bool Audio::addSound(std::string path, std::string name, bool isLoop, bool isStr
 	if (fr != FMOD_OK) {
 		// TODO: add more descriptive error prompts
 		std::cout << "Failed to add sound \"" << name << "\". (Unknown error)\n";
+		std::cout << "\tFMOD Error : " << FMOD_ErrorString(fr) << "\n";
 		return false;
 	}
 
@@ -49,6 +50,9 @@ bool Audio::playSound(std::string name, AudioType type, int volume) {
 	FMOD::Channel* channel;
 	fr = fs->playSound(_sounds[name], _chgroups[type], false, &channel);
 
+	if (volume > 100) volume = 100;
+	else if (volume < 0) volume = 0;
+	channel->setVolume(volume / 100.0f);
 	_channels.insert(std::make_pair(name, channel));
 	return true;
 }
