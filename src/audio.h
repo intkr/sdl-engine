@@ -9,7 +9,7 @@
 
 class Core;
 
-enum AudioType { _AUDIO_BGM = 1, _AUDIO_SFX = 2
+enum AudioType { _BGM = 1, _SFX = 2
 };
 
 class Audio {
@@ -36,7 +36,7 @@ public:
 	/// Plays a sound.
 	/// </summary>
 	/// <param name="name">Sound name.</param>
-	/// <param name="type">Sound type - _AUDIO_BGM or _AUDIO_SFX.</param>
+	/// <param name="type">Sound type - _BGM or _SFX.</param>
 	/// <param name="volume">Sound volume, 0~100.</param>
 	/// <returns>true if the sound is successfully played.</returns>
 	bool playSound(std::string name, AudioType type, int volume);
@@ -58,7 +58,7 @@ public:
 	/// Stops a sound.
 	/// </summary>
 	/// <param name="name">Sound name.</param>
-	/// <param name="type">Sound type - _AUDIO_BGM or _AUDIO_SFX.</param>
+	/// <param name="type">Sound type - _BGM or _SFX.</param>
 	/// <returns>true if the sound is successfully stopped.</returns>
 	bool stopSound(std::string name, AudioType type);
 

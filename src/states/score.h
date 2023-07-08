@@ -1,8 +1,10 @@
 #pragma once
 #include <queue>
+#include <typeinfo>
 
 #include "StateTitle.h"
 #include "StateSelect.h"
+#include "StatePrep.h"
 #include "StateTest.h"
 
 #include "GamePair.h"

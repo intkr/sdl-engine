@@ -15,6 +15,8 @@ public:
 	~Player();
 	void saveData();
 
+	Json::Value getValue(std::string name);
+	bool setValue(std::string name, Json::Value value);
 private:
 	void init();
 	void newData();

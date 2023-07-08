@@ -206,7 +206,7 @@ void GamePair::handleKey(SDL_Scancode key, bool active) {
 
 	Audio* a = core->getAudio();
 	if (key == SDL_SCANCODE_SPACE && active) {
-		a->playSound("vine", _AUDIO_SFX, 100);
+		a->playSound("vine", _SFX, 100);
 		newPuzzle();
 		return;
 	}
@@ -280,7 +280,7 @@ void GamePair::winLevel() {
 	g->addSprite("goodjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
 
 	Audio* a = core->getAudio();
-	a->playSound("goodsfx", _AUDIO_SFX, 30);
+	a->playSound("goodsfx", _SFX, 30);
 
 	displayTimer = resultDisplayFrames;
 }
@@ -296,7 +296,7 @@ void GamePair::loseLevel() {
 	g->addSprite("badjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
 
 	Audio* a = core->getAudio();
-	a->playSound("badsfx", _AUDIO_SFX, 30);
+	a->playSound("badsfx", _SFX, 30);
 
 	displayTimer = resultDisplayFrames;
 }

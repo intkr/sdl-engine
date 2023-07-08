@@ -24,7 +24,7 @@ void Player::readData() {
 
 	reader.parse(str, data);
 
-	int i = data.get("int", 0).asInt();
+	int i = data.get("selectedGame", 0).asInt();
 	// wide char example
 	// 
 	//str = data.get("kr", "").asString();
@@ -36,7 +36,7 @@ void Player::readData() {
 }
 
 void Player::newData() {
-	data["int"] = 1;
+	data["selectedGame"] = -1;
 
 	// wide char example
 	// 
@@ -54,4 +54,16 @@ void Player::saveData() {
 	stream.open(path, std::fstream::out | std::fstream::trunc);
 	stream << str;
 	stream.close();
+}
+
+Json::Value Player::getValue(std::string name) {
+	if (data.isMember(name)) {
+		return data[name];
+	}
+	return 0;
+}
+
+bool Player::setValue(std::string name, Json::Value value) {
+	data[name] = value;
+	return true;
 }

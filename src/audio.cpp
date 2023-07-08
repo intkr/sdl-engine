@@ -8,11 +8,11 @@ Audio::Audio(Core* _core) : core(_core) {
 
 	FMOD::ChannelGroup* bgm;
 	fs->createChannelGroup("bgm", &bgm);
-	_chgroups[_AUDIO_BGM] = bgm;
+	_chgroups[_BGM] = bgm;
 
 	FMOD::ChannelGroup* sfx;
 	fs->createChannelGroup("sfx", &sfx);
-	_chgroups[_AUDIO_SFX] = sfx;
+	_chgroups[_SFX] = sfx;
 }
 
 Audio::~Audio() {

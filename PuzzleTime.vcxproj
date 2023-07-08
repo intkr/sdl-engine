@@ -32,6 +32,7 @@
     <ClInclude Include="src\states\GamePair.h" />
     <ClInclude Include="src\states\state.h" />
     <ClInclude Include="src\states\score.h" />
+    <ClInclude Include="src\states\StatePrep.h" />
     <ClInclude Include="src\states\StateSelect.h" />
     <ClInclude Include="src\states\StateTest.h" />
     <ClInclude Include="src\states\StateTitle.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="src\states\game.cpp" />
     <ClCompile Include="src\states\GamePair.cpp" />
     <ClCompile Include="src\states\score.cpp" />
+    <ClCompile Include="src\states\StatePrep.cpp" />
     <ClCompile Include="src\states\StateSelect.cpp" />
     <ClCompile Include="src\states\StateTest.cpp" />
     <ClCompile Include="src\states\StateTitle.cpp" />

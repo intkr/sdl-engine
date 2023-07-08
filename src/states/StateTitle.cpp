@@ -133,7 +133,7 @@ void StateTitle::init() {
 		
 	}
 	if (a->addSound("assets/audio.mp3", "testbgm", true, true)) {
-		a->playSound("testbgm", _AUDIO_BGM, 10);
+		a->playSound("testbgm", _BGM, 10);
 	}
 	
 }
@@ -170,7 +170,7 @@ void StateTitle::handleClick(std::string name, bool active) {
 	Audio* a = core->getAudio();
 	if (name == "testfg" && active) {
 		// *vine boom*
-		a->playSound("vine", _AUDIO_SFX, 100);
+		a->playSound("vine", _SFX, 100);
 		exitState(_STATE_SELECT);
 	}
 	return;
@@ -179,7 +179,7 @@ void StateTitle::handleClick(std::string name, bool active) {
 void StateTitle::handleKey(SDL_Scancode key, bool active) {
 	Audio* a = core->getAudio();
 	if (key == SDL_SCANCODE_SPACE && active) {
-		a->playSound("vine", _AUDIO_SFX, 100);
+		a->playSound("vine", _SFX, 100);
 		exitState(_STATE_SELECT);
 	}
 	return;

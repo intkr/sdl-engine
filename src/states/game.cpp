@@ -49,11 +49,16 @@ void Game::init() {
 	Audio* a = core->getAudio();
 	a->addSound("assets/good.ogg", "goodsfx", false, false);
 	a->addSound("assets/bad.ogg", "badsfx", false, false);
+	a->addSound("assets/yippee.mp3", "combo", false, false);
 }
 
 void Game::winLevel() {
 	currentCombo++;
 	if (currentCombo > maximumCombo) maximumCombo = currentCombo;
+	if (currentCombo % 5 == 0) {
+		Audio* a = core->getAudio();
+		a->playSound("combo", _SFX, 30);
+	}
 
 	score += (int)(pow(currentCombo, scoreExponent) * baseScore);
 }

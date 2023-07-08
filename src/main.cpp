@@ -26,6 +26,7 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 TODO:
 	player class for user data file save / load
 		+ non-messy way to use user data throughout multiple objects
+	separation between permanent player data and temporary data
 
 	-- idk do it when you feel like it
 	

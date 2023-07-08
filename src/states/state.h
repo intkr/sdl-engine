@@ -10,7 +10,7 @@ class SCore;
 class Core;
 
 enum StateType {
-	_STATE_TEST = 999, _STATE_TITLE = 1, _STATE_SELECT = 2,
+	_STATE_TEST = 999, _STATE_TITLE = 1, _STATE_SELECT = 2, _STATE_PREP = 3,
 	_GAME_PAIR = 101
 };
 

@@ -65,13 +65,13 @@ bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName)
 
 SDL_Texture* Graphics::addTexture(std::string path, std::string name) {
 	if (_textures.find(name) != _textures.end()) {
-		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
+		//std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
 		return _textures[name];
 	}
 
 	SDL_Surface* surface = IMG_Load(path.c_str());
 	if (surface == nullptr) {
-		std::cout << "adding texture \"" << name << "\" failed. (null image)\n";
+		//std::cout << "adding texture \"" << name << "\" failed. (null image)\n";
 		return nullptr;
 	}
 	
@@ -89,7 +89,7 @@ SDL_Texture* Graphics::addTexture(SDL_Texture* texture, std::string name) {
 	}
 
 	if (texture == nullptr) {
-		std::cout << "adding texture \"" << name << "\" failed. (null texture)\n";
+		//std::cout << "adding texture \"" << name << "\" failed. (null texture)\n";
 		return nullptr;
 	}
 
@@ -104,7 +104,7 @@ Sprite* Graphics::addSprite(std::string texName, std::string spriteName, SDL_Rec
 	}
 
 	if (_textures.count(texName) == 0) {
-		std::cout << "adding sprite \"" << spriteName << "\" failed. (null texture)\n";
+		//std::cout << "adding sprite \"" << spriteName << "\" failed. (null texture)\n";
 		return nullptr;
 	}
 
