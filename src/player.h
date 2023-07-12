@@ -13,19 +13,21 @@ class Player {
 public:
 	Player(Core* core);
 	~Player();
-	void saveData();
+	void save();
 
-	Json::Value getValue(std::string name);
-	bool setValue(std::string name, Json::Value value);
+	Json::Value getValue(std::string name, bool temporary);
+	bool setValue(std::string name, Json::Value value, bool temporary);
 private:
 	void init();
-	void newData();
-	void readData();
+	void reset();
+	void load();
 
-	std::string path;
-	Json::Value data;
-
+	std::string savepath;
 	std::fstream stream;
+
+	Json::Value tmpData;
+	Json::Value saveData;
+
 
 	Core* core;
 };

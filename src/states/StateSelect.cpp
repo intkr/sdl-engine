@@ -10,7 +10,7 @@ StateSelect::StateSelect(SCore* _score, Core* _core) : State(_score, _core) {
 StateSelect::~StateSelect() {}
 
 void StateSelect::init() {
-	selectedGame = core->getPlayer()->getValue("selectedGame").asInt();
+	selectedGame = core->getPlayer()->getValue("selectedGame", true).asInt();
 
 	Graphics* g = core->getGraphics();
 	SDL_Texture* tex;
@@ -91,7 +91,7 @@ void StateSelect::exitState(StateType targetState) {
 
 void StateSelect::handleHover(std::string name) {
 	if (gameList.count(name) > 0) {
-		core->getPlayer()->setValue("selectedGame", (int)gameList[name]);
+		core->getPlayer()->setValue("selectedGame", (int)gameList[name], true);
 	}
 }
 

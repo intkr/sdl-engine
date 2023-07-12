@@ -47,7 +47,7 @@ public:
 	/// </summary>
 	/// <param name="name">: Color name.</param>
 	/// <returns>SDL_Color of the requested color.</returns>
-	SDL_Color& getColor(std::string name) { return _colors[name]; }
+	SDL_Color& getColor(std::string name);
 
 	/// <summary>
 	/// Creates and returns a SDL_Texture object of a Unicode text.
@@ -57,6 +57,15 @@ public:
 	/// <param name="wrapLength">: Maximum length of pixels of a single row of text.</param>
 	/// <returns>SDL_Texture object if successful, nullptr otherwise.</returns>
 	SDL_Texture* getTextTexture(std::wstring text, std::string color, int wrapLength);
+
+	/// <summary>
+	/// Creates and returns a SDL_Texture object of a Unicode text.
+	/// </summary>
+	/// <param name="text">: Wide string text.</param>
+	/// <param name="color">: Text color.</param>
+	/// <param name="wrapLength">: Maximum length of pixels of a single row of text.</param>
+	/// <returns>SDL_Texture object if successful, nullptr otherwise.</returns>
+	SDL_Texture* getTextTexture(std::wstring text, SDL_Color& color, int wrapLength);
 
 	/// <summary>
 	/// Creates a texture from an image and adds it to memory.
@@ -157,6 +166,15 @@ private:
 	/// <param name="wrapLength">: Maximum length of pixels of a single row of text.</param>
 	/// <returns>SDL_Surface object if successful, nullptr otherwise.</returns>
 	SDL_Surface* getTextSurface(std::wstring text, std::string color, int wrapLength);
+
+	/// <summary>
+	/// Creates and returns a SDL_Surface object of a Unicode text.
+	/// </summary>
+	/// <param name="text">: Wide string text.</param>
+	/// <param name="color">: Text color.</param>
+	/// <param name="wrapLength">: Maximum length of pixels of a single row of text.</param>
+	/// <returns>SDL_Surface object if successful, nullptr otherwise.</returns>
+	SDL_Surface* getTextSurface(std::wstring text, SDL_Color& color, int wrapLength);
 
 	void emptySprites();
 	void emptyTextures();

@@ -4,15 +4,20 @@
 // Base class specifically for minigames
 class Game : public State {
 public:
-	Game(SCore* _score, Core* _core) : State(_score, _core),
+	Game(SCore* _score, Core* _core, float exp) : State(_score, _core),
 		difficulty(0.0f), gameStatus(_INTRO), gameTimer(60 * 60),
-		baseScore(1000), score(0), scoreExponent(1.0f), currentCombo(0), maximumCombo(0),
+		baseScore(1000), score(0), scoreExponent(exp), currentCombo(0), maximumCombo(0),
 		gameElapsedFrames(0), puzzleElapsedFrames(0) {}
 	virtual ~Game() {}
 
 	virtual void init() override;
+	virtual void update() override;
+	virtual void exitState(StateType targetState) override;
 
 protected:
+	void setStatus(StatusType status) { gameStatus = status; }
+	StatusType getStatus() { return gameStatus; }
+
 	/// <summary>
 	/// Creates a new puzzle.
 	/// </summary>
@@ -27,16 +32,35 @@ protected:
 	virtual void winLevel();
 	virtual void loseLevel();
 
-	/// <summary>
-	/// Updates the state timers.
-	/// </summary>
-	void updateTime() { gameTimer--; gameElapsedFrames++; puzzleElapsedFrames++; }
 
 	/// <summary>
 	/// Current difficulty of the puzzle.<para/>
 	/// Difficulty range differs for every game.
 	/// </summary>
 	float difficulty;
+
+	/// <summary>
+	/// Frames elapsed for the current game.
+	/// Excludes intro / outro cutscenes.
+	/// </summary>
+	int gameElapsedFrames;
+
+	/// <summary>
+	/// Frames elapsed for the current puzzle.
+	/// </summary>
+	int puzzleElapsedFrames;
+
+
+private:
+	/// <summary>
+	/// Updates the state timers.
+	/// </summary>
+	void updateTime();
+
+	/// <summary>
+	/// Updates the timer's graphics.
+	/// </summary>
+	void updateTimer();
 
 	/// <summary>
 	/// Current status of the game.<para/>
@@ -49,17 +73,6 @@ protected:
 	/// Timer starts at 60 seconds (or 3600 frames) by default.
 	/// </summary>
 	int gameTimer;
-
-	/// <summary>
-	/// Frames elapsed for the current game.
-	/// Excludes intro / outro cutscenes.
-	/// </summary>
-	int gameElapsedFrames;
-
-	/// <summary>
-	/// Frames elapsed for the current puzzle.
-	/// </summary>
-	int puzzleElapsedFrames;
 
 	/// <summary>
 	/// Current game score.
@@ -85,4 +98,7 @@ protected:
 	/// Maximum combo achieved during the current game.
 	/// </summary>
 	int maximumCombo;
+
+	int barWidth;
+	int barHeight;
 };

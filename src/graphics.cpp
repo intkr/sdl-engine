@@ -32,21 +32,30 @@ SDL_Texture* Graphics::getTexture(std::string name) {
 }
 
 SDL_Surface* Graphics::getTextSurface(std::wstring text, std::string color, int wrapLength) {
+	return getTextSurface(text, getColor(color), wrapLength);
+}
+
+SDL_Surface* Graphics::getTextSurface(std::wstring text, SDL_Color& color, int wrapLength) {
 	size_t usize = text.size() + 1;
 	Uint16* utext = new Uint16[usize];
 	for (; usize; usize--) {
 		utext[usize - 1] = text[usize - 1];
 	}
 
-	return TTF_RenderUNICODE_Blended_Wrapped(getFont(), utext, getColor(color), wrapLength);
+	return TTF_RenderUNICODE_Blended_Wrapped(getFont(), utext, color, wrapLength);
 }
 
 SDL_Texture* Graphics::getTextTexture(std::wstring text, std::string color, int wrapLength) {
+	return getTextTexture(text, getColor(color), wrapLength);
+}
+
+SDL_Texture* Graphics::getTextTexture(std::wstring text, SDL_Color& color, int wrapLength) {
 	SDL_Surface* textSurface = getTextSurface(text, color, wrapLength);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, textSurface);
 	SDL_FreeSurface(textSurface);
 	return textTexture;
 }
+
 
 bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName) {
 	Sprite* s = nullptr;
@@ -219,4 +228,11 @@ bool Graphics::deleteTexture(std::string name) {
 		return true;
 	}
 	else return false;
+}
+
+SDL_Color& Graphics::getColor(std::string name) {
+	if (_colors.count(name) == 0) {
+		return _colors["white"];
+	}
+	return _colors[name];
 }

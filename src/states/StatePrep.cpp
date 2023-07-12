@@ -60,7 +60,7 @@ void StatePrep::handleClick(std::string name, bool active) {
 	Audio* a = core->getAudio();
 	if (name == "zarrow" && active) {
 		a->playSound("vine", _SFX, 100);
-		StateType selectedGame = (StateType)(core->getPlayer()->getValue("selectedGame").asInt());
+		StateType selectedGame = (StateType)(core->getPlayer()->getValue("selectedGame", true).asInt());
 		switch (selectedGame) {
 		case _GAME_PAIR:
 			exitState(_GAME_PAIR);

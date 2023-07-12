@@ -5,15 +5,13 @@
 #include "score.h"
 
 
-GamePair::GamePair(SCore* _score, Core* _core) : Game(_score, _core) {
+GamePair::GamePair(SCore* _score, Core* _core) : Game(_score, _core, 1.05f) {
 	init();
 }
 
 GamePair::~GamePair() {}
 
 void GamePair::init() {
-	scoreExponent = 1.05f;
-
 	difficulty = 0;
 	displayTimer = 0;
 	remainingPairs = 0;
@@ -103,23 +101,15 @@ void GamePair::init() {
 }
 
 void GamePair::update() {
-	switch (gameStatus) {
+	Game::update();
+	switch (getStatus()) {
 	case _INTRO:
 		// TODO: change this into a more proper intro cutscene after more stuff is made
-		gameStatus = _IDLE;
-
+		setStatus(_IDLE);
 		newPuzzle();
 		break;
 
 	case _IDLE:
-		updateTime();
-
-		// game over condition check
-		//if (gameTimer % 60 == 0) std::cout << gameTimer / 60 << " seconds left\n";
-		if (gameTimer == 0) {
-			gameStatus = _OUTRO;
-		}
-
 		// handle display timer
 		switch ((displayTimer > 0) - (displayTimer < 0)) {
 		case 0: // timer == 0
@@ -144,7 +134,7 @@ void GamePair::update() {
 
 	case _OUTRO:
 		std::cout << "Game over\n";
-		gameStatus = _END;
+		setStatus(_END);
 		break;
 
 	case _END:
@@ -156,13 +146,10 @@ void GamePair::update() {
 }
 
 void GamePair::exitState(StateType targetState) {
+	Game::exitState(targetState);
 	Graphics* g = core->getGraphics();
-	g->deleteSprite("goodjob", _FOREGROUND);
-	g->deleteSprite("badjob", _FOREGROUND);
 	deleteCards();
 
-	g->deleteTexture("good");
-	g->deleteTexture("bad");
 
 	std::string name;
 	while (cardTypes >= 0) {
@@ -181,14 +168,12 @@ void GamePair::exitState(StateType targetState) {
 	}
 	g->deleteTexture("card-bg");
 
-	std::cout << "Score : " << score << "\tMax combo : " << maximumCombo << "\n";
-
 	sCore->changeState(_STATE_TITLE);
 }
 
 void GamePair::handleClick(std::string name, bool active) {
 	// if there's a thumb on display disable clicking
-	if (!isInteractable() || gameStatus != _IDLE) return;
+	if (!isInteractable() || getStatus() != _IDLE) return;
 
 	if (name == "testfg" && active) {
 		newPuzzle();
@@ -202,7 +187,7 @@ void GamePair::handleClick(std::string name, bool active) {
 }
 
 void GamePair::handleKey(SDL_Scancode key, bool active) {
-	if (!isInteractable() || gameStatus != _IDLE) return;
+	if (!isInteractable() || getStatus() != _IDLE) return;
 
 	Audio* a = core->getAudio();
 	if (key == SDL_SCANCODE_SPACE && active) {
