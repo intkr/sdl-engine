@@ -13,6 +13,8 @@ public:
 	void handleKey(SDL_Scancode key, bool active) override;
 
 private:
+	void addGearAnimations(Sprite* s, int rotatingFrames, int stopFrames, float rotation, int brightness = 255);
+	void addGear(char size, int num, SDL_FRect* dst, double angle, float rotation, int rotatingFrames, int stopFrames, int brightness = 255, int layer = 0);
 
 	void freeAll();
 	void freeSpecifics(); // rename to something better

@@ -4,19 +4,12 @@ class Sprite;
 class AnimationEvent;
 
 namespace Animations {
+///
+/// Motion
+///
 
 	// Sprite has no movement.
 	void staticMotion(Sprite* _s, AnimationEvent* _e);
-
-	// Sprite has width and height of 0, thus becoming invisible.
-	// As such, invisible sprites are not interactable.
-	void invisible(Sprite* _s, AnimationEvent* _e);
-
-	// The x / y position of the sprite moves in a sine / cosine function. (a sin b¥ðt / a cos b¥ðt)
-	// c decides which axis to move. true = x, false = y
-	// d decides which function to use. true = sine, false = cosine
-	// Length of cycle should be 2/b frames.
-	// This animation is NOT compoundable.
 
 	// The [x / y] position of the sprite moves in a [sine / cosine] function. (a sin b¥ðt / a cos b¥ðt)
 	// 'a' (float) : Amplitude, 'a' in the equation.
@@ -39,6 +32,10 @@ namespace Animations {
 	// 'endSize' (float) : Multiplier ending point.
 	void resizeCenteredMotion(Sprite* _s, AnimationEvent* _e);
 
+///
+/// Rotation
+///
+	
 	// The angle of the sprite changes in a linear function.
 	// 'speed' (float) : Angular speed, degrees/frame.
 	void linearRotation(Sprite* _s, AnimationEvent* _e);
@@ -50,12 +47,9 @@ namespace Animations {
 	// 'func' (char) : 's'(sine) or 'c'(cosine), the type of the function.
 	void sincosRotation(Sprite* _s, AnimationEvent* _e);
 
-	// The opacity of the sprite changes in a linear function.
-	// WARNING - This affects the texture, not the sprite. All sprites that uses the same texture will be affected.
-	//			 If multiple sprites using the same texture requires varying opacity, use the same function for each sprite.
-	// 'a' (float) : Initial opacity.
-	// 'b' (float) : Final opacity.
-	void opacity(Sprite* _s, AnimationEvent* _e);
+///
+/// Etc.
+/// 
 
 	// The width or height of the sprite changes from length a to b in a linear function.
 	// 'axis' (char) : 'w' (width) or 'h' (height), defines the property to scale.
@@ -63,5 +57,18 @@ namespace Animations {
 	// 'b' (float) : Final length.
 	// 'centered' (bool) : If true, the sprite scales based on its center point.
 	void linearScale(Sprite* _s, AnimationEvent* _e);
+
+	// The opacity of the sprite changes in a linear function.
+	// 'a' (float) : Initial opacity, [0.0-1.0].
+	// 'b' (float) : Final opacity, [0.0-1.0].
+	void opacity(Sprite* _s, AnimationEvent* _e);
+
+	// Sprite has width and height of 0, thus becoming intangible.
+	// As such, intangible sprites are not interactable.
+	void intangible(Sprite* _s, AnimationEvent* _e);
+
+	// Overlays a preset color on a texture.
+	// 'r', 'g', 'b' (float) : The rgb value of the overlay color, [0-255]. Defaults to 0.
+	void colorize(Sprite* _s, AnimationEvent* _e);
 }
 

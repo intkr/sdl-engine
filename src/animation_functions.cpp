@@ -6,7 +6,7 @@ void Animations::staticMotion(Sprite* _s, AnimationEvent* _e) {
 	// nothing
 }
 
-void Animations::invisible(Sprite* _s, AnimationEvent* _e) {
+void Animations::intangible(Sprite* _s, AnimationEvent* _e) {
 	SDL_FRect* dstRect = _s->getDstRect();
 	dstRect->w = dstRect->h = 0;
 }
@@ -144,4 +144,9 @@ void Animations::linearScale(Sprite* _s, AnimationEvent* _e) {
 		dstRect->h = (a * (maxFrames - currentFrame) + b * currentFrame) / maxFrames;
 		if (centered) dstRect->y = baseRect->y + abs(dstRect->h - baseRect->h) / 2;
 	}
+}
+
+void Animations::colorize(Sprite* _s, AnimationEvent* _e) {
+	int r = (int)_e->getFloat("r"), g = (int)_e->getFloat("g"), b = (int)_e->getFloat("b");
+	SDL_SetTextureColorMod(_s->getTexture(), r, g, b);
 }

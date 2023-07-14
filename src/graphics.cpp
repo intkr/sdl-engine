@@ -179,8 +179,8 @@ void Graphics::renderScreen() {
 		if (i == 2 && doesPopupExist()) {
 			darkenScreen();
 		}
-		for (int j = 0; j < maxLayers; j++) {
-			for (auto iter = (*_sprites[i])[j].cbegin(); iter != (*_sprites[i])[j].cend();) {
+		for (int j = maxLayers; j; j--) {
+			for (auto iter = (*_sprites[i])[j - 1].cbegin(); iter != (*_sprites[i])[j - 1].cend();) {
 				Sprite* s = iter->second;
 				bool validSprite = s->update();
 				if (validSprite) {

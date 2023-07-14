@@ -18,10 +18,55 @@ void StateTitle::init() {
 	Sprite* s;
 	SDL_FRect* r;
 	int cycle, w, h;
-	
+
+	// Clockworks
+	//if (tex = g->addTexture("assets/common/gear-L.png", "gear-1")) {
+	//	SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+	//	r = new SDL_FRect{ 1920.0f * 0.12f, 1080.0f * 0.1f, (float)w * 1.5f, (float)h * 1.5f };
+	//	s = g->addSprite("gear-1", _FOREGROUND, new Sprite(tex, nullptr, r));
+	//
+	//	if (s != nullptr) addGearAnimations(s, 18.0f);
+	//}
+
+	// Clockworks (blurred)
+	addGear('L', 1, new SDL_FRect{ 1920.0f * 0.7f, 1080.0f * -0.1f, 3.0f, 3.0f }, 0.0, -18.0f, 10, 50, 160, 1);
+	addGear('M', 2, new SDL_FRect{ 1920.0f * 0.46f, 1080.0f * 0.025f, 3.0f, 3.0f }, 0.0, 27.7f, 10, 50, 180, 1);
+	addGear('S', 3, new SDL_FRect{ 1920.0f * 0.508f, 1080.0f * 0.485f, 2.333f, 2.333f }, -10.0, -60.0f, 10, 50, 200, 1);
+	addGear('M', 4, new SDL_FRect{ 1920.0f * 0.548f, 1080.0f * 0.637f, 2.5f, 2.5f }, 10.0, 27.7f, 10, 50, 140, 1);
+	addGear('S', 5, new SDL_FRect{ 1920.0f * 0.918f, 1080.0f * 0.67f, 2.75f, 2.75f }, 17.0, 60.0f, 10, 50, 235, 1);
+	addGear('L', 6, new SDL_FRect{ 1920.0f * 0.157f, 1080.0f * 0.573f, 2.667f, 2.667f }, -6.0, -18.0f, 10, 50, 180, 1);
+	addGear('M', 7, new SDL_FRect{ 1920.0f * 0.228f, 1080.0f * -0.188f, 3.0f, 3.0f }, 6.0, -27.7f, 10, 50, 200, 1);
+	addGear('L', 8, new SDL_FRect{ 1920.0f * -0.171f, 1080.0f * -0.1f, 2.9f, 2.9f }, 13.0, 18.0f, 10, 50, 255, 1);
+
+	addGear('L', 10, new SDL_FRect{ 1920.0f * 0.52f, 1080.0f * 0.14f, 5.0f, 5.0f }, 6.0, 1.0f, 1, 0, 80, 2);
+	addGear('L', 11, new SDL_FRect{ 1920.0f * -0.161f, 1080.0f * -0.188f, 5.0f, 5.0f }, -3.0, -1.0f, 1, 0, 100, 2);
+
+	// Black screen for fade in effect
+	SDL_Renderer* _renderer = g->getRenderer();
+	tex = SDL_CreateTexture(_renderer, 0, SDL_TEXTUREACCESS_TARGET, 1, 1);
+	SDL_SetRenderTarget(_renderer, tex);
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+	SDL_RenderDrawPoint(_renderer, 0, 0);
+	SDL_SetRenderTarget(_renderer, nullptr);
+	if (tex = g->addTexture(tex, "black")) {
+		s = g->addSprite("black", _FOREGROUND, new Sprite(tex, nullptr, nullptr), 0);
+
+		if (s != nullptr) {
+			// fade in
+			ag = new AnimationGroup(false, false, true);
+			if (s->addAnimationGroup("fadein", _IDLE, ag)) {
+				ae = new AnimationEvent(40, Animations::opacity);
+				ae->setFloat("a", 1.0f);
+				ae->setFloat("b", 0.0f);
+				s->addAnimationEvent("fadein", ae);
+			}
+		}
+	}
+
 	// background
 	if (tex = g->addTexture("assets/bg.png", "test")) {
-		s = g->addSprite("testbg", _BACKGROUND, new Sprite(tex, nullptr, nullptr));
+		s = g->addSprite("testbg", _BACKGROUND, new Sprite(tex, nullptr, nullptr), 9);
 
 		if (s != nullptr) {
 			// static motion
@@ -34,11 +79,11 @@ void StateTitle::init() {
 	}
 
 	// text
-	tex = g->getTextTexture(L"°¡³ª´ÙABC", "white", 800);
+	tex = g->getTextTexture(L"Press any key", "white", 800);
 	if (tex = g->addTexture(tex, "testText")) {
 		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
-		r = new SDL_FRect{ 100.0f, 100.0f, (float)w, (float)h };
-		s = g->addSprite("txt", _FOREGROUND, new Sprite(tex, nullptr, r));
+		r = new SDL_FRect{ (1920 - w) * 0.5f, (1080 - h) * 0.9f, (float)w, (float)h };
+		s = g->addSprite("txt", _FOREGROUND, new Sprite(tex, nullptr, r), 1);
 
 		if (s != nullptr) {
 			// static motion
@@ -50,11 +95,11 @@ void StateTitle::init() {
 		}
 	}
 
-	// test logo
-	if (tex = g->addTexture("assets/buh.png", "test2"), 1) {
+	// Logo
+	if (tex = g->addTexture("assets/common/logo.png", "logo"), 1) {
 		SDL_QueryTexture(tex, 0, 0, &w, &h);
-		r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
-		s = g->addSprite("testfg", _FOREGROUND, new Sprite(tex, nullptr, r));
+		r = new SDL_FRect{ (1920 - w) * 0.5f, (1080 - h) * 0.25f, (float)w, (float)h};
+		s = g->addSprite("logo", _FOREGROUND, new Sprite(tex, nullptr, r), 1);
 
 		if (s != nullptr) {
 			// pop out from center of screen
@@ -65,41 +110,15 @@ void StateTitle::init() {
 				ae->setFloat("startSize", 0.0);
 				ae->setFloat("endSize", 1.0);
 				s->addAnimationEvent("introPopOut", ae);
-
-				// and move 128 pixels to the left for 24 frames
-				cycle = 24;
-				ae = new AnimationEvent(cycle, Animations::linearMotion);
-				ae->setChar("axis", 'x');
-				ae->setBool("baseMove", false);
-				ae->setFloat("speed", 128.0f / cycle * -1);
-				s->addAnimationEvent("introPopOut", ae);
 			}
 			else delete ag;
 
-			// idle in circular rotation / motion
+			// idle motion in y axis
 			ag = new AnimationGroup(true, false, true);
 			if (s->addAnimationGroup("idleSpin", _IDLE, ag)) {
-				// rotation
-				cycle = 80;
-				ae = new AnimationEvent(cycle * 2, Animations::sincosRotation);
-				ae->setFloat("a", 6);
-				ae->setFloat("b", (float)(1.0 / cycle));
-				ae->setChar("func", 's');
-				s->addAnimationEvent("idleSpin", ae);
-
-				// motion (x axis)
 				cycle = 120;
 				ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
-				ae->setFloat("a", 128.0f);
-				ae->setFloat("b", 1.0f / cycle);
-				ae->setChar("axis", 'x');
-				ae->setChar("func", 'c');
-				s->addAnimationEvent("idleSpin", ae);
-
-				// motion (y axis)
-				cycle = 120;
-				ae = new AnimationEvent(cycle * 2, Animations::sincosMotion);
-				ae->setFloat("a", 128.0f);
+				ae->setFloat("a", 60.0f);
 				ae->setFloat("b", 1.0f / cycle);
 				ae->setChar("axis", 'y');
 				ae->setChar("func", 's');
@@ -132,9 +151,9 @@ void StateTitle::init() {
 	if (a->addSound("assets/Vine Boom.ogg", "vine", false, false)) {
 		
 	}
-	if (a->addSound("assets/audio.mp3", "testbgm", true, true)) {
-		a->playSound("testbgm", _BGM, 10);
-	}
+	//if (a->addSound("assets/audio.mp3", "testbgm", true, true)) {
+	//	a->playSound("testbgm", _BGM, 10);
+	//}
 	
 }
 
@@ -183,4 +202,67 @@ void StateTitle::handleKey(SDL_Scancode key, bool active) {
 		exitState(_STATE_SELECT);
 	}
 	return;
+}
+
+void StateTitle::addGear(char size, int num, SDL_FRect* dst, double angle, float rotation, int rotatingFrames, int stopFrames, int brightness, int layer) {
+	Graphics* g = core->getGraphics();
+	SDL_Texture* tex;
+	Sprite* s;
+	int w, h;
+
+	std::string path, name = "gear-blur-";
+	name.append(std::to_string(num));
+	switch (size) {
+	case 's':
+	case 'S':
+		path = "assets/common/gear-S-blur.png";
+		break;
+
+	case 'm':
+	case 'M':
+		path = "assets/common/gear-M-blur.png";
+		break;
+
+	case 'l':
+	case 'L':
+		path = "assets/common/gear-L-blur.png";
+		break;
+
+	default:
+		// invalid size
+		return;
+	}
+
+
+	if (tex = g->addTexture(path, name)) {
+		SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+		dst->w *= w, dst->h *= h;
+		s = g->addSprite(name, _BACKGROUND, new Sprite(tex, nullptr, dst, angle), layer);
+
+		if (s != nullptr) addGearAnimations(s, rotatingFrames, stopFrames, rotation, brightness);
+	}
+}
+
+void StateTitle::addGearAnimations(Sprite* s, int rotatingFrames, int stopFrames, float rotation, int brightness) {
+	// rotation
+	AnimationGroup* ag;
+	AnimationEvent* ae;
+
+	ag = new AnimationGroup(true, true, true);
+	if (s->addAnimationGroup("gearSpin", _IDLE, ag)) {
+		ae = new AnimationEvent(stopFrames, Animations::staticMotion);
+		s->addAnimationEvent("gearSpin", ae);
+		ae = new AnimationEvent(rotatingFrames, Animations::linearRotation);
+		ae->setFloat("speed", rotation / rotatingFrames);
+		s->addAnimationEvent("gearSpin", ae);
+	}
+	// colorize
+	ag = new AnimationGroup(true, true, true);
+	if (s->addAnimationGroup("gearDarken", _IDLE, ag)) {
+		ae = new AnimationEvent(1, Animations::colorize);
+		ae->setFloat("r", (float)brightness);
+		ae->setFloat("g", (float)brightness);
+		ae->setFloat("b", (float)brightness);
+		s->addAnimationEvent("gearDarken", ae);
+	}
 }
