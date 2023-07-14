@@ -51,7 +51,7 @@ void StateTitle::init() {
 	}
 
 	// test logo
-	if (tex = g->addTexture("assets/buh.png", "test2")) {
+	if (tex = g->addTexture("assets/buh.png", "test2"), 1) {
 		SDL_QueryTexture(tex, 0, 0, &w, &h);
 		r = new SDL_FRect{ (1920 - w) * 0.75f, (1080 - h) * 0.5f, (float)w, (float)h };
 		s = g->addSprite("testfg", _FOREGROUND, new Sprite(tex, nullptr, r));

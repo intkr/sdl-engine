@@ -42,7 +42,7 @@ void GamePair::init() {
 	}
 
 	// card background
-	if (tex = g->addTexture("assets/pair/card-bg.png", "card-bg")) {
+	if (tex = g->addTexture("assets/games/pair/card-bg.png", "card-bg")) {
 		std::string name;
 		//SDL_QueryTexture(g->getTexture("card-bg"), nullptr, nullptr, &w, &h);
 		w = h = (int)(1080 * 0.1);
@@ -90,7 +90,7 @@ void GamePair::init() {
 	std::string path, name;
 	cardTypes = 0;
 	do {
-		path = "assets/pair/card-";
+		path = "assets/games/pair/card-";
 		name = "card-card-";
 		path.append(std::to_string(cardTypes));
 		name.append(std::to_string(cardTypes));
@@ -116,8 +116,8 @@ void GamePair::update() {
 			if (!isInteractable()) {
 				// hide result image
 				Graphics* g = core->getGraphics();
-				g->addSprite("badjob",  _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, false);
-				g->addSprite("goodjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, false);
+				g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
+				g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, false);
 
 				newPuzzle();
 			}
@@ -261,8 +261,8 @@ void GamePair::winLevel() {
 	adjustDifficulty(true);
 
 	Graphics* g = core->getGraphics();
-	g->addSprite("goodjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, true);
-	g->addSprite("goodjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
+	g->getSprite("goodjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
+	g->getSprite("goodjob")->setStatus(_IDLE);
 
 	Audio* a = core->getAudio();
 	a->playSound("goodsfx", _SFX, 30);
@@ -277,8 +277,8 @@ void GamePair::loseLevel() {
 	adjustDifficulty(false);
 	
 	Graphics* g = core->getGraphics();
-	g->addSprite("badjob", _FOREGROUND, nullptr)->toggleAnimationGroup("idleStatic", _IDLE, true);
-	g->addSprite("badjob", _FOREGROUND, nullptr)->setStatus(_IDLE);
+	g->getSprite("badjob")->toggleAnimationGroup("idleStatic", _IDLE, true);
+	g->getSprite("badjob")->setStatus(_IDLE);
 
 	Audio* a = core->getAudio();
 	a->playSound("badsfx", _SFX, 30);
@@ -301,7 +301,8 @@ void GamePair::newPuzzle() {
 	for (int i = 0; i < _PAIR_HEIGHT * _PAIR_WIDTH; i++) {
 		name = "card-bg-";
 		name.append(std::to_string(i));
-		s = g->addSprite(name, _FOREGROUND, nullptr);
+		s = g->getSprite(name);
+		//s = g->addSprite(name, _FOREGROUND, nullptr);
 		s->resetDstRect();
 	}
 
@@ -350,7 +351,7 @@ void GamePair::createCard(int pos, int type) {
 	//SDL_QueryTexture(g->getTexture(textureName), nullptr, nullptr, &w, &h);
 	w = h = (int)(1080 * 0.1);
 	SDL_FRect* r;
-	SDL_Texture* tex = g->addTexture(nullptr, textureName);
+	SDL_Texture* tex = g->getTexture(textureName);
 	r = new SDL_FRect{ (1920 * 0.5f - w * 1.75f) + (pos % _PAIR_WIDTH) * (w * 1.25f), (1080 * 0.5f - h * 2.375f) + (pos / _PAIR_WIDTH) * (h * 1.25f), (float)w, (float)h };
 	Sprite* s = g->addSprite(spriteName, _FOREGROUND, new Sprite(tex, nullptr, r));
 	
@@ -403,11 +404,11 @@ void GamePair::hideCards() {
 		if (cards[i - 1].type != -1) {
 			name = "card-card-";
 			name.append(std::to_string(i - 1));
-			g->addSprite(name, _FOREGROUND, nullptr)->toggleAnimationGroup("static", _IDLE, false);
-			g->addSprite(name, _FOREGROUND, nullptr)->toggleAnimationGroup("hide", _IDLE, true);
+			g->getSprite(name)->toggleAnimationGroup("static", _IDLE, false);
+			g->getSprite(name)->toggleAnimationGroup("hide", _IDLE, true);
 			name = "card-bg-";
 			name.append(std::to_string(i - 1));
-			g->addSprite(name, _FOREGROUND, nullptr)->toggleAnimationGroup("show", _IDLE, true);
+			g->getSprite(name)->toggleAnimationGroup("show", _IDLE, true);
 		}
 	}
 }
@@ -424,14 +425,14 @@ void GamePair::openCard(int pos) {
 		cards[pos].opened = true;
 		name = "card-card-";
 		name.append(std::to_string(pos));
-		Sprite* s = g->addSprite(name, _FOREGROUND, nullptr);
+		Sprite* s = g->getSprite(name);
 		s->setStatus(_IDLE);
 		s->toggleAnimationGroup("static", _IDLE, true);
 		s->toggleAnimationGroup("show", _IDLE, true);
 
 		name = "card-bg-";
 		name.append(std::to_string(pos));
-		s = g->addSprite(name, _FOREGROUND, nullptr);
+		s = g->getSprite(name);
 		s->toggleAnimationGroup("hide", _IDLE, true);
 	}
 }

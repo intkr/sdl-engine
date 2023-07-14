@@ -102,18 +102,20 @@ void Input::pollKey(SDL_Scancode inputKey, Uint32 type) {
 
 void Input::pollMouse(int x, int y) {
 	SDL_FPoint p = { (float)x, (float)y };
-	SpriteMap** map = core->getGraphics()->getSpriteMap();
+	SpriteList** map = core->getGraphics()->getSpriteMap();
 
 	// Check mouse hover
 	for (int i = 3; i; i--) {
-		for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
-			Sprite* s = iter->second;
-			std::string t = iter->first;
+		for (int j = 0; j < core->getGraphics()->maxLayers; j++) {
+			for (auto iter = (*map[i - 1])[j].cbegin(); iter != (*map[i - 1])[j].cend();) {
+				Sprite* s = iter->second;
+				std::string t = iter->first;
 
-			if (s->getDstRect() == nullptr || checkCollision(p, s)) {
-				hoveredSprites.push_back(t);
+				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
+					hoveredSprites.push_back(t);
+				}
+				iter++;
 			}
-			iter++;
 		}
 	}
 
@@ -130,14 +132,16 @@ void Input::pollMouse(int x, int y) {
 
 	case _MOUSE_ACTIVE:
 		for (int i = 3; i; i--) {
-			for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
-				Sprite* s = iter->second;
-				std::string t = iter->first;
-				
-				if (s->getStatus() != _END && (s->getDstRect() == nullptr || checkCollision(p, s))) {
-					clickedSprites[t] = true;
+			for (int j = 0; j < core->getGraphics()->maxLayers; j++) {
+				for (auto iter = (*map[i - 1])[j].cbegin(); iter != (*map[i - 1])[j].cend();) {
+					Sprite* s = iter->second;
+					std::string t = iter->first;
+
+					if (s->getStatus() != _END && (s->getDstRect() == nullptr || checkCollision(p, s))) {
+						clickedSprites[t] = true;
+					}
+					iter++;
 				}
-				iter++;
 			}
 		}
 
@@ -146,17 +150,19 @@ void Input::pollMouse(int x, int y) {
 
 	case _MOUSE_PASSIVE:
 		for (int i = 3; i; i--) {
-			for (auto iter = map[i - 1]->cbegin(); iter != map[i - 1]->cend();) {
-				Sprite* s = iter->second;
-				std::string t = iter->first;
+			for (int j = 0; j < core->getGraphics()->maxLayers; j++) {
+				for (auto iter = (*map[i - 1])[j].cbegin(); iter != (*map[i - 1])[j].cend();) {
+					Sprite* s = iter->second;
+					std::string t = iter->first;
 
-				if (s->getDstRect() == nullptr || checkCollision(p, s)) {
-					clickedSprites[t] = false;
+					if (s->getDstRect() == nullptr || checkCollision(p, s)) {
+						clickedSprites[t] = false;
+					}
+					else if (clickedSprites.count(t) > 0) {
+						clickedSprites.erase(t);
+					}
+					iter++;
 				}
-				else if (clickedSprites.count(t) > 0) {
-					clickedSprites.erase(t);
-				}
-				iter++;
 			}
 		}
 		break;

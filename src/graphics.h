@@ -9,7 +9,7 @@
 #include "sprite.h"
 #include "animation.h"
 
-#define SpriteMap std::map<std::string, Sprite*>
+#define SpriteList std::vector<std::map<std::string, Sprite*>>
 
 class Core;
 
@@ -93,9 +93,10 @@ public:
 	/// <param name="src">: TODO: how do i word this</param>
 	/// <param name="dst">: ^</param>
 	/// <param name="type">: Sprite type - _BACKGROUND, _FOREGROUND, or _POPUP.</param>
+	/// <param name="layer">: Sprite layer number.</param>
 	/// <param name="angle">: Rotation angle of the sprite, in degrees.</param>
 	/// <returns>Sprite object corresponding to 'name', or nullptr if unsuccessful.</returns>
-	Sprite* addSprite(std::string texName, std::string spriteName, SDL_Rect* src, SDL_FRect* dst, SpriteType type, double angle = 0.0);
+	Sprite* addSprite(std::string texName, std::string spriteName, SDL_Rect* src, SDL_FRect* dst, SpriteType type, int layer = 0, double angle = 0.0);
 	
 	/// <summary>
 	/// Adds an existing sprite to memory.
@@ -103,8 +104,9 @@ public:
 	/// <param name="name">: Sprite name.</param>
 	/// <param name="type">: Sprite type - _BACKGROUND, _FOREGROUND, or _POPUP.</param>
 	/// <param name="s">: Sprite object.</param>
+	/// <param name="layer">: Sprite layer number.</param>
 	/// <returns>Sprite object corresponding to 'name', or nullptr if unsuccessful.</returns>
-	Sprite* addSprite(std::string name, SpriteType type, Sprite* s);
+	Sprite* addSprite(std::string name, SpriteType type, Sprite* s, int layer = 0);
 
 	/// <summary>
 	/// Deletes a texture.
@@ -154,8 +156,13 @@ public:
 	/// <summary>
 	/// Returns the sprite map for cursor-hitbox detection.
 	/// </summary>
-	/// <returns>Pointer to SpriteMap*[3].</returns>
-	SpriteMap** getSpriteMap() { return _spritemap; }
+	/// <returns>Pointer to SpriteList*[3].</returns>
+	SpriteList** getSpriteMap() { return _sprites; }
+
+	/// <summary>
+	/// Maximum number of layers per sprite list.
+	/// </summary>
+	const int maxLayers = 10;
 
 private:
 	/// <summary>
@@ -214,14 +221,14 @@ private:
 	/// <summary>
 	/// List of sprites.
 	/// </summary>
-	SpriteMap backgroundSprites;
-	SpriteMap foregroundSprites;
-	SpriteMap popupSprites;
+	SpriteList backgroundSprites;
+	SpriteList foregroundSprites;
+	SpriteList popupSprites;
 
 	/// <summary>
 	/// Array of three sprite lists.
 	/// </summary>
-	SpriteMap* _spritemap[3];
+	SpriteList* _sprites[3];
 
 	Core* core;
 };

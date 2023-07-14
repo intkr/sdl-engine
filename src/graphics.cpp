@@ -3,6 +3,14 @@
 #include "core.h"
 
 Graphics::Graphics(Core* _core) : core(_core) {
+	_sprites[0] = &backgroundSprites;
+	_sprites[1] = &foregroundSprites;
+	_sprites[2] = &popupSprites;
+	// 10 layers for each sprite list
+	for (int i = 0; i < 3; i++) {
+		_sprites[i]->resize(maxLayers);
+	}
+
 	// TODO: Fetch screen size data from player
 	int w = 1280, h = 720;
 
@@ -11,9 +19,6 @@ Graphics::Graphics(Core* _core) : core(_core) {
 	SDL_SetWindowTitle(_window, "Puzzle Time");
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 
-	_spritemap[0] = &backgroundSprites;
-	_spritemap[1] = &foregroundSprites;
-	_spritemap[2] = &popupSprites;
 
 	_font = TTF_OpenFont("assets/fonts/ns_eb.ttf", 70);
 	_colors["white"] = SDL_Color{ 255, 255, 255, 255 };
@@ -60,7 +65,9 @@ SDL_Texture* Graphics::getTextTexture(std::wstring text, SDL_Color& color, int w
 bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName) {
 	Sprite* s = nullptr;
 	for (int i = 3; i; i--) {
-		if (_spritemap[i - 1]->count(spriteName) > 0) s = (*_spritemap[i - 1])[spriteName];
+		for (int j = 0; j < maxLayers; j++) {
+			if ((*_sprites[i - 1])[j].count(spriteName) > 0) s = (*_sprites[i - 1])[j][spriteName];
+		}
 	}
 	if (s == nullptr) return false;
 
@@ -74,13 +81,13 @@ bool Graphics::setSpriteTexture(std::string spriteName, std::string textureName)
 
 SDL_Texture* Graphics::addTexture(std::string path, std::string name) {
 	if (_textures.find(name) != _textures.end()) {
-		//std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
+		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
 		return _textures[name];
 	}
 
 	SDL_Surface* surface = IMG_Load(path.c_str());
 	if (surface == nullptr) {
-		//std::cout << "adding texture \"" << name << "\" failed. (null image)\n";
+		std::cout << "adding texture \"" << name << "\" failed. (null image)\n";
 		return nullptr;
 	}
 	
@@ -93,12 +100,12 @@ SDL_Texture* Graphics::addTexture(std::string path, std::string name) {
 
 SDL_Texture* Graphics::addTexture(SDL_Texture* texture, std::string name) {
 	if (_textures.find(name) != _textures.end()) {
-		//std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
+		std::cout << "adding texture \"" << name << "\" failed. (duplicate texture name)\n";
 		return _textures[name];
 	}
 
 	if (texture == nullptr) {
-		//std::cout << "adding texture \"" << name << "\" failed. (null texture)\n";
+		std::cout << "adding texture \"" << name << "\" failed. (null texture)\n";
 		return nullptr;
 	}
 
@@ -106,36 +113,46 @@ SDL_Texture* Graphics::addTexture(SDL_Texture* texture, std::string name) {
 	return texture;
 }
 
-Sprite* Graphics::addSprite(std::string texName, std::string spriteName, SDL_Rect* src, SDL_FRect* dst, SpriteType type, double angle) {
-	if (_spritemap[type]->count(spriteName) > 0) {
-		//std::cout << "adding sprite \"" << spriteName << "\" failed. (duplicate sprite name)\n";
-		return (*_spritemap[type])[spriteName];
+Sprite* Graphics::addSprite(std::string texName, std::string spriteName, SDL_Rect* src, SDL_FRect* dst, SpriteType type, int layer, double angle) {
+	if (layer >= maxLayers) {
+		std::cout << "adding sprite \"" << spriteName << "\" failed. (invalid layer)\n";
+		return nullptr;
+	}
+	if ((*_sprites[type])[layer].count(spriteName) > 0) {
+		std::cout << "adding sprite \"" << spriteName << "\" failed. (duplicate sprite name)\n";
+		return(*_sprites[type])[layer][spriteName];
 	}
 
 	if (_textures.count(texName) == 0) {
-		//std::cout << "adding sprite \"" << spriteName << "\" failed. (null texture)\n";
+		std::cout << "adding sprite \"" << spriteName << "\" failed. (null texture)\n";
 		return nullptr;
 	}
 
 	Sprite* s = new Sprite(_textures[texName], src, dst, angle);
-	(*_spritemap[type])[spriteName] = s;
+	(*_sprites[type])[layer][spriteName] = s;
 	return s;
 }
 
-Sprite* Graphics::addSprite(std::string name, SpriteType type, Sprite* s) {
-	if (_spritemap[type]->count(name) > 0) {
-		//std::cout << "adding sprite \"" << name << "\" failed. (duplicate sprite name)\n";
-		return (*_spritemap[type])[name];
+Sprite* Graphics::addSprite(std::string name, SpriteType type, Sprite* s, int layer) {
+	if (layer >= maxLayers) {
+		std::cout << "adding sprite \"" << name << "\" failed. (invalid layer)\n";
+		return nullptr;
+	}
+	if ((*_sprites[type])[layer].count(name) > 0) {
+		std::cout << "adding sprite \"" << name << "\" failed. (duplicate sprite name)\n";
+		return (*_sprites[type])[layer][name];
 	}
 
-	(*_spritemap[type])[name] = s;
+	(*_sprites[type])[layer][name] = s;
 	return s;
 }
 
 Sprite* Graphics::getSprite(std::string name) {
 	for (int i = 3; i; i--) {
-		if ((*_spritemap[i - 1]).count(name) > 0) {
-			return (*_spritemap[i - 1])[name];
+		for (int j = 0; j < maxLayers; j++) {
+			if ((*_sprites[i - 1])[j].count(name) > 0) {
+				return (*_sprites[i - 1])[j][name];
+			}
 		}
 	}
 	return NULL;
@@ -143,14 +160,14 @@ Sprite* Graphics::getSprite(std::string name) {
 
 bool Graphics::hasSprites() {
 	for (int i = 0; i < 3; i++) {
-		if (_spritemap[i]->size() > 0)
+		if (_sprites[i]->size() > 0)
 			return false;
 	}
 	return true;
 }
 
 bool Graphics::doesPopupExist() {
-	return popupSprites.size() > 0;
+	return popupSprites[0].size() > 0;
 }
 
 void Graphics::renderScreen() {
@@ -162,14 +179,16 @@ void Graphics::renderScreen() {
 		if (i == 2 && doesPopupExist()) {
 			darkenScreen();
 		}
-		for (auto iter = _spritemap[i]->cbegin(); iter != _spritemap[i]->cend();) {
-			Sprite* s = iter->second;
-			bool validSprite = s->update();
-			if (validSprite) {
-				if (s->isVisible()) SDL_RenderCopyExF(_renderer, s->getTexture(), s->getSrcRect(), s->getDstRect(),
-													  s->getAngle(), nullptr, SDL_FLIP_NONE);
+		for (int j = 0; j < maxLayers; j++) {
+			for (auto iter = (*_sprites[i])[j].cbegin(); iter != (*_sprites[i])[j].cend();) {
+				Sprite* s = iter->second;
+				bool validSprite = s->update();
+				if (validSprite) {
+					if (s->isVisible()) SDL_RenderCopyExF(_renderer, s->getTexture(), s->getSrcRect(), s->getDstRect(),
+						s->getAngle(), nullptr, SDL_FLIP_NONE);
+				}
+				iter++;
 			}
-			iter++;
 		}
 	}
 
@@ -195,11 +214,13 @@ void Graphics::reset() {
 
 void Graphics::emptySprites() {
 	for (int i = 0; i < 3; i++) {
-		for (auto it = _spritemap[i]->begin(); it != _spritemap[i]->end();) {
-			delete it->second;
-			it = _spritemap[i]->erase(it);
+		for (int j = 0; j < maxLayers; j++) {
+			for (auto it = (*_sprites[i])[j].begin(); it != (*_sprites[i])[j].end();) {
+				delete it->second;
+				it = (*_sprites[i])[j].erase(it);
+			}
+			(*_sprites[i])[j].clear();
 		}
-		_spritemap[i]->clear();
 	}
 }
 
@@ -211,13 +232,19 @@ void Graphics::emptyTextures() {
 }
 
 bool Graphics::deleteSprite(std::string name, SpriteType type) {
-	auto sprite = _spritemap[type]->find(name);
-	if (sprite != _spritemap[type]->end()) {
-		delete sprite->second;
-		_spritemap[type]->erase(sprite);
-		return true;
+	int layer = -1;
+	for (int i = 0; i < maxLayers; i++) {
+		if ((*_sprites[type])[i].count(name) > 0) {
+			layer = i;
+			break;
+		}
 	}
-	else return false;
+	if (layer == -1) return false;
+
+	auto it = (*_sprites[type])[layer].find(name);
+	delete it->second;
+	(*_sprites[type])[layer].erase(it);
+	return true;
 }
 
 bool Graphics::deleteTexture(std::string name) {

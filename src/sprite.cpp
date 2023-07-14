@@ -56,8 +56,10 @@ bool Sprite::update() {
 		return false;
 	}
 
-	// set default texture opacity to 100%
+	// set default texture opacity to 100%,
+	// and set default texture color overlay to white
 	SDL_SetTextureAlphaMod(getTexture(), 255);
+	SDL_SetTextureColorMod(getTexture(), 255, 255, 255);
 
 	for (auto aniGroup = list->begin(); aniGroup != list->end();) {
 		if (aniGroup->second->animate(this)) {
