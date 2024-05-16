@@ -1,143 +1,90 @@
 #include "animation.h"
 #include "sprite.h"
 
-AnimationGroup::~AnimationGroup() {
-	for (auto it = animationList.begin(); it != animationList.end();) {
-		delete* it;
-		it = animationList.erase(it);
+Animation::~Animation() {
+	for (auto motion : motions) {
+		delete motion;
 	}
+	motions.clear();
 }
 
-bool AnimationGroup::addEvent(AnimationEvent* e) {
-	try {
-		animationList.push_back(e);
-		return true;
-	}
-	catch (...) {
-		return false;
-	}
+bool operator==(const Animation& other) const {
+	return name == other.name;
 }
 
-bool AnimationGroup::animate(Sprite* sprite) {
-	if (!enabled) return true;
-
-	if (sequential) {
-		if (animationList[currentAnimation]->animate(sprite)) {
-			if (++currentAnimation >= animationList.size()) {
-				if (looping && enabled) {
-					reset();
-					return false;
-				}
-				else {
-					enabled = false;
-					return true;
-				}
-				//currentAnimation *= looping;
-				//return !looping;
-			}
-		}
-		return false;
+void Animation::addMotion(Motion* motion) {
+	if (motion == nullptr) {
+		throw InvalidItemException("nullptr", "motion");
 	}
-	else {
-		bool finished = true;
-
-		for (auto animation = animationList.begin(); animation != animationList.end();) {
-			if ((*animation)->animate(sprite)) {
-				if (looping && enabled) {
-					(*animation)->reset();
-					finished = false;
-				}
-			}
-			else finished = false;
-
-			animation++;
-		}
-
-		if (finished && !looping) {
-			enabled = false;
-			return true;
-		}
-
-		return finished;
-	}
+	motions.push_back(motion);
 }
 
-void AnimationGroup::reset() {
-	currentAnimation = 0;
-	for (auto animation : animationList) {
-		animation->reset();
+Motion* Animation::getMotion(std::string name) {
+	for (Motion* motion : motions) {
+		if (motion->getName() == name)
+		return motion;
 	}
+	throw InvalidItemException(name, "motion");
 }
 
-void AnimationGroup::enableGroup() {
-	enabled = true;
-	for (auto e : animationList) {
-		e->reset();
-	}
-}
-
-//////////////////////////////////////////
-
-bool AnimationEvent::animate(Sprite* sprite) {
-	f(sprite, this);
-
-	if (++currentFrame > maxFrames) {
-		// Animation has finished
+void SequentialAnimation::animate(Geometry& geometry) {
+	ms delta = Clock::getDeltaTime(elapsedTime);
+	
+	Motion* motion = *currentMotion;
+	while (delta.count() > 0) {
 		
-		//currentFrame = 0;
-		return true;
 	}
-	return false;
+	
+	if (motion->isActive()) {
+		
+		motion.animate(geometry);
+	}
+	else selectNextMotion();
 }
 
-bool AnimationEvent::setBool(std::string name, bool value) {
-	if (paramBool.count(name) > 0) {
-		std::cout << "Failed to set bool parameter \"" << name << "\". (Duplicate parmeter name)\n";
-		return false;
+void ConcurrentAnimation::animate(Geometry& geometry) {
+	bool animatedMotionExists = false;
+	
+	for (Motion* motion : motions) {
+		if (motion.isActive()) {
+			animatedMotionExists = true;
+			motion.animate(geometry);
+		}
 	}
-	paramBool[name] = value;
-	return true;
+	
+	// If any of the motions were animated, then this animation is considered active.
+	activeness = animatedMotionExists;
 }
 
-bool AnimationEvent::setChar(std::string name, char value) {
-	if (paramChar.count(name) > 0) {
-		std::cout << "Failed to set char parameter \"" << name << "\". (Duplicate parmeter name)\n";
-		return false;
-	}
-	paramChar[name] = value;
-	return true;
+void SequentialAnimation::selectNextMotion() {
+	currentMotion++;
+	if (currentMotion == motions.end()) deactivate();
 }
 
-bool AnimationEvent::setFloat(std::string name, float value) {
-	if (paramFloat.count(name) > 0) {
-		std::cout << "Failed to set float parameter \"" << name << "\". (Duplicate parmeter name)\n";
-		return false;
+void Animation::reset() {
+	initialTime = Clock::getTime();
+	for (auto motion : motions) {
+		motion->reset();
 	}
-	paramFloat[name] = value;
-	return true;
 }
 
-bool AnimationEvent::getBool(std::string name) {
-	if (paramBool.count(name) == 0) {
-		std::cout << "Failed to get bool parameter \"" << name << "\". (Invalid parmeter name)\n";
-		return false;
-	}
-	return paramBool[name];
+void SequentialAnimation::reset() {
+	Animation::reset();
+	currentMotion = motions.begin();
 }
 
-
-char AnimationEvent::getChar(std::string name) {
-	if (paramChar.count(name) == 0) {
-		std::cout << "Failed to get char parameter \"" << name << "\". (Invalid parmeter name)\n";
-		return '\0';
-	}
-	return paramChar[name];
+void Animation::activate() {
+	activeness = true;
+	reset();
 }
 
-float AnimationEvent::getFloat(std::string name) {
-	if (paramFloat.count(name) == 0) {
-		std::cout << "Failed to get float parameter \"" << name << "\". (Invalid parmeter name)\n";
-		return 0.0f;
-	}
-	return paramFloat[name];
+void SequentialAnimation::activate() {
+	// me when when
+	activeness = true;
+	reset();
+}
+
+void Animation::updateTime() {
+	elapsedTime = Clock::getDeltaTime(initialTime);
+	activeness = (elapsedTime <= duration);
 }

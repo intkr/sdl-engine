@@ -40,7 +40,7 @@ void Player::reset() {
 
 	// wide char example
 	// 
-	//std::wstring wstr = L"°¡³ª´Ù";
+	//std::wstring wstr = L"Â°Â¡Â³ÂªÂ´Ã™";
 	//int len = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), 0, 0, NULL, NULL);
 	//std::string str(len, 0);
 	//WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &str[0], len, NULL, NULL);

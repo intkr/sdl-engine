@@ -2,106 +2,124 @@
 
 #include "core.h"
 
-Audio::Audio(Core* _core) : core(_core) {
+Audio::Audio() {
 	fr = FMOD::System_Create(&fs);
 	fr = fs->init(512, FMOD_INIT_NORMAL, 0);
-
-	FMOD::ChannelGroup* bgm;
-	fs->createChannelGroup("bgm", &bgm);
-	_chgroups[_BGM] = bgm;
-
-	FMOD::ChannelGroup* sfx;
-	fs->createChannelGroup("sfx", &sfx);
-	_chgroups[_SFX] = sfx;
 }
 
 Audio::~Audio() {
-	stopSound();
-	// TODO: check how to delete FMOD::ChannelGroups
+	stopAllSounds();
 	fs->close();
 	fs->release();
 }
 
-bool Audio::addSound(std::string path, std::string name, bool isLoop, bool isStream) {
-	if (_sounds.count(name) > 0) {
-		std::cout << "Failed to add sound \"" << name << "\". (Duplicate sound name)\n";
-		return false;
-	}
+Audio* Audio::getAudio() {
+	if (a == nullptr) a = new Audio();
+	return a;
+}
 
-	FMOD::Sound* sound;
-	fr = fs->createSound(path.c_str(), (isLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF) | FMOD_2D | (isStream ? FMOD_CREATESTREAM : FMOD_CREATESAMPLE), nullptr, &sound);
+void Audio::deleteAudio() {
+	delete a;
+}
+
+Sound* Audio::createBGM(std::string path) {
+	Sound* sound;
+	fr = fs->createSound(path.c_str(), (FMOD_3D | FMOD_CREATESTREAM), nullptr, &sound);
+	
 	if (fr != FMOD_OK) {
-		// TODO: add more descriptive error prompts
-		std::cout << "Failed to add sound \"" << name << "\". (Unknown error)\n";
-		std::cout << "\tFMOD Error : " << FMOD_ErrorString(fr) << "\n";
-		return false;
+		throw InvalidItemException(path, "sound path");
 	}
-
-	_sounds[name] = sound;
-	return true;
+	else return sound;
 }
 
-bool Audio::playSound(std::string name, AudioType type, int volume) {
-	if (_sounds.count(name) == 0) {
-		std::cout << "Failed to play sound \"" << name << "\". (Nonexistent name)\n";
-		return false;
+Sound* Audio::createSFX(std::string path) {
+	Sound* sound;
+	fr = fs->createSound(path.c_str(), (FMOD_3D | FMOD_CREATESAMPLE), nullptr, &sound);
+	
+	if (fr != FMOD_OK) {
+		throw InvalidItemException(path, "sound path");
 	}
-
-	FMOD::Channel* channel;
-	fr = fs->playSound(_sounds[name], _chgroups[type], false, &channel);
-
-	if (volume > 100) volume = 100;
-	else if (volume < 0) volume = 0;
-	channel->setVolume(volume / 100.0f);
-	_channels.insert(std::make_pair(name, channel));
-	return true;
+	else return sound;
 }
 
-bool Audio::pauseSound(std::string name) {
-	if (_channels.count(name) == 0) {
-		std::cout << "Failed to pause sound \"" << name << "\". (Nonexistent name)\n";
-		return false;
+void Audio::addSound(Sound* s, std::string name) {
+	if (isSoundAlreadyLoaded(name)) {
+		throw DuplicateItemException(name, "sound");
 	}
-
-	_channels.find(name)->second->setPaused(true);
-	return true;
+	sounds.emplace(name, s);
 }
 
-bool Audio::stopSound() {
-	for (auto ch = _channels.begin(); ch != _channels.end();) {
-		ch->second->stop();
-		ch = _channels.erase(ch);
+Channel* Audio::createChannel(std::string name) {
+	try {
+		Sound* sound = getSound(name);
+		FMOD::Channel* fmod_ch = createFMODchannel(sound);
+		Channel* channel = new Channel(fmod_ch);
+		return channel;
 	}
-	return true;
+	catch (std::exception& e) {
+		std::cout << e.what();
+	}
 }
 
-bool Audio::stopSound(std::string name, AudioType type) {
-	FMOD::Channel* channel;
-
-	if (_channels.count(name) == 0) {
-		std::cout << "Failed to stop sound \"" << name << "\". (Nonexistent name)\n";
-		return false;
+Sound* Audio::getSound(std::string name) {
+	try {
+		Sound* sound = sounds.at(name);
+		return sound;
 	}
-
-	channel = _channels.find(name)->second;
-	channel->stop();
-	return true;
+	catch (out_of_range& e) {
+		throw InvalidItemException(name, "sound");
+	}
 }
+
+FMOD::Channel* Audio::createFMODchannel(Sound* sound) {
+	FMOD::ChannelGroup* group;
+	if (isSoundBGM(sound)) group = bgm;
+	else group = sfx;
+
+	FMOD::Channel* fmod_ch;
+	fr = fs->playSound(sound, group, true, &fmod_ch);
+	return fmod_ch;
+}
+
+bool Audio::isSoundBGM(Sound* sound) {
+	FMOD_MODE mode;
+	sound->getMode(&mode);
+	return (mode & FMOD_CREATESTREAM);
+}
+
+void Audio::addChannel(Channel* ch, std::string name) {
+	channels.emplace(name, channel);
+}
+
+/* not sure if this is rly needed but uncomment if so
+Channel* Audio::getChannel(std::string name) {
+	auto range = channels.equal_range(name);
+	return range->second->second;
+}
+*/
 
 void Audio::update() {
-	FMOD::Channel* ch;
-	bool b;
+	FMOD::Channel* channel;
+	bool playing;
 
-	for (auto it = _channels.begin(); it != _channels.end();) {
-		ch = it->second;
-		fr = ch->isPlaying(&b);
-		if (!b || fr == FMOD_ERR_INVALID_HANDLE) {
+	// TODO: add effect related code when implemented
+	for (auto it = channels.begin(); it != channels.end();) {
+		channel = it->second;
+		fr = channel->isPlaying(&playing);
+		if (!playing || fr == FMOD_ERR_INVALID_HANDLE) {
 			it = _channels.erase(it);
 		}
 		else it++;
 	}
 }
 
-bool Audio::hasSounds() {
-	return _channels.size() > 0;
+void Audio::deleteSound(std::string name) {
+	try {
+		Sound* sound = sounds.at(name);
+		sound->release();
+		sounds.erase(name);
+	}
+	catch (std::exception& e) {
+		std::cout << e.what();
+	}
 }

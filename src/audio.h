@@ -7,93 +7,48 @@
 #include "fmod_output.h"
 #include "fmod_errors.h"
 
-class Core;
+#include "clock.h"
+#include "channel.h"
+#include "exceptions.h"
 
-enum AudioType { _BGM = 1, _SFX = 2
-};
+typedef FMOD::Sound Sound;
 
 class Audio {
 public:
-	friend class Core;
+	static Audio* getAudio();
+	static void deleteAudio();
+	
+	// TODO: check if bgms can be replayed / have multiple channels
+	
+	Sound* createBGM(std::string path);
+	Sound* createSFX(std::string path);
+	void addSound(Sound* s, std::string name);
+	// The name of the channel is equal to the sound it plays.
+	// Multiple channels may result in having the same name.
+	Channel* createChannel(std::string soundName);
+	void addChannel(Channel* ch, std::string name);
 
-	Audio(Core* core);
-	~Audio();
-
-	// TODO: check if below holds true if isStream is true
-
-	/// <summary>
-	/// Creates a Sound object, and adds it to memory.
-	/// Sounds are not deleted from memory after it stops, and can be played again.
-	/// </summary>
-	/// <param name="path">Audio file path.</param>
-	/// <param name="name">Sound name.</param>
-	/// <param name="isLoop">If true, the audio loops indefinitely.</param>
-	/// <param name="isStream">If true, audio is played as a stream. Should be false for SFXs and true for BGMs.</param>
-	/// <returns>true if the Sound object is successfully created.</returns>
-	bool addSound(std::string path, std::string name, bool isLoop, bool isStream);
-
-	/// <summary>
-	/// Plays a sound.
-	/// </summary>
-	/// <param name="name">Sound name.</param>
-	/// <param name="type">Sound type - _BGM or _SFX.</param>
-	/// <param name="volume">Sound volume, 0~100.</param>
-	/// <returns>true if the sound is successfully played.</returns>
-	bool playSound(std::string name, AudioType type, int volume);
-
-	/// <summary>
-	/// Pauses a sound.
-	/// </summary>
-	/// <param name="name">Sound name.</param>
-	/// <returns>true if the sound is successfully paused.</returns>
-	bool pauseSound(std::string name);
-
-	/// <summary>
-	/// Stops all playing sounds.
-	/// </summary>
-	/// <returns>true if all sounds are successfully stopped.</returns>
-	bool stopSound();
-
-	/// <summary>
-	/// Stops a sound.
-	/// </summary>
-	/// <param name="name">Sound name.</param>
-	/// <param name="type">Sound type - _BGM or _SFX.</param>
-	/// <returns>true if the sound is successfully stopped.</returns>
-	bool stopSound(std::string name, AudioType type);
-
-	/// <summary>
-	/// Iterates through all existing channels, deleting it from memory if its sound has finished playing.
-	/// </summary>
+	void deleteSound(std::string name);
+	
+	bool stopAllSounds();
 	void update();
-
-	/// <summary>
-	/// Checks if there is a channel with sound playing.
-	/// </summary>
-	/// <returns>true if there is.</returns>
-	bool hasSounds();
-
+	
 private:
+	static Audio* a;
+	Audio();
+	~Audio();
+	
+	bool isSoundAlreadyLoaded(std::string name) { return (sounds.find(name) != sounds.end()); }
+
+	Sound* getSound(std::string name);
+	FMOD::Channel* createFMODchannel(Sound* sound);
+	bool isSoundBGM(Sound* sound);
+	
 	FMOD::System* fs;
 	FMOD_RESULT fr;
-
-	/// <summary>
-	/// Contains a ChannelGroup object for each AudioType.<para/>
-	/// Each ChannelGroup is used to control all SFXs or BGMs at once.
-	/// </summary>
-	std::map<AudioType, FMOD::ChannelGroup*> _chgroups;
-
-	/// <summary>
-	/// Contains all Channel objects currently playing a sound.<para/>
-	/// Each Channel has its own name, and multiple Channels can have the same name.
-	/// </summary>
-	std::multimap<std::string, FMOD::Channel*> _channels;
-
-	/// <summary>
-	/// Contains all Sound objects for later use.
-	/// Sound objects must be loaded and unloaded properly on each state change.
-	/// </summary>
-	std::map<std::string, FMOD::Sound*> _sounds;
-
-	Core* core;
+	
+	FMOD::ChannelGroup* sfx;
+	FMOD::ChannelGroup* bgm;
+	std::multimap<std::string, Channel*> channels;
+	std::map<std::string, Sound*> sounds;
 };

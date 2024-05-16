@@ -1,54 +1,56 @@
 #include "animation_functions.h"
 
-#include "sprite.h"
-
-void Animations::staticMotion(Sprite* _s, AnimationEvent* _e) {
-	// nothing
+void Motions::Stationary(Geometry* geo, Motion* m) {
+	// Nothing happens
 }
 
-void Animations::intangible(Sprite* _s, AnimationEvent* _e) {
-	SDL_FRect* dstRect = _s->getDstRect();
-	dstRect->w = dstRect->h = 0;
-}
-
-void Animations::sincosMotion(Sprite* _s, AnimationEvent* _e) {
-	float a = _e->getFloat("a"), b = _e->getFloat("b");
-	char axis = _e->getChar("axis"), func = _e->getChar("func");
-
-	unsigned int currentFrame = _e->getCurrentFrame();
-	SDL_FRect* dstRect = _s->getDstRect();
-	SDL_FRect* baseRect = _s->getBaseRect();
-
-	float delta;
-	switch (func) {
-	case 's': // sine
-		delta = (float)sin(currentFrame * M_PI * b) * a;
-		break;
-	case 'c': // cosine
-		delta = (float)cos(currentFrame * M_PI * b) * a;
-		break;
-	default:
-		delta = 0;
-		printf("sincos - invalid func : %c\n", func);
-		break;
-	}
-
+void Motions::2DPosition_SineWave(Geometry* geo, Motion* m) {
+	const int msPerSecond = 1000;
+	float amplitude = m->getParameter<float>("amplitude"),
+		freqency = m->getParameter<float>("frequency");
+	ms elapsedTime = m->getElapsedTime();
+		
+	float delta = amplitude * (float)sin(frequency * M_PI * (elapsedTime.count() / msPerSecond));
+	
+	char axis = m->getParameter<char>("axis");
+	SDL_FRect*& baseRect = geo->baseRect,
+		modRect = geo->modRect;
+	
 	switch (axis) {
 	case 'x':
-		dstRect->x = baseRect->x - delta;
-		break;
+		modRect->x = baseRect->x - delta;
 	case 'y':
-		dstRect->y = baseRect->y - delta;
-		break;
+		modRect->y = baseRect->y - delta;
 	default:
-		printf("sincos - invalid axis : %c\n", axis);
-		break;
+		std::cout << "Invalid parameter 'axis' (" << axis << ") in 2DPosition_SineWave\n";
+	}
+}
+
+void Motions::2DPosition_CosineWave(Geometry* geo, Motion* m) {
+	const int msPerSecond = 1000;
+	float amplitude = m->getParameter<float>("amplitude"),
+		freqency = m->getParameter<float>("frequency");
+	ms elapsedTime = m->getElapsedTime();
+		
+	float delta = amplitude * (float)sin(frequency * M_PI * (elapsedTime.count() / msPerSecond));
+	
+	char axis = m->getParameter<char>("axis");
+	SDL_FRect*& baseRect = geo->baseRect,
+		modRect = geo->modRect;
+	
+	switch (axis) {
+	case 'x':
+		modRect->x = baseRect->x - delta;
+	case 'y':
+		modRect->y = baseRect->y - delta;
+	default:
+		std::cout << "Invalid parameter 'axis' (" << axis << ") in 2DPosition_SineWave\n";
 	}
 }
 
 void Animations::linearMotion(Sprite* _s, AnimationEvent* _e) {
-	float speed = _e->getFloat("speed");
-	char axis = _e->getChar("axis");
+	float speed = _e->getParameter<float>("speed");
+	char axis = _e->getParameter<char>("axis");
 	bool baseMove = _e->getBool("baseMove");
 
 	SDL_FRect* dstRect = _s->getDstRect();
@@ -71,7 +73,7 @@ void Animations::linearMotion(Sprite* _s, AnimationEvent* _e) {
 }
 
 void Animations::resizeCenteredMotion(Sprite* _s, AnimationEvent* _e) {
-	float startSize = _e->getFloat("startSize"), endSize = _e->getFloat("endSize");
+	float startSize = _e->getParameter<float>("startSize"), endSize = _e->getParameter<float>("endSize");
 
 	// validity check
 	if (startSize < 0 || endSize < 0) {
@@ -94,13 +96,13 @@ void Animations::resizeCenteredMotion(Sprite* _s, AnimationEvent* _e) {
 }
 
 void Animations::linearRotation(Sprite* _s, AnimationEvent* _e) {
-	double speed = (double)_e->getFloat("speed");
+	double speed = (double)_e->getParameter<float>("speed");
 	_s->setAngle(_s->getAngle() + speed);
 }
 
 void Animations::sincosRotation(Sprite* _s, AnimationEvent* _e) {
-	float a = _e->getFloat("a"), b = _e->getFloat("b");
-	char func = _e->getChar("func");
+	float a = _e->getParameter<float>("a"), b = _e->getParameter<float>("b");
+	char func = _e->getParameter<char>("func");
 	unsigned int currentFrame = _e->getCurrentFrame();
 
 	double angle = sin(currentFrame * M_PI * b) * a;
@@ -111,7 +113,7 @@ void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
 	unsigned int currentFrame = _e->getCurrentFrame();
 	unsigned int maxFrames = _e->getMaxFrames();
 
-	float a = _e->getFloat("a");
+	float a = _e->getParameter<float>("a");
 	if (a > 1.0f) a = 1.0f;
 	else if (a < 0.0f) a = 0.0f;
 	
@@ -119,7 +121,7 @@ void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
 		SDL_SetTextureAlphaMod(_s->getTexture(), (Uint8)(a * 255));
 	}
 	else {
-		float b = _e->getFloat("b");
+		float b = _e->getParameter<float>("b");
 		if (b > 1.0f) b = 1.0f;
 		else if (b < 0.0f) b = 0.0f;
 
@@ -130,9 +132,9 @@ void Animations::opacity(Sprite* _s, AnimationEvent* _e) {
 void Animations::linearScale(Sprite* _s, AnimationEvent* _e) {
 	unsigned int currentFrame = _e->getCurrentFrame();
 	unsigned int maxFrames = _e->getMaxFrames();
-	char axis = _e->getChar("axis");
+	char axis = _e->getParameter<char>("axis");
 	bool centered = _e->getBool("centered");
-	float a = _e->getFloat("a"), b = _e->getFloat("b");
+	float a = _e->getParameter<float>("a"), b = _e->getParameter<float>("b");
 
 	SDL_FRect* baseRect = _s->getBaseRect(), * dstRect = _s->getDstRect();
 
@@ -147,6 +149,6 @@ void Animations::linearScale(Sprite* _s, AnimationEvent* _e) {
 }
 
 void Animations::colorize(Sprite* _s, AnimationEvent* _e) {
-	int r = (int)_e->getFloat("r"), g = (int)_e->getFloat("g"), b = (int)_e->getFloat("b");
+	int r = (int)_e->getParameter<float>("r"), g = (int)_e->getParameter<float>("g"), b = (int)_e->getParameter<float>("b");
 	SDL_SetTextureColorMod(_s->getTexture(), r, g, b);
 }

@@ -1,24 +1,45 @@
 #pragma once
 
-class Sprite;
-class AnimationEvent;
+#include <math.h>
 
-namespace Animations {
-///
-/// Motion
-///
+#include "geometry.h"
+#include "motion.h"
+#include "exception.h"
 
-	// Sprite has no movement.
-	void staticMotion(Sprite* _s, AnimationEvent* _e);
+namespace Motions {
+	/*
+	 The [x / y] position of the target moves in a sine function.
+	 The function is equal to 'amplitude * sin(frequency*Ï€t)',
+	 where t = elapsed time (in seconds).
+	 
+	 Parameters:
+	 "amplitude" (float) : The size of the sine wave.
+	 "frequency" (float) : The frequency of each sine wave.
+	 "axis" (char) : The axis to apply the function to. Value must either be 'x' or 'y'.
+	*/
+	void Position2D_SineWave(Geometry* geo, Motion* m);
 
-	// The [x / y] position of the sprite moves in a [sine / cosine] function. (a sin b¥ðt / a cos b¥ðt)
-	// 'a' (float) : Amplitude, 'a' in the equation.
-	// 'b' (float) : Angular frequency, 'b' in the equation.
-	//		Length of the cycle should be 2/b frames.
-	// 'axis' (char) : 'x' or 'y', defines the axis the function operates on.
-	// 'func' (char) : 's'(sine) or 'c'(cosine), the type of the function.
-	void sincosMotion(Sprite* _s, AnimationEvent* _e);
+	/*
+	 The [x / y] position of the target moves in a cosine function.
+	 The function is equal to 'amplitude * cos(frequency*Ï€t)',
+	 where t = elapsed time (in seconds).
+	 
+	 Parameters:
+	 "amplitude" (float) : The size of the sine wave.
+	 "frequency" (float) : The frequency of each sine wave.
+	 "axis" (char) : The axis to apply the function to. Value must either be 'x' or 'y'.
+	*/
+	void Position2D_CosineWave(Geometry* geo, Motion* m);
 
+	/*
+	The target moves towards a destination point.
+	
+	Parameters:
+	
+	*/
+	void Position2D_(Geometry* geo, Motion* m);
+	
+	
 	// The [x / y] position of the sprite moves in a linear function.
 	// 'speed' (float) : Defines how much the sprite moves, pixels/frame.
 	// 'axis' (char) : 'x' or 'y', defines the axis the function operates on.
@@ -40,7 +61,7 @@ namespace Animations {
 	// 'speed' (float) : Angular speed, degrees/frame.
 	void linearRotation(Sprite* _s, AnimationEvent* _e);
 
-	// The angle of the sprite changes in a [sine / cosine] function. (a sin b¥ðt / a cos b¥ðt)
+	// The angle of the sprite changes in a [sine / cosine] function. (a sin bÂ¥Ã°t / a cos bÂ¥Ã°t)
 	// 'a' (float) : Amplitude, 'a' in the equation.
 	// 'b' (float) : Angular frequency, 'b' in the equation.
 	//		Length of the cycle should be 2/b frames.
@@ -71,4 +92,3 @@ namespace Animations {
 	// 'r', 'g', 'b' (float) : The rgb value of the overlay color, [0-255]. Defaults to 0.
 	void colorize(Sprite* _s, AnimationEvent* _e);
 }
-
