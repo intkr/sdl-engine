@@ -20,13 +20,13 @@ public:
 	
 	// TODO: check if bgms can be replayed / have multiple channels
 	
-	Sound* createBGM(std::string path);
-	Sound* createSFX(std::string path);
-	void addSound(Sound* s, std::string name);
-	// The name of the channel is equal to the sound it plays.
-	// Multiple channels may result in having the same name.
+	// Adds a sound by loading the audio file and assigning it to a given name.
+	// Each sound should be assigned a unique name to prevent confusion.
+	Sound* addBGM(std::string path, std::string name);
+	Sound* addSFX(std::string path, std::string name);
+	// Creates a channel with a designated sound loaded in, in a paused state.
+	// You can unpause the channel via Channel::play().
 	Channel* createChannel(std::string soundName);
-	void addChannel(Channel* ch, std::string name);
 
 	void deleteSound(std::string name);
 	
@@ -43,6 +43,9 @@ private:
 	Sound* getSound(std::string name);
 	FMOD::Channel* createFMODchannel(Sound* sound);
 	bool isSoundBGM(Sound* sound);
+	void Audio::addChannel(Channel* ch, std::string name);
+
+	bool isChannelDeprecated(Channel* ch);
 	
 	FMOD::System* fs;
 	FMOD_RESULT fr;

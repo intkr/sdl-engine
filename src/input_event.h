@@ -3,32 +3,27 @@
 #include "SDL.h"
 
 enum InputType {
-	// Default value for no events.
+	// Default value for lack of events.
 	_INPUT_NONE = 0,
-	// Inputs where an entity is focused via
-	// keyboard presses or mouse movement.
+	// Inputs where an entity is focused via keyboard presses or mouse movement.
 	_INPUT_FOCUS_IN = 1 << 0,
 	_INPUT_FOCUSED = 1 << 1,
 	_INPUT_FOCUS_OUT = 1 << 2,
-	// Inputs where a mouse button or a key is
-	// being pressed down/up on an entity.
-	// This can't occur without being focused.
+	// Inputs where a mouse button or a key is being pressed down/up on an entity.
+	// This can't (and shouldn't) occur without the target being priorly focused.
 	_INPUT_PRESS_DOWN = 1 << 3,
 	_INPUT_PRESSED = 1 << 4,
 	_INPUT_PRESS_UP = 1 << 5,
 	// Input where an entity has been selected
-	// via a mouse click or a 'return' key press.
+	// via a mouse click or an 'Enter' key press.
 	_INPUT_CLICK = 1 << 6
 };
 
 enum Key {
-	// Default value for all keys except ones below
+	// Default value for keys not listed below
 	_KEY_ETC = 0,
-	// 12 key layout
-	_KEY_A1, _KEY_A2, _KEY_A3,
-	_KEY_B1, _KEY_B2, _KEY_B3,
-	_KEY_C1, _KEY_C2, _KEY_C3,
-	_KEY_D1, _KEY_D2, _KEY_D3,
+	// Add key values specific to the game's needs
+
 	// Special function keys
 	_KEY_SHIFT,
 	_KEY_RETURN,
@@ -36,13 +31,13 @@ enum Key {
 }
 
 struct MouseButton {
-	// Default value for all buttons except ones below
+	// Default value for all buttons not listed below
 	_BUTTON_ETC = 0,
 	// Mouse press
 	_BUTTON_LEFT,
 	_BUTTON_MIDDLE,
 	_BUTTON_RIGHT,
-	// Only used for hover in/out checks
+	// Not a mouse press, used for mouse movement only
 	_BUTTON_NONE
 }
 struct UserInput {
@@ -50,7 +45,7 @@ struct UserInput {
 }
 
 struct KeyInput : UserInput {
-	KeyInput(InputType t, Key k) : key(k), type(t) {}
+	KeyInput(Key k, InputType t) : key(k), type(t) {}
 	
 	bool operator==(const KeyInput& other) {
 		return (key == other.key) && (type == other.type);
@@ -60,7 +55,7 @@ struct KeyInput : UserInput {
 }
 
 struct MouseInput : UserInput {
-	MouseInput(InputType t, MouseButton b, SDL_FPoint p = SDL_FPoint()) : button(b), pos(p), type(t) {}
+	MouseInput(MouseButton b, InputType t, SDL_FPoint p = SDL_FPoint()) : button(b), pos(p), type(t) {}
 	
 	bool operator==(const MouseInput& other) {
 		return (button == other.button) && (type == other.type);

@@ -10,10 +10,9 @@
 typedef FMOD::Sound Sound;
 
 // Note: if a channel makes a clicking sound at the end of playback, refer to ChannelControl::setMode() documentation
-
 class Channel {
 public:
-	Channel(FMOD::Channel* ch, float _bpm = 0.0f) : channel(ch), active(false), looping(false), bpm(_bpm) {}
+	Channel(FMOD::Channel* ch) : channel(ch), active(false), looping(false) {}
 	~Channel() {}
 	
 	void play();
@@ -28,5 +27,4 @@ private:
 	FMOD::Channel* channel;
 	bool active;
 	bool looping;
-	float bpm;
 }

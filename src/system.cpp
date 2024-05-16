@@ -48,6 +48,7 @@ void System::checkForQuitTrigger() {
 	if(i->isQuitTriggered())
 		gaming = false;
 }
+
 void System::render() {
 	Renderer* r = g->getRenderer();
 	r->clearScreen();
@@ -60,8 +61,8 @@ void System::updateTime() {
 }
 
 void limitFPS() {
-	ms timeSinceFrameStarted = c->getDeltaTime(SteadyClock::now());
-	int frameElapsedMS = (int)timeSinceFrameStarted.count();
+	ms deltaTime = c->getDeltaTime(SteadyClock::now());
+	int frameElapsedMS = (int)deltaTime.count();
 	
 	const int msPerSecond = 1000;
 	int msPerFrame = msPerSecond / fps;

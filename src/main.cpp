@@ -28,28 +28,23 @@ Stuff I must do before I eventually meltdown:
 	- Make a 'Renderer' class that does all the sprite rendering.
 	- Make a sprite list in State, and pass the Renderer object to State so it can iterate through sprites and render.
 		* a Renderer should only need geometry/texture data to render
-	- Allow Entities to group multiple sub-Entities
+	- Allow Entities to group multiple sub-Entities.
 	- Put all functions required for every State in the base class, so all derived classes can do their specific stuff
+	- Create audio effect systems.
+	- Text (fonts and text color) and sprites should be separated into its own class, not within Graphics.
 */
 
 /*
-Puzzle ideas:
-	road direction puzzle
-	dance puzzle
+Stuff to ponder upon like a sophisticated individual:
 
-Notes:
-	- Need a better name than 'Motion' for the namespace used by all animating functions
-Important notes:
-	- The input data (more specifically, keyStatus and mouseStatus) needs to be 
-	  reset when the State changes (or any equivalent action) to prevent any
-	  unintended input triggers.
-	  
-	  By such logic, "Half-presses" should be considered equally as not having any 
-	  input at all - therefore, there needs an additional check for keyUps to see if 
-	  there's input data for keyDown already
-	  (if not, keyUp is invalid)
-	  
-	- If collision checks take too much time, consider saving the hitbox region of the sprites as the width and height of the entity - which would 
-	  then be used to compare with the distance between the entity's center and the 
-	  cursor.
+	- When implementing customizable keybinds, how should duplicate keys be handled?
+		* obviously they should be prohibited in the first place but how should that be handled
+	- The current input system does not properly handle key presses that aren't used in the game.
+	  i.e. pressing multiple of those may or may not trigger each PRESS_DOWN/ED/UP as one might expect.
+*/
+
+/*
+Small notes for the brainrot future me:
+
+	- BPM should be handled by a music-specific class object, not Channels or whatever.
 */

@@ -34,7 +34,7 @@ private:
 	void flushKeys();
 	void flushKeyStatus(InputType& status);
 	void flushMouse();
-	void transformInputStatus(InputType& input, InputType from, InputType to) {
+	void changeInputStatus(InputType& input, InputType from, InputType to) {
 		if (i == from)
 			i = to;
 	}
@@ -67,5 +67,7 @@ private:
 	bool quitTriggered;
 
 	enum class InputDevice { _NONE, _MOUSE, _KEY };
+	// This variable exists to ensure that any mouse activity overrides all
+	// keyboard actions prior, as they should be considered irrelevant. 
 	InputDevice lastInputDevice;
 };

@@ -15,26 +15,9 @@ Input::Input() {
 	quitTriggered = false;
 	lastInputDevice = _NONE;
 	
-	// Keybind setup for my keyboard
-	setKeybinds(_KEY_A1, SDL_SCANCODE_KP_7);
-	setKeybinds(_KEY_A2, SDL_SCANCODE_KP_8);
-	setKeybinds(_KEY_A3, SDL_SCANCODE_KP_9);
-	
-	setKeybinds(_KEY_B1, SDL_SCANCODE_KP_4);
-	setKeybinds(_KEY_B2, SDL_SCANCODE_KP_5);
-	setKeybinds(_KEY_B3, SDL_SCANCODE_KP_6);
-	
-	setKeybinds(_KEY_C1, SDL_SCANCODE_KP_1);
-	setKeybinds(_KEY_C2, SDL_SCANCODE_KP_2);
-	setKeybinds(_KEY_C3, SDL_SCANCODE_KP_3);
-	
-	setKeybinds(_KEY_D1, SDL_SCANCODE_KP_0);
-	setKeybinds(_KEY_D2, SDL_SCANCODE_KP_PERIOD);
-	setKeybinds(_KEY_D3, SDL_SCANCODE_KP_ENTER);
-
-	setKeybinds(_KEY_SHIFT, SDL_SCANCODE_LSHIFT);
-	setKeybinds(_KEY_RETURN, SDL_SCANCODE_RETURN);
-	setKeybinds(_KEY_ESCAPE, SDL_SCANCODE_ESCAPE);
+	// Temporary keybind code until player settings are implemented,
+	// set keybinds like the commented code below
+	//setKeybinds(_KEY_A1, SDL_SCANCODE_KP_7);
 }
 
 Input::~Input() {}
@@ -71,16 +54,16 @@ void Input::flushKeys() {
 }
 
 void Input::flushKeyStatus(InputType& status) {
-	transformInputStatus(status, _INPUT_PRESS_DOWN, _INPUT_PRESSED);
-	transformInputStatus(status, _INPUT_PRESS_UP, _INPUT_NONE);
+	changeInputStatus(status, _INPUT_PRESS_DOWN, _INPUT_PRESSED);
+	changeInputStatus(status, _INPUT_PRESS_UP, _INPUT_NONE);
 }
 
 void Input::flushMouse() {
-	transformInputStatus(mouseStatus, _INPUT_PRESS_DOWN, _INPUT_PRESSED);
-	transformInputStatus(mouseStatus, _INPUT_PRESS_UP, _INPUT_NONE);
+	changeInputStatus(mouseStatus, _INPUT_PRESS_DOWN, _INPUT_PRESSED);
+	changeInputStatus(mouseStatus, _INPUT_PRESS_UP, _INPUT_NONE);
 }
 
-void Input::transformInputStatus(InputType& status, InputType from, InputType to) {
+void Input::changeInputStatus(InputType& status, InputType from, InputType to) {
 	if (status == from)
 		status = to;
 }
@@ -90,6 +73,7 @@ void Input::pollInput() {
 	
 	while (SDL_PollEvent(&e)) {
 		setInputDevicePriority(e.type);
+
 		switch (e.type) {
 		// Window X button
 		case SDL_QUIT:
@@ -128,14 +112,23 @@ void Input::pollInput() {
 // which would make this function pointless if so.
 void Input::setInputDevicePriority(Uint32 type) {
 	switch (type) {
+	// Key input
 	case SDL_KEYUP:
 	case SDL_KEYDOWN:
 		if (lastInputDevice != _MOUSE)
 			lastInputDevice = _KEY;
+		break;
+
+	// Mouse input
 	case SDL_MOUSEBUTTONUP:
 	case SDL_MOUSEBUTTONDOWN:
 	case SDL_MOUSEMOTION:
 		lastInputDevice = _MOUSE;
+		break;
+	
+	default:
+		// explore other options later
+		break;
 	}
 }
 
@@ -205,7 +198,7 @@ void Input::handleKeys() {
 		if (iter.first == _KEY_ETC || iter.second == _INPUT_NONE)
 			continue;
 		
-		input = KeyInput(iter.second, iter.first);
+		input = KeyInput(iter.first, iter.second);
 		sc->handleKey(input);
 	}
 }
@@ -214,7 +207,7 @@ void Input::handleMouse() {
 	MouseInput input;
 	StateController* sc = StateController::getStateController();
 	for (auto iter : mouseStatus) {
-		input = MouseInput(iter.second, iter.first, cursorPos);
+		input = MouseInput(iter.first, iter.second, cursorPos);
 		sc->handleMouse(input);
 	}
 }

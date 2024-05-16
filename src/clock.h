@@ -12,11 +12,12 @@ public:
 	static void deleteClock();
 	
 	void updateTime();
-	// Returns the "current" time - at which the current frame started.
+	// Returns the starting timepoint of the current frame,
+	// which is referred as the "current time" within the engine.
 	static Timepoint getTime() { return frameTimepoint; }
 
-	// Calculated as 'to - from'.
-	// 'to' defaults to the current time.
+	// Returns the difference between two timepoints, calculated as 'to - from'.
+	// 'to' is set to the current frame time by default.
 	static ms getDeltaTime(Timepoint from, Timepoint to = frameTimepoint;
 	
 private:

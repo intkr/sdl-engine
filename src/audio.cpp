@@ -22,31 +22,38 @@ void Audio::deleteAudio() {
 	delete a;
 }
 
-Sound* Audio::createBGM(std::string path) {
+Sound* Audio::addBGM(std::string path, std::string name) {
+	if (isSoundAlreadyLoaded(name)) {
+		throw DuplicateItemException(name, "sound");
+	}
+
 	Sound* sound;
 	fr = fs->createSound(path.c_str(), (FMOD_3D | FMOD_CREATESTREAM), nullptr, &sound);
 	
 	if (fr != FMOD_OK) {
 		throw InvalidItemException(path, "sound path");
 	}
-	else return sound;
+	else {
+		sounds.emplace(name, sound);
+		return sound;
+	}
 }
 
-Sound* Audio::createSFX(std::string path) {
+Sound* Audio::addSFX(std::string path, std::string name) {
+	if (isSoundAlreadyLoaded(name)) {
+		throw DuplicateItemException(name, "sound");
+	}
+
 	Sound* sound;
 	fr = fs->createSound(path.c_str(), (FMOD_3D | FMOD_CREATESAMPLE), nullptr, &sound);
 	
 	if (fr != FMOD_OK) {
 		throw InvalidItemException(path, "sound path");
 	}
-	else return sound;
-}
-
-void Audio::addSound(Sound* s, std::string name) {
-	if (isSoundAlreadyLoaded(name)) {
-		throw DuplicateItemException(name, "sound");
+	else {
+		sounds.emplace(name, sound);
+		return sound;
 	}
-	sounds.emplace(name, s);
 }
 
 Channel* Audio::createChannel(std::string name) {
@@ -54,6 +61,7 @@ Channel* Audio::createChannel(std::string name) {
 		Sound* sound = getSound(name);
 		FMOD::Channel* fmod_ch = createFMODchannel(sound);
 		Channel* channel = new Channel(fmod_ch);
+		addChannel(channel, name);
 		return channel;
 	}
 	catch (std::exception& e) {
@@ -73,8 +81,10 @@ Sound* Audio::getSound(std::string name) {
 
 FMOD::Channel* Audio::createFMODchannel(Sound* sound) {
 	FMOD::ChannelGroup* group;
-	if (isSoundBGM(sound)) group = bgm;
-	else group = sfx;
+	if (isSoundBGM(sound))
+		group = bgm;
+	else
+		group = sfx;
 
 	FMOD::Channel* fmod_ch;
 	fr = fs->playSound(sound, group, true, &fmod_ch);
@@ -93,6 +103,7 @@ void Audio::addChannel(Channel* ch, std::string name) {
 
 /* not sure if this is rly needed but uncomment if so
 Channel* Audio::getChannel(std::string name) {
+	// only returns the most recently created channel with the given name
 	auto range = channels.equal_range(name);
 	return range->second->second;
 }
@@ -100,17 +111,21 @@ Channel* Audio::getChannel(std::string name) {
 
 void Audio::update() {
 	FMOD::Channel* channel;
-	bool playing;
 
-	// TODO: add effect related code when implemented
+	// TODO: add audio effect updates when implemented
 	for (auto it = channels.begin(); it != channels.end();) {
 		channel = it->second;
-		fr = channel->isPlaying(&playing);
-		if (!playing || fr == FMOD_ERR_INVALID_HANDLE) {
+		if (isChannelDeprecated(channel)) {
 			it = _channels.erase(it);
 		}
 		else it++;
 	}
+}
+
+bool Audio::isChannelDeprecated(Channel* ch) {
+	bool playing;
+	fr = channel->isPlaying(&playing);
+	return !playing || fr == FMOD_ERR_INVALID_HANDLE;
 }
 
 void Audio::deleteSound(std::string name) {
