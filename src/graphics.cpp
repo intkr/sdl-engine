@@ -42,33 +42,28 @@ void Graphics::addNewColor(std::string name, int r, int g, int b, int a) {
 	colors.emplace(name, color);
 }
 
-SDL_Texture* Graphics::getTexture(std::string name) {
-	try {
-		return textures.at(name);
+Renderer* Graphics::getRenderer() {
+	if (renderer == nullptr) {
+		throw InvalidItemException("null", "renderer");
 	}
-	catch (out_of_range& e) {
-		throw InvalidItemException(name, "texture");
-	}
+	return renderer;
 }
 
-SDL_Color& Graphics::getColor(std::string name) {
-	try {
-		return colors.at(name);
+SDL_Texture* Graphics::addTextureFromString(std::string name, std::wstring text, std::string color, int wrapLength) {
+	if (doesTextureExist(name)) {
+			throw DuplicateItemException(name);
 	}
-	catch (out_of_range& e) {
-		throw InvalidItemException(name, "color");
-	}
-}
 
-SDL_Texture* Graphics::getTextTexture(std::wstring text, std::string color, int wrapLength) {
-	SDL_Surface* textSurface = getTextSurface(text, getColor(color), wrapLength);
+	SDL_Surface* textSurface = createSurfaceFromText(text, getColor(color), wrapLength);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 	SDL_FreeSurface(textSurface);
+	
+	textures.emplace(name, texture);
 	return textTexture;
 }
 
-SDL_Surface* Graphics::getTextSurface(std::wstring text, SDL_Color& color, int wrapLength) {
-	// utext needs to be destroyed
+SDL_Surface* Graphics::createSurfaceFromText(std::wstring text, SDL_Color& color, int wrapLength) {
+	// Converts wstring to Uint16 to match param requirements.
 	size_t usize = text.size() + 1;
 	Uint16* utext = new Uint16[usize];
 	for (; usize; usize--) {
@@ -81,39 +76,43 @@ SDL_Surface* Graphics::getTextSurface(std::wstring text, SDL_Color& color, int w
 	return surface;
 }
 
-Texture* Graphics::createTexture(std::string path, std::string name) {
-	SDL_Texture* SDLtexture = createSDLtexture(path);
-	if (SDLtexture == nullptr)
+Texture* Graphics::addTextureFromImage(std::string name, std::string path, std::string name) {
+	if (doesTextureExist(name)) {
+			throw DuplicateItemException(name);
+	}
+	
+	SDL_Texture* SDLtexture = createTextureFromImage(path);
+	if (SDLtexture == nullptr) {
 		throw InvalidItemException(path, "texture path");
-	Texture* texture = Texture::createTexture(SDLtexture, name);
+	}
 
+	Texture* texture = Texture::createTexture(SDLtexture, name);
+	textures.emplace(name, texture);
 	return texture;
 }
 
-SDL_Texture* Graphics::createSDLtexture(std::string path) {
-	SDL_Surface* surface = loadImageAsSurface(path);
+SDL_Texture* Graphics::createTextureFromImage(std::string path) {
+	SDL_Surface* surface = createSurfaceFromImage(path);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 	SDL_FreeSurface(surface);
 	return texture;
 }
 
-SDL_Surface* Graphics::loadImageAsSurface(std::string path) {
+SDL_Surface* Graphics::createSurfaceFromImage(std::string path) {
 	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == nullptr) throw InvalidItemException(path, "texture path");
+	if (surface == nullptr) {
+		throw InvalidItemException(path, "texture path");
+	}
 	return surface;
 }
 
-Texture* Graphics::addTexture(Texture* texture) {
+SDL_Texture* Graphics::getTexture(std::string name) {
 	try {
-		std::string name = texture.getName();
-		if (doesTextureExist(name)) {
-			throw DuplicateItemException(name);
-		}
-		textures.emplace(name, texture);
+		return textures.at(name);
 	}
-	catch (std::exception& e) {
-		std::cout << e.what();
+	catch (out_of_range& e) {
+		throw InvalidItemException(name, "texture");
 	}
 }
 
@@ -121,6 +120,15 @@ bool Graphics::doesTextureExist(std::string name) {
 	if (textures.find(name) != textures.end())
 		return true;
 	else return false;
+}
+
+SDL_Color& Graphics::getColor(std::string name) {
+	try {
+		return colors.at(name);
+	}
+	catch (out_of_range& e) {
+		throw InvalidItemException(name, "color");
+	}
 }
 
 void Graphics::deleteAllAssets() {

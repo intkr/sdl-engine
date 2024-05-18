@@ -11,7 +11,7 @@ bool operator==(const Entity& other) const {
 
 void Entity::addSprite(Sprite* s) {
 	try {
-		checkSpriteValidity(s);
+		checkObjectValidity(s, sprites);
 		sprites.push_back(s);
 	}
 	catch (GameException& e) {
@@ -19,42 +19,23 @@ void Entity::addSprite(Sprite* s) {
 	}
 }
 
-void Entity::checkSpriteValidity(Sprite* s) {
-	if (s == nullptr)
-		throw InvalidItemException("nullptr", "sprite");
-	if(isSpriteAlreadyMapped(s))
-		throw DuplicateItemException(s->getName(), "sprite");
-}
-
-bool Entity::isSpriteAlreadyMapped(Sprite* s) {
-	return (std::find(sprites.begin(), sprites.end(), s) != sprites.end());
-}
-
 void Entity::addAnimation(Animation* a) {
 	try {
-		checkAnimationValidity(a);
-		sprites.push_back(a);
+		checkObjectValidity(a, animations);
+		animations.push_back(a);
 	}
 	catch (GameException& e) {
 		std::cout << e.what();
 	}
 }
 
-void Entity::checkAnimationValidity(Animation* a) {
-	if (a == nullptr)
-		throw InvalidItemException("nullptr", "animation");
-	if(isAnimationAlreadyMapped(a))
-		throw DuplicateItemException(a->getName(), "animation");
-}
-
-bool Entity::isAnimationAlreadyMapped(Animation* a) {
-	return (std::find(animations.begin(), animations.end(), a) != animations.end());
-}
-
 void Entity::addSubentity(Entity* e) {
-	// TODO: separate code like other add functions
-	if (e == nullptr || std::find(subentities.begin(), subentities.end(), e) == subentities.end()) {
+	try {
+		checkObjectValidity(e, subentities);
 		subentities.push_back(e);
+	}
+	catch (GameException& ex) {
+		std::cout << ex.what();
 	}
 }
 

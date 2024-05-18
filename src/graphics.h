@@ -18,10 +18,9 @@ public:
 	static void deleteGraphics();
 	static Renderer* getRenderer();
 
-	Texture* createTextAsTexture(std::wstring text, TextAttribute attribute, int wrapLength);
+	Texture* addTextureFromString(std::string textureName, std::wstring text, TextAttribute attribute, int wrapLength);
+	Texture* addTextureFromImage(std::string textureName, std::string path, std::string name);
 	Texture* getTexture(std::string name);
-	Texture* createTexture(std::string path, std::string name);
-	void addTexture(Texture* texture);
 	bool doesTextureExist(std::string name);
 
 	void deleteAllAssets();
@@ -35,14 +34,14 @@ private:
 	
 	void initSDL();
 	void loadFonts();
-	void addNewFont(std::string name, std::string fontPath, int ptSize);
+	void addNewFont(std::string name, std::string path, int ptSize);
 	void addNewColor(std::string name, int r, int b, int g, int a);
 
 	SDL_Color& getColor(std::string name);
 	SDL_Surface* getTextSurface(std::wstring text, SDL_Color& color, int wrapLength);
 
-	SDL_Texture* createSDLtexture(std::string path);
-	SDL_Surface* loadImageAsSurface(std::string path);
+	SDL_Texture* createTextureFromImage(std::string path);
+	SDL_Surface* createSurfaceFromImage(std::string path);
 	
 	void deleteAllTextures();
 

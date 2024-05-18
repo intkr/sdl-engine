@@ -21,6 +21,14 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	return 0;
 }
 
+/* reminding progress:
+	entity (midway)
+
+	todo:
+	sprites and sprite attributes
+	animations/motions
+	motion functions <<<< idk if this is really necessary nor good implemention, research into scripting (Lua or wtv)
+*/
 
 /*
 Stuff I must do before I eventually meltdown:
