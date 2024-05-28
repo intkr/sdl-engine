@@ -13,7 +13,7 @@
 #include "renderer.h"
 #include "exception.h"
 
-// Note: a Sprite's geometry is relative to the Entity's center position (being (0,0) for sprite positions)
+// Note: a Sprite's geometry is relative to the Entity's center position (equal to (0,0) for sprite positions)
 class Sprite {
 public:
 	Sprite(std::string name, Texture* tex, Geometry& geo);
@@ -25,7 +25,7 @@ public:
 	
 	void reset();
 	void applyAnimation(Animation* a);
-	void updateHitbox(Orientation o);
+	void updateHitbox(EntityGeometry& geo);
 	void render(Renderer* renderer);
 	
 	int getLayer() { return layer; }
@@ -44,6 +44,6 @@ private:
 	
 	ObjectAttribute attribute;
 	int layer;
-	Geometry geometry;
+	SpriteGeometry geometry;
 	Texture* texture;
 };

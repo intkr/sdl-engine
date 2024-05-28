@@ -30,6 +30,7 @@ public:
 	void handleKey(KeyInput i);
 	void handleMouse(MouseInput i);
 	
+	// TODO: Check if this needs to be a public function - change to private if negative
 	// Checks the collision between an entity's hitbox and a single point.
 	bool isPointInEntity(SDL_FPoint point);
 	
@@ -48,13 +49,13 @@ private:
 	MouseInput getCollisionInput(SDL_FPoint pos);
 	void handleMouseInput(MouseInput i);
 	
-	void resetAllSpriteEffects();
+	void resetAllSprites();
 	void playAnimations();
 	void animateRecursively(Animation* animation);
 	void applyAnimation(Animation* animation);
 	void updateHitboxes(Orientation o);
 	
-	Attribute attribute;
+	ObjectAttribute attribute;
 	EntityGeometry geometry;
 	bool focused;
 	

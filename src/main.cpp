@@ -22,11 +22,6 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 }
 
 /* reminding progress:
-	entity (midway)
-
-	todo:
-	sprites and sprite attributes
-	animations/motions
 	motion functions <<<< idk if this is really necessary nor good implemention, research into scripting (Lua or wtv)
 */
 
@@ -40,6 +35,7 @@ Stuff I must do before I eventually meltdown:
 	- Put all functions required for every State in the base class, so all derived classes can do their specific stuff
 	- Create audio effect systems.
 	- Text (fonts and text color) and sprites should be separated into its own class, not within Graphics.
+	- Attributes for both sprites and entities, and ones sprite-specific should be separated properly.
 */
 
 /*
@@ -49,10 +45,15 @@ Stuff to ponder upon like a sophisticated individual:
 		* obviously they should be prohibited in the first place but how should that be handled
 	- The current input system does not properly handle key presses that aren't used in the game.
 	  i.e. pressing multiple of those may or may not trigger each PRESS_DOWN/ED/UP as one might expect.
+	- How do I handle storing and rendering sprites without intertwining a bunch of headers and classes
+	- Learn how to script with Lua (maybe consider using Sol (https://github.com/ThePhD/sol2))
 */
 
 /*
 Small notes for the brainrot future me:
 
 	- BPM should be handled by a music-specific class object, not Channels or whatever.
+	- Remind myself why recursive animation exists because I don't get the point of it rn
+	- When checking for collision of an entity, consider overloading a single collision-checking function
+	  with all possible targets - a single point (mouse cursor), a line, convex/concave shapes, etc.
 */

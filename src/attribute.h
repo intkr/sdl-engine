@@ -1,7 +1,8 @@
 #pragma once
 
-struct EntityAttribute {
-	Attribute(std::string _name) : name(_name), visibility(true), activeness(true) {}
+// Attributes used by entities and sprites.
+struct ObjectAttribute {
+	ObjectAttribute(std::string _name) : name(_name), visibility(true), activeness(true) {}
 	
 	std::string name;
 	bool visibility;

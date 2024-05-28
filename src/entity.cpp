@@ -60,12 +60,12 @@ void Entity::setMouseEvent(MouseInput input, void(*f)(Entity*)) {
 }
 
 void Entity::update() {
-	resetAllSpriteEffects();
+	resetAllSprites();
 	playAnimations();
 	updateHitboxes();
 }
 
-void Entity::resetAllSpriteEffects() {
+void Entity::resetAllSprites() {
 	for (Sprite* sprite : sprites) {
 		sprite->reset();
 	}
@@ -81,7 +81,6 @@ void Entity::playAnimations() {
 }
 
 void Entity::animateRecursively(Animation* a) {
-	applyAnimation(animation);
 	// apply animation to subentities first,
 	for (Entity* entity : subentities) {
 		entity->animateRecursively(a);
@@ -96,15 +95,15 @@ void Entity::applyAnimation(Animation* a) {
 	}
 }
 
-void Entity::updateHitboxes(Orientation parentOrientation) {
-	Orientation entityOrientation = parentOrientation + orientation;
-	// recursively update subentities
+void Entity::updateHitboxes(EntityGeometry parentGeometry) {
+	EntityGeometry entityGeometry = parentGeometry + geometry;
+	// Recursively update subentities' hitboxes first,
 	for (Entity* entity : subentities) {
-		entity->updateHitboxes(entityOrientation);
+		entity->updateHitboxes(entityGeometry);
 	}
-	// update this entity's sprite hitboxes
+	// and then update this entity's sprite hitboxes
 	for (Sprite* sprite : sprites) {
-		sprite->updateHitbox(entityOrientation);
+		sprite->updateHitbox(entityGeometry);
 	}
 }
 
