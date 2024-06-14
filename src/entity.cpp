@@ -1,8 +1,19 @@
 #include "entity.h"
 
 Entity::~Entity() {
-	// delete sprite and animations
-	// delete subentities (recursive)
+	// Delete subentities first,
+	for (Entity*& e : subentities) {
+		delete e;
+	}
+
+	// then delete sprites and animations.
+	for (Sprite*& s : sprites) {
+		delete s;
+	}
+
+	for (Animation*& a : aniamtions) {
+		delete a;
+	}
 }
 
 bool operator==(const Entity& other) const {

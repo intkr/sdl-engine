@@ -13,10 +13,10 @@
 #include "clock.h"
 #include "states/controller.h"
 
-class System {
+class Engine {
 public:
-	System();
-	~System();
+	Engine();
+	~Engine();
 	
 	void loop();
 	

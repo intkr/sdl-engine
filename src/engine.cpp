@@ -1,6 +1,6 @@
-#include "system.h"
+#include "engine.h"
 
-System::System() {
+Engine::Engine() {
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_JPG);
 	TTF_Init();
@@ -15,7 +15,7 @@ System::System() {
 	gaming = true;
 }
 
-System::~System() {
+Engine::~Engine() {
 	p->deletePlayer();
 	s->deleteStateController();
 	a->deleteAudio();
@@ -28,7 +28,7 @@ System::~System() {
 	SDL_Quit();
 }
 
-void System::loop() {
+void Engine::loop() {
 	while (gaming) {
 		updateTime();
 		updateGame();
@@ -37,26 +37,26 @@ void System::loop() {
 	}
 }
 
-void System::updateGame() {
+void Engine::updateGame() {
 	i->processInput();
 	a->update();
 	s->update();
 	checkForQuitTrigger();
 }
 
-void System::checkForQuitTrigger() {
+void Engine::checkForQuitTrigger() {
 	if(i->isQuitTriggered())
 		gaming = false;
 }
 
-void System::render() {
+void Engine::render() {
 	Renderer* r = g->getRenderer();
 	r->clearScreen();
 	s->render(r);
 	r->presentScreen();
 }
 
-void System::updateTime() {
+void Engine::updateTime() {
 	c->update();
 }
 

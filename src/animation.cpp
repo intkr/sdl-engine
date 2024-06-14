@@ -5,7 +5,6 @@ Animation::~Animation() {
 	for (auto motion : motions) {
 		delete motion;
 	}
-	motions.clear();
 }
 
 bool operator==(const Animation& other) const {

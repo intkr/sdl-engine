@@ -21,7 +21,6 @@ public:
 	void update();
 	bool isActive();
 	void setLoop(bool active);
-	// TODO: implement an audio effect system
 	
 private:
 	FMOD::Channel* channel;

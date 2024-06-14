@@ -5,12 +5,11 @@
 enum InputType {
 	// Default value for lack of events.
 	_INPUT_NONE = 0,
-	// Inputs where an entity is focused via keyboard presses or mouse movement.
+	// Inputs where an entity is focused via mouse movement.
 	_INPUT_FOCUS_IN = 1 << 0,
 	_INPUT_FOCUSED = 1 << 1,
 	_INPUT_FOCUS_OUT = 1 << 2,
-	// Inputs where a mouse button or a key is being pressed down/up on an entity.
-	// This can't (and shouldn't) occur without the target being priorly focused.
+	// Inputs where a mouse button or a key has acted on an entity.
 	_INPUT_PRESS_DOWN = 1 << 3,
 	_INPUT_PRESSED = 1 << 4,
 	_INPUT_PRESS_UP = 1 << 5,
