@@ -1,15 +1,30 @@
-#include "score.h"
+#include "controller.h"
 
-#include "../graphics.h"
-#include "../input.h"
-#include "../core.h"
+StateController* StateController::getStateController() {
+	if (_controller == nullptr) {
+		_controller = new StateController();
+	}
+	return _controller;
+}
 
-StateController::StateController() {
-	StateCode startingState = _STATE_TITLE;
-	loadState(startingState);
+void StateController::deleteStateController() {
+	delete _controller;
+}
+
+StateController::StateController() : currentState(_STATE_TITLE) {
+	initStateTypes();
+	changeState(currentState);
 }
 
 StateController::~StateController() {}
+
+void StateController::initStateTypes() {
+	stateTypes[_STATE_TEST] = &createState<StateTest>;
+	stateTypes[_STATE_TITLE] = &createState<StateTitle>;
+	stateTypes[_STATE_SELECT] = &createState<StateSelect>;
+	stateTypes[_STATE_PREP] = &createState<StatePrep>;
+	stateTypes[_GAME_PAIR] = &createState<StatePair>;
+}
 
 void StateController::changeState(StateCode code) {
 	if (state != nullptr) delete state;
@@ -17,45 +32,29 @@ void StateController::changeState(StateCode code) {
 }
 
 void StateController::loadState(StateCode code) {
-	// Looks like horrible and archaic implementation, but this should be fixed as I implement states with Lua
-	switch (code) {
-	case _STATE_TITLE:
-		state = new StateTitle(this);
-		break;
-
-	case _STATE_SELECT:
-		state = new StateSelect(this);
-		break;
-
-	case _STATE_PREP:
-		state = new StatePrep(this);
-		break;
-	
-	//////
-	case _GAME_PAIR:
-		state = new GamePair(this);
-		break;
-	case _STATE_TEST:
-		state = new StateTest(this);
-		break;
-	default:
-		// shouldn't happen unless I forgot to write a case for a state
-		break;
+	try {
+		state = stateTypes[stateTypes.at(state)]();
+	}
+	catch (std::out_of_range& e) {
+		// This state has not been added properly to the map when initializing,
+		// so load the testing state as a failsafe.
+		state = createState<StateTest>();
 	}
 }
 
 void StateController::update() {
-	state->update();
+	state->updateData();
+	state->updateAssets();
 }
 
-void StateController::handleKey(KeyInput& input) {
-	state->handleKey(id, active);
+void StateController::handleInput(KeyInput i) {
+	state->handleKey(i);
 }
 
-void StateController::handleMouse(MouseInput& input) {
-	switch (input.type) {
-		// write after ik what those events do
-		//case _SOMETHING:
-		//	state->handleWhatever(input.button, input.pos);
-	}
+void StateController::handleInput(MouseInput i) {
+	state->handleMouse(i);
+}
+
+void StateController::render(Renderer* r) {
+	state->render(r);
 }

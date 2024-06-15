@@ -30,9 +30,7 @@ public:
 	void handleKey(KeyInput i);
 	void handleMouse(MouseInput i);
 	
-	// TODO: Check if this needs to be a public function - change to private if negative
-	// Checks the collision between an entity's hitbox and a single point.
-	bool isPointInEntity(SDL_FPoint point);
+	bool doesCollide(SDL_FPoint point);
 	
 	Entity* getSubentity(std::string name);
 	std::string getName() { return attribute.name; }

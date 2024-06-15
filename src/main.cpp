@@ -26,6 +26,8 @@ Highly prioritized stuff I must do before I eventually meltdown:
 	- (#1 priority) use CMake to build this project instead of Visual Studio,
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
 
+	- Implement a logging system for easier debugging
+
 	- get the state-related files I wrote on mobile because I forgor to bring those
 	- also figure out a way to keep entities/sprites loaded when transitioning to a new state
 	  for some smooth transitioning animations
@@ -47,12 +49,20 @@ Highly prioritized stuff I must do before I eventually meltdown:
 
 	- Text (fonts and text color) and sprites should be separated into their own classes, not within Graphics.
 
-	- Attributes for both sprites and entities, and ones sprite-specific should be separated properly.
+	- Implement attributes for sprites / entities / states
+	  Notable examples I should add:
+		- Collidable (Entity) : ignore collision checks if false for optimization
+		- Renderable (Entity, Sprite) : used for invisible hitboxes (idk when I'd use but still)
+		- StateSpecific (Entity, Sprite) : used for resources specific to that state only (allows smooth state transitions if false)
+		- Interactable (State) : false for cutscenes and whatnot
+		- Paused (State) : self-explanatory
 */
 
 /*
 Moderately important stuff to ponder upon like a sophisticated individual:
 	- Add functions in classes such that all classes adhere to "the rule of fives".
+
+	- Replace all #pragma onces with #ifndefs for compatibility.
 
 	- When implementing customizable keybinds, how should duplicate keys be handled?
 		* obviously they should be prohibited in the first place but how should that be handled
@@ -61,6 +71,8 @@ Moderately important stuff to ponder upon like a sophisticated individual:
 	  i.e. pressing multiple of those may or may not trigger each PRESS_DOWN/ED/UP as one might expect.
 
 	- How do I handle storing and rendering sprites without intertwining a bunch of headers and classes
+
+	- Optimize collision checking
 */
 
 /*

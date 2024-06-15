@@ -1,13 +1,20 @@
 #pragma once
 #include <string>
+#include <algorithm>
+#include <map>
 
 #include <SDL.h>
 
+#include "resources.h"
+
 #include "../input_event.h"
+#include "../motion_functions.h"
+#include "../renderer.h"
+
 
 enum class StateCode {
-	_STATE_TEST = 0, _STATE_TITLE = 1, _STATE_SELECT = 2, _STATE_PREP = 3,
-	_GAME_PAIR = 101
+	_STATE_TEST = 0, _STATE_TITLE, _STATE_SELECT, _STATE_PREP,
+	_GAME_PAIR
 };
 
 // Base class for states in a Finite State Machine.
@@ -16,19 +23,21 @@ public:
 	State() {}
 	virtual ~State() {}
 
-	// Critical common functions.
-	// Make sure to override these for every existing state.
+	void render(Renderer* renderer);
 
 	virtual void init() = 0;
-	virtual void update() = 0;
+	virtual void updateData() = 0;
+	virtual void updateAssets() = 0;
 	virtual void exit() = 0;
+	
+	void handleKey(KeyInput input);
+	void handleMouse(MouseInput input);
 
-	// Event handling common functions.
-	// If not required, these functions may not be overridden.
-
-	virtual void handleKey(Key key, InputType type) {}
-	virtual void handleMouseHover(MouseButton button, SDL_FPoint pos) {}
-	virtual void handleMouseDown(MouseButton button, SDL_FPoint pos) {}
-	virtual void handleMouseUp(MouseButton button, SDL_FPoint pos) {}
-	virtual void handleClick(MouseButton button, SDL_FPoint pos) {}
+protected:
+	void addSprite(Sprite* sprite);
+	void addEntity(Entity* entity);
+	void addKeyEvent(KeyInput input, void(*f)());
+	
+	std::map<KeyInput, void(*)()> keyEvents;
+	Resources* res;
 };

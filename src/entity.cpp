@@ -52,7 +52,9 @@ void Entity::addSubentity(Entity* e) {
 
 Entity* Entity::getSubentity(std::string name) {
 	auto iter = std::find(subentities.begin(), subentities.end(), e);
-	if (iter == subentities.end()) throw InvalidItemException(name, "entity");
+	if (iter == subentities.end()) {
+		throw InvalidItemException(name, "entity");
+	}
 	return *iter;
 }
 
@@ -140,7 +142,7 @@ void Entity::handleMouse(MouseInput input) {
 }
 
 MouseInput Entity::getCollisionInput(SDL_FPoint pos) {
-	if (isPointInEntity(pos)) {
+	if (doesCollide(pos)) {
 		if (!isFocused()) {
 			return MouseInput(_INPUT_FOCUS_IN, _MOUSE_NONE);
 		}
@@ -160,7 +162,7 @@ void Entity::handleMouseActivity(MouseInput input) {
 		iter.second(this);
 }
 
-bool Entity::isPointInEntity(SDL_FPoint point) {
+bool Entity::doesCollide(SDL_FPoint point) {
 	SDL_FRect*& modRect = geometry.modRect;
 	point.x -= modRect->x;
 	point.y -= modRect->y;
