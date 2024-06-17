@@ -57,8 +57,9 @@ private:
 	void handleInput();
 	void handleKeys();
 	void handleMouse();
-
+	
 	std::map<SDL_Scancode, Key> keybinds;
+
 	std::map<Key, InputType> keyStatus;
 	std::map<MouseButton, InputType> mouseStatus;
 	SDL_FPoint cursorPos;

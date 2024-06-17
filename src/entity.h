@@ -32,6 +32,8 @@ public:
 	
 	bool doesCollide(SDL_FPoint point);
 	
+	bool isRootEntity() { return (parent == null); }
+	Entity* getParentEntity() { return parent; }
 	Entity* getSubentity(std::string name);
 	std::string getName() { return attribute.name; }
 	bool isFocused() { return focused; }
@@ -57,7 +59,7 @@ private:
 	EntityGeometry geometry;
 	bool focused;
 	
-	// if needed, add a parent entity pointer
+	Entity* parent;
 	
 	std::vector<Entity*> subentities;
 	std::vector<Sprite*> sprites;

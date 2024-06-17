@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #include "state.h"
 #include "resources.h"
@@ -23,7 +24,9 @@ public:
 
 	void update();
 	void render(Renderer* r);
-	void changeState(StateCode state);
+	void addState(StateCode state);
+	void changeActiveState(StateCode state);
+	void deleteActiveState();
 
 	void handleInput(KeyInput i);
 	void handleInput(MouseInput i);
@@ -33,15 +36,19 @@ private:
 	~StateController();
 	StateController* _controller;
 	
-	void loadState(StateCode state);
+	State* createState(StateCode state);
 
 	// This temporary implementation allows creating State objects with small code,
 	// but this should be replaced with a Lua script later on.
 	template <typename T>
 	State* createState() { return new T; }
-	void initStateTypes();
-	StateMap stateTypes;
+	void mapStateCodes();
+	StateMap stateCodes;
 	
-	State* state;
+	// The state stack puts the most recent item in the back.
+	// The last item in the stack is the currently active state.
+	std::vector<State*> stateStack;
+	State* activeState;
+
 	Resources* resources;
 };

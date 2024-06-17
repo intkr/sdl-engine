@@ -11,50 +11,79 @@ void StateController::deleteStateController() {
 	delete _controller;
 }
 
-StateController::StateController() : currentState(_STATE_TITLE) {
-	initStateTypes();
+StateController::StateController() {
+	mapStateCodes();
 	changeState(currentState);
 }
 
 StateController::~StateController() {}
 
-void StateController::initStateTypes() {
-	stateTypes[_STATE_TEST] = &createState<StateTest>;
-	stateTypes[_STATE_TITLE] = &createState<StateTitle>;
-	stateTypes[_STATE_SELECT] = &createState<StateSelect>;
-	stateTypes[_STATE_PREP] = &createState<StatePrep>;
-	stateTypes[_GAME_PAIR] = &createState<StatePair>;
+void StateController::mapStateCodes() {
+	stateCodes[_STATE_TEST] = &createState<StateTest>;
+	stateCodes[_STATE_TITLE] = &createState<StateTitle>;
+	stateCodes[_STATE_SELECT] = &createState<StateSelect>;
+	stateCodes[_STATE_PREP] = &createState<StatePrep>;
+	stateCodes[_GAME_PAIR] = &createState<StatePair>;
 }
 
-void StateController::changeState(StateCode code) {
-	if (state != nullptr) delete state;
-	loadState(code);
+void StateController:addState(StateCode code) {
+	State* state = createState(code);
+	stateStack.push_back(state);
+	activeState 	activeState = state;state;
 }
 
-void StateController::loadState(StateCode code) {
+void StateController::changeActiveState(StateCode code) {
+	activeState = state;delete activeState;
+	stateStack.pop_back();
+
+	State* state = createState(code);
+		activeState = state;.push_back(state);
+	activeState = state;
+}
+
+void 	activeState = state;::deleteActiveState(StateCode code) {
+	delete activeState;
+	stateStack.pop_back();
+
+	if (stateStack.size() > 0) {
+	activeState = (*stateStack.rbegin());
+	}
+	else {
+		// If the only existing state has been deleted,
+		// load the testing state as a failsafe.
+		addState(_STATE_TEST);
+	}
+}
+
+State* StateController::createState(StateCode code) {
+	State* state;
+	
 	try {
-		state = stateTypes[stateTypes.at(state)]();
+		state = stateCodes[stateCodes.at(state)]();
 	}
 	catch (std::out_of_range& e) {
 		// This state has not been added properly to the map when initializing,
 		// so load the testing state as a failsafe.
 		state = createState<StateTest>();
 	}
+	state.assignResources(resources);
+
+	return state;
 }
 
 void StateController::update() {
-	state->updateData();
-	state->updateAssets();
+	activeState->updateData();
+	activeState->updateAssets();
 }
 
 void StateController::handleInput(KeyInput i) {
-	state->handleKey(i);
+	activeState->handleKey(i);
 }
 
 void StateController::handleInput(MouseInput i) {
-	state->handleMouse(i);
+	activeState->handleMouse(i);
 }
 
 void StateController::render(Renderer* r) {
-	state->render(r);
+	activeState->render(r);
 }

@@ -26,28 +26,21 @@ Highly prioritized stuff I must do before I eventually meltdown:
 	- (#1 priority) use CMake to build this project instead of Visual Studio,
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
 
-	- Implement a logging system for easier debugging
-
-	- get the state-related files I wrote on mobile because I forgor to bring those
-	- also figure out a way to keep entities/sprites loaded when transitioning to a new state
-	  for some smooth transitioning animations
-
-	- Input events confuse me rn so be sure to make that clear in my brain,
-	  and then comment thoroughly so I don't get confused later on again
-
 	- Consider using Lua to make states instead of hardcoding and linking everything into the StateController.
 	  This should be better for game extensibility and flexibility in the long term.
 	  (maybe consider using Sol (https://github.com/ThePhD/sol2))
 	  * Also research about what should be hardcoded and what should be scripted because I have no idea
 
-	- Make the State object perform rendering calls using its sprite data.
-		* a Renderer should only need geometry/texture data to render
+	- Implement a logging system for easier debugging
 
-	- Put all functions required for every State in the base class, so all derived classes can do their specific stuff.
-
-	- Create audio effect systems.
+	- When implementing customizable keybinds, how should duplicate keys be handled?
+		* If it's guaranteed that two key actions can not happen simultaneously,
+		  then having duplicate keys shouldn't be a problem and may be allowed.
+		  A category system for key actions would be required for this to be possible - think about this more later.
 
 	- Text (fonts and text color) and sprites should be separated into their own classes, not within Graphics.
+
+	- When handling time in states, search for a way that can ignore time being paused
 
 	- Implement attributes for sprites / entities / states
 	  Notable examples I should add:
@@ -62,21 +55,22 @@ Highly prioritized stuff I must do before I eventually meltdown:
 Moderately important stuff to ponder upon like a sophisticated individual:
 	- Add functions in classes such that all classes adhere to "the rule of fives".
 
-	- Replace all #pragma onces with #ifndefs for compatibility.
-
-	- When implementing customizable keybinds, how should duplicate keys be handled?
-		* obviously they should be prohibited in the first place but how should that be handled
+	- Replace all #pragma onces with #ifndefs for IDE compatibility.
 
 	- The current input system does not properly handle key presses that aren't used in the game.
 	  i.e. pressing multiple of those may or may not trigger each PRESS_DOWN/ED/UP as one might expect.
 
 	- How do I handle storing and rendering sprites without intertwining a bunch of headers and classes
 
+	- Find a way to add game-specific key values without altering the enum class itself -
+	  in other words, consider using a different method of storing valid keys (vectors or whatever, maybe create a custom class idk)
+	  
 	- Optimize collision checking
 */
 
 /*
 Not-too-important small notes for the brainrot future me:
+	- Create audio effect systems.. if I need it idk
 
 	- BPM should be handled by a music-specific class object, not Channels or whatever.
 

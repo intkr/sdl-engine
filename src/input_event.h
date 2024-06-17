@@ -2,55 +2,56 @@
 
 #include "SDL.h"
 
-enum InputType {
+// Small note for my two braincells in the future:
+// Whether or not an entity is focused should not be checked by the input system.
+// Handle that within the state.
+
+// Defines the state of an input.
+enum class InputType {
 	// Default value for lack of events.
 	_INPUT_NONE = 0,
-	// Inputs where an entity is focused via mouse movement.
-	_INPUT_FOCUS_IN = 1 << 0,
-	_INPUT_FOCUSED = 1 << 1,
-	_INPUT_FOCUS_OUT = 1 << 2,
-	// Inputs where a mouse button or a key has acted on an entity.
-	_INPUT_PRESS_DOWN = 1 << 3,
-	_INPUT_PRESSED = 1 << 4,
-	_INPUT_PRESS_UP = 1 << 5,
-	// Input where an entity has been selected
-	// via a mouse click or an 'Enter' key press.
-	_INPUT_CLICK = 1 << 6
+	// Valid values for all key and mouse inputs.
+	_INPUT_DOWN, _INPUT_HOLD, _INPUT_UP
 };
 
-enum Key {
+// Defines the valid actions done via key inputs.
+enum class KeyAction {
 	// Default value for keys not listed below
 	_KEY_ETC = 0,
-	// Add key values specific to the game's needs
 
+	// Add key values specific to the game's needs
+	
 	// Special function keys
 	_KEY_SHIFT,
 	_KEY_RETURN,
 	_KEY_ESCAPE
 }
 
-struct MouseButton {
-	// Default value for all buttons not listed below
-	_BUTTON_ETC = 0,
-	// Mouse press
-	_BUTTON_LEFT,
-	_BUTTON_MIDDLE,
-	_BUTTON_RIGHT,
-	// Not a mouse press, used for mouse movement only
-	_BUTTON_NONE
+// Defines all valid mouse buttons.
+enum class MouseButton {
+	// Default value for buttons not listed below
+	_MOUSE_ETC = 0,
+
+	_MOUSE_LEFT,
+	_MOUSE_MIDDLE,
+	_MOUSE_RIGHT,
+	// add side buttons or scroll-related stuff when needed
+
+	// Used on mouse movement inputs without any buttons pressed.
+	_MOUSE_HOVER
 }
 struct UserInput {
 	InputType type;
 }
 
 struct KeyInput : UserInput {
-	KeyInput(Key k, InputType t) : key(k), type(t) {}
+	KeyInput(KeyAction k, InputType t) : key(k), type(t) {}
 	
 	bool operator==(const KeyInput& other) {
 		return (key == other.key) && (type == other.type);
 	}
 	
-	Key key;
+	KeyAction key;
 }
 
 struct MouseInput : UserInput {

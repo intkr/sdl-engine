@@ -1,9 +1,7 @@
 #include "state.h"
 
-void State::render(Renderer* renderer) {
-	for (Sprite* sprite : sprites) {
-		sprite->render(renderer);
-	}
+void State::assignResources(Resource* res) {
+	resources = res;
 }
 
 void State::handleKey(KeyInput input) {
@@ -35,15 +33,7 @@ void State::handleMouse(MouseInput input) {
 	}
 }
 
-void State::addSprite(Sprite* sprite) {
-	auto iter = std::lower_bound(sprites.begin(), sprites.end(), sprite,
-	[](Sprite& a, Sprite& b) -> bool { return a.getLayer() < b.getLayer(); } );
-	sprites.insert(iter, sprite);
-}
 
-void State::addEntity(Entity* entity) {
-	entities.push_back(entity);
-}
 
 void State::addKeyEvent(KeyInput input, void(*f)()) {
 	if (keyEvents.find(input) != keyEvents.end()) {

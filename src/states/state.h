@@ -9,7 +9,6 @@
 
 #include "../input_event.h"
 #include "../motion_functions.h"
-#include "../renderer.h"
 
 
 enum class StateCode {
@@ -23,7 +22,7 @@ public:
 	State() {}
 	virtual ~State() {}
 
-	void render(Renderer* renderer);
+	void assignResources(Resources* res);
 
 	virtual void init() = 0;
 	virtual void updateData() = 0;
@@ -34,10 +33,8 @@ public:
 	void handleMouse(MouseInput input);
 
 protected:
-	void addSprite(Sprite* sprite);
-	void addEntity(Entity* entity);
 	void addKeyEvent(KeyInput input, void(*f)());
 	
 	std::map<KeyInput, void(*)()> keyEvents;
-	Resources* res;
+	Resources* resources;
 };
