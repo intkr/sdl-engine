@@ -7,8 +7,7 @@
 
 class Animation {
 public:
-	Animation(std::string _name, bool _recursive = false)
-		: recursive(_recursive), name(_name) {}
+	Animation(std::string _name) : name(_name), active(true) {}
 	~Animation();
 	
 	bool operator==(const Animation& other) const;
@@ -20,11 +19,10 @@ public:
 	Motion* getMotion(std::string name);
 	
 	virtual void activate();
-	void deactivate() { activeness = false; }
+	void deactivate() { active = false; }
 
 protected:
-	bool isRecursive() { return recursive; }
-	bool isActive() { return activeness; }
+	bool isActive() { return active; }
 	
 	void updateTime();
 	
@@ -32,8 +30,7 @@ private:
 	std::vector<Motion*> motions;
 
 	std::string name;
-	bool activeness;
-	bool recursive;
+	bool active;
 	
 	Timepoint initialTime;
 	ms elapsedTime;
@@ -42,8 +39,8 @@ private:
 
 class SequentialAnimation : public Animation {
 public:
-	SequentialAnimation(std::string _name, bool _recursive = false) : Animation(_recursive, _enabled), currentMotion(motions.begin()) {}
-	
+	SequentialAnimation(std::string _name) : Animation(_name), currentMotion(motions.begin()) {}
+
 	void animate(Geometry& geometry) override;
 	void reset() override;
 	void activate() override;
@@ -56,7 +53,7 @@ private:
 
 class ConcurrentAnimation : public Animation {
 public:
-	ConcurrentAnimation(bool _recursive = false, bool _enabled = true) : Animation(_recursive, _enabled) {}
+	ConcurrentAnimation(bool _recursive = false) : Animation(_name) {}
 	
 	void animate(Geometry& geometry) override;
 }

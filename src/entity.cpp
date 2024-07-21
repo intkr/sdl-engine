@@ -5,40 +5,14 @@ Entity::~Entity() {
 	for (Entity*& e : subentities) {
 		delete e;
 	}
-
-	// then delete sprites and animations.
-	for (Sprite*& s : sprites) {
-		delete s;
-	}
-
-	for (Animation*& a : aniamtions) {
-		delete a;
-	}
+	
+	// then delete components
 }
 
 bool operator==(const Entity& other) const {
 	return attribute.name == other.attribute.name;
 }
 
-void Entity::addSprite(Sprite* s) {
-	try {
-		checkObjectValidity(s, sprites);
-		sprites.push_back(s);
-	}
-	catch (GameException& e) {
-		std::cout << e.what();
-	}
-}
-
-void Entity::addAnimation(Animation* a) {
-	try {
-		checkObjectValidity(a, animations);
-		animations.push_back(a);
-	}
-	catch (GameException& e) {
-		std::cout << e.what();
-	}
-}
 
 void Entity::addSubentity(Entity* e) {
 	try {
@@ -73,39 +47,7 @@ void Entity::setMouseEvent(MouseInput input, void(*f)(Entity*)) {
 }
 
 void Entity::update() {
-	resetAllSprites();
-	playAnimations();
-	updateHitboxes();
-}
-
-void Entity::resetAllSprites() {
-	for (Sprite* sprite : sprites) {
-		sprite->reset();
-	}
-}
-
-void Entity::playAnimations() {
-	for (Animation* animation : animations) {
-		if (animation->isRecursive()) {
-			animateRecursively(animation);
-		}
-		else applyAnimation(animation);
-	}
-}
-
-void Entity::animateRecursively(Animation* a) {
-	// apply animation to subentities first,
-	for (Entity* entity : subentities) {
-		entity->animateRecursively(a);
-	}
-	// then apply the animation to the current entity.
-	applyAnimation(a);
-}
-
-void Entity::applyAnimation(Animation* a) {
-	for (Sprite* sprite : sprites) {
-		sprite->applyAnimation(a);
-	}
+	graphics.update();
 }
 
 void Entity::updateHitboxes(EntityGeometry parentGeometry) {

@@ -1,28 +1,14 @@
 #pragma once
 
-// Attributes used by entities and sprites.
-struct ObjectAttribute {
-	ObjectAttribute(std::string _name) : name(_name), visibility(true), activeness(true) {}
+// Attributes used by all objects.
+struct Attribute {
+	Attribute(std::string _name) : name(_name), active(true) {}
 	
 	std::string name;
-	bool visibility;
-	bool activeness;
+	bool active;
 };
 
-// TODO: implement this when i get back home
-struct SpriteAttribute {
-	/* only add attributes that may differ from sprite to sprite, even within the same entity.
-
-	Some examples I can think of rn:
-		- collidable
-			true for sprites that should have collision,
-			false for sprites that shouldn't have collision (for purely visual stuff such as particle effects)
-		- renderable
-			true for sprites with textures,
-			false for sprites without textures (for triggers or whatever those kind of stuff)
-	*/
-};
-
+// TODO: work on this later idk
 struct TextAttribute {
 	std::string color;
 	std::string font; // TODO: there is not a name for the default font yet

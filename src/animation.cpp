@@ -52,7 +52,7 @@ void ConcurrentAnimation::animate(Geometry& geometry) {
 	}
 	
 	// If any of the motions were animated, then this animation is considered active.
-	activeness = animatedMotionExists;
+	active = animatedMotionExists;
 }
 
 void SequentialAnimation::selectNextMotion() {
@@ -73,17 +73,17 @@ void SequentialAnimation::reset() {
 }
 
 void Animation::activate() {
-	activeness = true;
+	active = true;
 	reset();
 }
 
 void SequentialAnimation::activate() {
 	// me when when
-	activeness = true;
+	active = true;
 	reset();
 }
 
 void Animation::updateTime() {
 	elapsedTime = Clock::getDeltaTime(initialTime);
-	activeness = (elapsedTime <= duration);
+	active = (elapsedTime <= duration);
 }

@@ -10,13 +10,12 @@
 #include "../input_event.h"
 #include "../motion_functions.h"
 
-
 enum class StateCode {
 	_STATE_TEST = 0, _STATE_TITLE, _STATE_SELECT, _STATE_PREP,
 	_GAME_PAIR
 };
 
-// Base class for states in a Finite State Machine.
+// Base class for all states.
 class State {
 public:
 	State() {}

@@ -26,7 +26,6 @@ public:
 	void reset();
 	void applyAnimation(Animation* a);
 	void updateHitbox(EntityGeometry& geo);
-	void render(Renderer* renderer);
 	
 	int getLayer() { return layer; }
 	std::string getName() { return attribute.name; }
@@ -42,8 +41,9 @@ private:
 	void calculateRotation();
 	void offsetPosition();
 	
-	ObjectAttribute attribute;
+	Attribute attribute;
 	int layer;
-	SpriteGeometry geometry;
+	SourceGeometry source;
+	FinalGeometry geo;
 	Texture* texture;
 };

@@ -41,7 +41,7 @@ void Sprite::updateHitbox(Orientation o) {
 bool Sprite::shouldSpriteBeRotated(double angle) {
 	// If the sprite fills the whole screen,
 	// or if the entity does not rotate, return false.
-	return !(angle = 0 | geometry.dstRect == nullptr);
+	return !(angle == 0 || geometry.dstRect == nullptr);
 }
 
 void Sprite::calculateRotation(double angle) {
@@ -60,7 +60,7 @@ void Sprite::calculateRotation(double angle) {
 	rect.x = rotatedCenter.x - rect.w / 2;
 	rect.y = rotatedCenter.y - rect.h / 2;
 	
-	// Finally, add the entity's angle value to the sprite's value.
+	// Finally, add the entity's angle value to the sprite's angle value.
 	geometry.angle += angle;
 }
 

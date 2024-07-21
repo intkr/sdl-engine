@@ -1,11 +1,5 @@
 #include "renderer.h"
 
-void Renderer::render() {
-	clearScreen();
-	
-	displayScreen();
-}
-
 void Renderer::clearScreen() {
 	SDL_RenderClear(renderer);
 }

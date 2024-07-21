@@ -23,8 +23,10 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 /*
 Highly prioritized stuff I must do before I eventually meltdown:
+	- (#0 priority) fix all the existing syntax errors / inconsistencies detected by the IDE when I get back home :)
 	- (#1 priority) use CMake to build this project instead of Visual Studio,
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
+	  Additionally, consider organizing this clutter of .h/.cpp files into folders because its gettin kinda messy
 
 	- Consider using Lua to make states instead of hardcoding and linking everything into the StateController.
 	  This should be better for game extensibility and flexibility in the long term.
@@ -70,12 +72,26 @@ Moderately important stuff to ponder upon like a sophisticated individual:
 
 /*
 Not-too-important small notes for the brainrot future me:
+	- sprites, animations, and audio channels will be stored in a single 'Resources' class object owned by the StateController.
+	  this is to reduce duplicate data and coupling between components and various game objects.
+	  to prevent accidental destructions of an object still in use (eg. animation used by multiple GameObjects),
+	  consider using shared_ptr or weak_ptr within components.
+
 	- Create audio effect systems.. if I need it idk
 
 	- BPM should be handled by a music-specific class object, not Channels or whatever.
 
-	- Remind myself why recursive animation exists because I don't get the point of it rn
-
 	- When checking for collision of an entity, consider overloading a single collision-checking function
 	  with all possible targets - a single point (mouse cursor), a line, convex/concave shapes, etc.
+*/
+
+/*
+Naming-related stuff to remind myself because I have dementia:
+
+	- Bool flag variables that store some status should be an adjective if possible, instead of nouns.
+	  ex) "active" indicates whether something is active or not
+
+	- deltaFrame elapsedTime etcetc wtf idk what bruh
+
+	- Find better names to use in geometry.h because they lowkey bad rn
 */
