@@ -18,9 +18,9 @@ public:
 	static void deleteGraphics();
 	static Renderer* getRenderer();
 
-	Texture* addTextureFromString(std::string textureName, std::wstring text, TextAttribute attribute, int wrapLength);
-	Texture* addTextureFromImage(std::string textureName, std::string path, std::string name);
-	Texture* getTexture(std::string name);
+	void createTextureFromText(std::string name, std::wstring text, TextAttribute attribute, int wrapLength);
+	void createTextureFromImage(std::string name, std::string path, std::string name);
+	SDL_Texture* getTexture(std::string name);
 	bool doesTextureExist(std::string name);
 
 	void deleteAllAssets();
@@ -54,6 +54,6 @@ private:
 	
 	std::map<std::string, TTF_Font*> fonts;
 	std::map<std::string, SDL_Color> colors;
-	std::map<std::string, Texture*> textures;
+	std::map<std::string, SDL_Texture*> textures;
 	std::vector<Sprite*> sprites;
 };

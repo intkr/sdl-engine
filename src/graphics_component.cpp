@@ -1,16 +1,19 @@
 #include "graphics_component.h"
 
-void GraphicsComponent::addSprite(Sprite* s) {
+GraphicsComponent::GraphicsComponent() {
+}
+
+void GraphicsComponent::setTexture(std::string name) {
+	Graphics* g = Graphics::getGraphics();
 	try {
-		checkObjectValidity<Sprite>(s, sprites);
-		sprites.push_back(s);
+		texture = g->getTexture(name);
 	}
-	catch (GameException& e) {
+	catch (InvalidItemException& e) {
 		std::cout << e.what();
 	}
 }
 
-void GraphicsComponent::addAnimation(Animation* a) {
+void GraphicsComponent::addAnimation(Animation& a) {
 	try {
 		checkObjectValidity<Animation>(a, animations);
 		animations.push_back(a);
@@ -20,25 +23,21 @@ void GraphicsComponent::addAnimation(Animation* a) {
 	}
 }
 
-void GraphicsComponent::update() {
-	resetSpriteModifiers();
-	playAnimations();
+void GraphicsComponent::update(ms delta) {
+	updateAnimation(delta);
+	updateBox();
 }
 
-void GraphicsComponent::resetSpriteModifiers() {
-	for (Sprite* sprite : sprites) {
-		sprite->reset();
-	}
+void GraphicsComponent::updateAnimation(ms delta) {
+	/*
+	go through the current animation and iterate through its frames using delta
+	if (delta>0 and animation's endpoint has been reached),
+		go through the next animation and repeat
+	if (delta=0 before or as the animation's endpoint),
+		finish updating
+	*/
 }
 
-void GraphicsComponent::playAnimations() {
-	for (Animation* animation : animations) {
-		applyAnimation(animation);
-	}
-}
-
-void GraphicsComponent::applyAnimation(Animation* a) {
-	for (Sprite* sprite : sprites) {
-		sprite->applyAnimation(a);
-	}
+void GraphicsComponent::updateBox() {
+	textureBox = currentAnimation->getBox();
 }

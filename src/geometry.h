@@ -1,40 +1,28 @@
 #pragma once
 
-template <typename T>
-struct Point<T> {
-	T x;
-	T y;
-};
-
-template <typename T>
-struct Rect<T> {
-	T x;
-	T y;
-	T w;
-	T h;
-};
+#include "SDL.h"
 
 struct Position {
 	Position Position::operator+(const Position& other) {
-		Point<float> newPos{ position.x + other.position.x, position.y + other.position.y };
+		SDL_FPoint newPos{ position.x + other.position.x, position.y + other.position.y };
 		return Position{newPos, angle_deg + other.angle_deg};
 	}
 
-	Point<float> point;
+	SDL_FPoint point;
 	double angle_deg;
 };
 
 // Contains pre-calculation geometric data.
 struct SourceGeometry {
 	// Used to get the sprite texture from the spritesheet.
-	Rect<int> textureBox;
+	SDL_Rect textureBox;
 
 	// Contains the values before any animation is applied.
 	// Positioned relative to the entity's center.
-	Rect<float> baseBox;
+	SDL_FRect baseBox;
 	// Post-animation (i.e. "modded") box.
 	// Positioned relative to the entity's center.
-	Rect<float> modBox;
+	SDL_FRect modBox;
 
 	double angle_deg;
 };
@@ -43,10 +31,10 @@ struct SourceGeometry {
 struct FinalGeometry {
 	// Used for the final rendering of the sprite.
 	// Positioned absolute within the screen.
-	Rect<float> renderBox;
+	SDL_FRect renderBox;
 	// Used for collision handling.
 	// Positioned absolute within the screen.
-	Rect<float> hitbox;
+	SDL_FRect hitbox;
 
 	double angle_deg;
 };

@@ -91,6 +91,8 @@ Naming-related stuff to remind myself because I have dementia:
 	- Bool flag variables that store some status should be an adjective if possible, instead of nouns.
 	  ex) "active" indicates whether something is active or not
 
+	- "box" instead of "rect" because the word "hitbox" exists
+	
 	- deltaFrame elapsedTime etcetc wtf idk what bruh
 
 	- Find better names to use in geometry.h because they lowkey bad rn

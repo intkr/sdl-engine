@@ -1,59 +1,32 @@
 #pragma once
+
 #include <vector>
-#include <string>
 
 #include "clock.h"
-#include "motion.h"
+#include "attribute.h"
+
+struct AnimationFrame {
+    int row;
+    int column;
+    ms duration;
+};
 
 class Animation {
 public:
-	Animation(std::string _name) : name(_name), active(true) {}
-	~Animation();
-	
-	bool operator==(const Animation& other) const;
+    Animation(std::string name) : attribute(name) {}
+    
+    // The box data of the first sprite is used to calculate
+    // all positions of subsequent sprites for a given animation.
+    // TODO: rename
+    void initFirstSprite(int x, int y, int w, int h);
 
-	virtual void reset();
-	virtual void animate(Geometry& geometry) = 0;
-	
-	void addMotion(Motion* motion);
-	Motion* getMotion(std::string name);
-	
-	virtual void activate();
-	void deactivate() { active = false; }
+    void update(ms delta);
+    SDL_Rect getBox();
 
-protected:
-	bool isActive() { return active; }
-	
-	void updateTime();
-	
 private:
-	std::vector<Motion*> motions;
+    Attribute attribute;
+    SDL_Rect baseBox;
 
-	std::string name;
-	bool active;
-	
-	Timepoint initialTime;
-	ms elapsedTime;
-	ms duration;
+    std::vector<AnimationFrame> frames;
+    std::vector<AnimationFrame>::iterator currentFrame;
 };
-
-class SequentialAnimation : public Animation {
-public:
-	SequentialAnimation(std::string _name) : Animation(_name), currentMotion(motions.begin()) {}
-
-	void animate(Geometry& geometry) override;
-	void reset() override;
-	void activate() override;
-	
-private:
-	void selectNextMotion();
-
-	std::vector<Motion*>::iterator currentMotion;
-}
-
-class ConcurrentAnimation : public Animation {
-public:
-	ConcurrentAnimation(bool _recursive = false) : Animation(_name) {}
-	
-	void animate(Geometry& geometry) override;
-}
