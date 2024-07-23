@@ -22,9 +22,10 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 }
 
 /*
-Highly prioritized stuff I must do before I eventually meltdown:
-	- (#0 priority) fix all the existing syntax errors / inconsistencies detected by the IDE when I get back home :)
-	- (#1 priority) use CMake to build this project instead of Visual Studio,
+Stuff to do when I have my IDE at home:
+	- fix all the existing syntax errors / inconsistencies
+
+	- use CMake to build this project instead of Visual Studio,
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
 	  Additionally, consider organizing this clutter of .h/.cpp files into folders because its gettin kinda messy
 
@@ -32,8 +33,15 @@ Highly prioritized stuff I must do before I eventually meltdown:
 	  This should be better for game extensibility and flexibility in the long term.
 	  (maybe consider using Sol (https://github.com/ThePhD/sol2))
 	  * Also research about what should be hardcoded and what should be scripted because I have no idea
+*/
 
+/*
+Highly prioritized stuff I must do before I eventually meltdown:
 	- Implement a logging system for easier debugging
+
+	- Animations are going to be loaded from a external file.
+	  This includes each frame data (position / size / duration), and attributes (name and flags, etc).
+	  Make sure to create documentation for how to format such files and properly implement them.
 
 	- When implementing customizable keybinds, how should duplicate keys be handled?
 		* If it's guaranteed that two key actions can not happen simultaneously,
@@ -43,12 +51,11 @@ Highly prioritized stuff I must do before I eventually meltdown:
 	- Text (fonts and text color) and sprites should be separated into their own classes, not within Graphics.
 
 	- When handling time in states, search for a way that can ignore time being paused
+	  -> just use delta time instead of raw timestamps lol dumbass
 
 	- Implement attributes for sprites / entities / states
 	  Notable examples I should add:
-		- Collidable (Entity) : ignore collision checks if false for optimization
-		- Renderable (Entity, Sprite) : used for invisible hitboxes (idk when I'd use but still)
-		- StateSpecific (Entity, Sprite) : used for resources specific to that state only (allows smooth state transitions if false)
+		- StateSpecific (Entity, Sprite) : used for resources specific to one state only (allows smooth state transitions if false)
 		- Interactable (State) : false for cutscenes and whatnot
 		- Paused (State) : self-explanatory
 */
@@ -72,6 +79,9 @@ Moderately important stuff to ponder upon like a sophisticated individual:
 
 /*
 Not-too-important small notes for the brainrot future me:
+	- Should every component own an 'attribute' object?
+	  On first thought yes, but this might result in mixed 'active' flag values within highly-coupled components.. idk
+
 	- sprites, animations, and audio channels will be stored in a single 'Resources' class object owned by the StateController.
 	  this is to reduce duplicate data and coupling between components and various game objects.
 	  to prevent accidental destructions of an object still in use (eg. animation used by multiple GameObjects),

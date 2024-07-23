@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "game_object.h"
-#include "graphics_component.h"
+#include "sprite_component.h"
 
 class Entity : public GameObject {
 public:
@@ -19,7 +19,7 @@ public:
 	void setMouseEvent(MouseInput input, void(*f)(Entity*));
 	
 	void update();
-	void render();
+	void render() override;
 	
 	void handleKey(KeyInput i);
 	void handleMouse(MouseInput i);
@@ -46,7 +46,9 @@ private:
 	Attribute attribute;
 	Position position;
 	
-	GraphicsComponent graphics;
+	// TODO: implement in a way such that each Text/Sprite component can be tied to a Display component
+	// 		 so the Renderer can draw each texture as intended
+	vector<SpriteComponent> sprites;
 
 	std::map<MouseInput, void(*)(Entity*)> mouseEvents;
 	std::map<KeyInput, void(*)(Entity*)> keyEvents;
