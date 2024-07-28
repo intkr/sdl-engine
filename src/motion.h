@@ -5,53 +5,42 @@
 #include "clock.h"
 #include "motion_frame.h"
 
+// previously animation class
+
 class Motion {
 public:
-	Motion(std::string _name, bool _active = true) : name(_name), active(_active) {}
+	Motion(std::string _name, bool _active = true) : attribute(_name), duration(ms(0)) {}
 	bool operator==(const Motion& other) const;
 
 	virtual void reset();
-	virtual SDL_FRect apply(const SDL_FRect& box) = 0;
+	// TODO: If delta > duration, there will be leftover time for other motions to perform.
+	// Figure out how that information can be notified.
+	virtual SDL_FRect apply(const SDL_FRect& sourceBox, ms delta) = 0;
 	
-	void addMotion(MotionFrame motion);
-	MotionFrame* getMotion(std::string name);
-	
-	virtual void activate();
-	void deactivate() { active = false; }
+	void addFrame(MotionFrame frame);
 
-protected:
-	bool isActive() { return active; }
-	
-	void updateTime();
-	
 private:
-	std::vector<MotionFrame> frames;
+	Attribute attribute;
 
-	std::string name;
-	bool active;
-	
-	Timepoint initialTime;
-	ms elapsedTime;
+	std::vector<MotionFrame> frames;
 	ms duration;
 };
 
-class SequentialAnimation : public Motion {
+class SequentialMotion : public Motion {
 public:
-	SequentialAnimation(std::string _name) : Motion(_name), currentMotion(motions.begin()) {}
+	SequentialMotion(std::string _name) : Motion(_name), currentMotion(frames.begin()) {}
 
-	void animate(Geometry& geometry) override;
 	void reset() override;
-	void activate() override;
+	SDL_FRect apply(const SDL_FRect& sourceBox, ms delta) override;
 	
 private:
-	void selectNextMotion();
-
-	std::vector<MotionFrame>::iterator currentMotion;
+	std::vector<MotionFrame>::iterator currentFrame;
+	// ^ idk why i can init to a private base class member im dumb
 }
 
-class ConcurrentAnimation : public Motion {
+class ConcurrentMotion : public Motion {
 public:
-	ConcurrentAnimation(bool _recursive = false) : Motion(_name) {}
+	ConcurrentMotion(bool _recursive = false) : Motion(_name) {}
 	
-	void animate(Geometry& geometry) override;
+	SDL_FRect apply(const SDL_FRect& sourceBox, ms delta) override;
 }

@@ -1,88 +1,67 @@
 #include "motion.h"
 
-Motion::~Motion() {
-	for (auto motion : motions) {
-		delete motion;
-	}
-}
-
 bool operator==(const Motion& other) const {
-	return name == other.name;
-}
-
-void Motion::addMotion(MotionFrame* motion) {
-	if (motion == nullptr) {
-		throw InvalidItemException("nullptr", "motion");
-	}
-	motions.push_back(motion);
-}
-
-MotionFrame* Motion::getMotion(std::string name) {
-	for (MotionFrame* motion : motions) {
-		if (motion->getName() == name)
-		return motion;
-	}
-	throw InvalidItemException(name, "motion");
-}
-
-void SequentialAnimation::animate(Geometry& geometry) {
-	ms delta = Clock::getDeltaTime(elapsedTime);
-	
-	MotionFrame* motion = *currentMotion;
-	while (delta.count() > 0) {
-		
-	}
-	
-	if (motion->isActive()) {
-		
-		motion.animate(geometry);
-	}
-	else selectNextMotion();
-}
-
-void ConcurrentAnimation::animate(Geometry& geometry) {
-	bool animatedMotionExists = false;
-	
-	for (MotionFrame* motion : motions) {
-		if (motion.isActive()) {
-			animatedMotionExists = true;
-			motion.animate(geometry);
-		}
-	}
-	
-	// If any of the motions were animated, then this animation is considered active.
-	active = animatedMotionExists;
-}
-
-void SequentialAnimation::selectNextMotion() {
-	currentMotion++;
-	if (currentMotion == motions.end()) deactivate();
+	return attribute.name == other.attribute.name;
 }
 
 void Motion::reset() {
-	initialTime = Clock::getTime();
-	for (auto motion : motions) {
-		motion->reset();
+	for (MotionFrame frame : motions) {
+		frame.reset();
 	}
 }
 
-void SequentialAnimation::reset() {
+void SequentialMotion::reset() {
 	Motion::reset();
-	currentMotion = motions.begin();
+	currentFrame = frames.begin();
 }
 
-void Motion::activate() {
-	active = true;
-	reset();
+SDL_FRect SequentialMotion::apply(const SDL_FRect& sourceBox, ms delta) {
+	SDL_FRect box = sourceBox;
+	while (delta > 0) {
+		if (currentFrame == frames.end()) {
+			// maybe add callbacks or something here
+			return;
+		}
+
+		// if delta > current frame length,
+			// update box to end of frame
+			// delta -= frame length
+			// next frame
+			// continue
+		// if 0 <= delta < current frame length,
+			// update box to delta
+			// break
+		box = currentFrame.apply(box, delta);
+		if (delta.count() >= currentFrame.getDuration()) {
+			delta -= ms(currentFrame.getDuration());
+			currentFrame++;
+		}
+		else if (delta < currentFrame.getDuration()) {
+			break;
+		}
+	}
+
+	return box;
 }
 
-void SequentialAnimation::activate() {
-	// me when when
-	active = true;
-	reset();
+SDL_FRect ConcurrentMotion::apply(const SDL_FRect& box, ms delta) {
+	SDL_FRect box = sourceBox;
+	bool animatedMotionExists = false;
+	
+	for (MotionFrame frame : motions) {
+		if (frame.isUnfinished()) {
+			animatedMotionExists = true;
+			box = frame.apply(box, delta);
+		}
+	}
+
+	// If any of the motions were animated, then this animation is considered active.
+	active = animatedMotionExists;
+
+	return box;
 }
 
-void Motion::updateTime() {
-	elapsedTime = Clock::getDeltaTime(initialTime);
-	active = (elapsedTime <= duration);
+void Motion::addFrame(MotionFrame frame) {
+	// change parameter to actual frame data
+	motions.push_back(motion);
 }

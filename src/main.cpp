@@ -188,12 +188,16 @@ Not-too-important small notes for the brainrot future me:
 /*
 Naming-related stuff to remind myself because I have dementia:
 
-	- Bool flag variables that store some status should be an adjective if possible, instead of nouns.
-	  ex) "active" indicates whether something is active or not
+	- Bool flag variables:
+		- Use adjectives that describes whatever status you're trying to keep track of.
+		  Avoid using nouns unless you really can't think of an alternative.
+		  ex) "visible" instead of "visibility"
 
-	- "box" instead of "rect" because the word "hitbox" exists
+	- Use "box" instead of "rect", just because the word 'hitbox' exists.
 	
-	- deltaFrame elapsedTime etcetc wtf idk what bruh
-
-	- Find better names to use in geometry.h because they lowkey bad rn
+	- Time related variables:
+		- Use "delta" if it refers to the difference of two timepoints of the past.
+		  Use "elapsed" if it refers to the difference between the current and the past.
+		- For beginnings or ends of a time frame, use "start" or "end".
+		- Use "duration" if it refers to how much time something takes.
 */
