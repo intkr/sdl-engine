@@ -8,10 +8,8 @@ void Renderer::displayScreen() {
 	SDL_RenderPresent(renderer);
 }
 
-void Renderer::renderTexture(Texture* texture, Geometry& geo) {
-	SDL_RenderCopyExF(renderer, texture->texture, 
-		geometry.srcRect, 
-		geometry.hitbox, 
-		geometry.angle,
-		nullptr, SDL_FLIP_NONE);
+void Renderer::renderTexture(SDL_Texture* texture, SDL_Rect* source, SDL_FRect target, double angle) {
+	SDL_RenderCopyExF(renderer, texture, 
+					  source, target, angle,
+					  nullptr, SDL_FLIP_NONE);
 }

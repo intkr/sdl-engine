@@ -24,21 +24,22 @@ INT WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 /*
 Overview of how the object-component stuff work
 
-	Example object hierarchy:
-
-	Object
-		-> Entity
-			-> UI
-			-> Player/Enemy
+	- Example object hierarchy:
+		Object
+			-> Entity
+				-> UI
+				-> Player/Enemy
+				etc
+			-> Zone
+				-> Loading Zone
+			-> Prop
+				-> Effects
+				-> Tooltip
+				-> Particle
 			etc
-		-> Zone
-			-> Loading Zone
-		-> Prop
-			-> Effects
-			-> Tooltip
-			-> Particle
-		etc
-
+	- When creating objects, add new components into component vectors owned by a state
+	  and then pass pointers of those to the objects.
+	  This should ensure data locality when iterating through each type of component.
 
 	Brief documentation on classes and member variables:
 	(Classes are capitalized and variables aren't)
@@ -63,13 +64,13 @@ Overview of how the object-component stuff work
 			render(Renderer*) passes Source and Target data to Renderer's render().
 			* An object would have a vector of Graphics components for every sprite required.
 
-			- Source
+			- Source component
 			  : Handles what sprite to use from a spritesheet image,
 			    and its animation sequences.
 				- texture data (SDL_Texture*)
 				- texture box (to get a specific portion of a spritesheet)
 				- animation sequences (for any visual sprite changes)
-			- Target
+			- Target component
 			  : Handles where to draw the sprite (position, size, rotation etc)
 			    and its motion sequences.
 				- motion sequences (for any movement within the object)

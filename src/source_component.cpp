@@ -1,6 +1,6 @@
 #include "graphics_component.h"
 
-void SpriteComponent::setTexture(std::string name) {
+void SourceComponent::setTexture(std::string name) {
 	Graphics* g = Graphics::getGraphics();
 	try {
 		texture = g->getTexture(name);
@@ -10,24 +10,23 @@ void SpriteComponent::setTexture(std::string name) {
 	}
 }
 
-void SpriteComponent::loadAnimationFromFile(std::string path) {
+void SourceComponent::initFromFile(std::string path) {
 	try {
-		// check if file exists, load if true
-		// parse through the file like a json or smth
-		// get metadata to create an empty animation object
-		// and then add each frame onto the animation
+		// parse through file
+			// get attributes, create empty animation object
+			// add each frame onto the animation
 	}
 	catch (...) {
 		std::cout << e.what();
 	}
 }
 
-void SpriteComponent::update(ms delta) {
+void SourceComponent::update(ms delta) {
 	updateAnimation(delta);
 	updateBox();
 }
 
-void SpriteComponent::updateAnimation(ms delta) {
+void SourceComponent::updateAnimation(ms delta) {
 	/*
 	go through the current animation and iterate through its frames using delta
 	if (delta>current frame duration),
@@ -39,6 +38,6 @@ void SpriteComponent::updateAnimation(ms delta) {
 	*/
 }
 
-void SpriteComponent::updateBox() {
+void SourceComponent::updateBox() {
 	textureBox = currentAnimation->getBox();
 }

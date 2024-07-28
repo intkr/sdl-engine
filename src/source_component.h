@@ -4,17 +4,17 @@
 #include "graphics.h"
 #include "animation.h"
 
-class SpriteComponent {
-	friend class RenderComponent; // allow the rendering component access to the texture and its box data
+class SourceComponent {
+	friend class GraphicsComponent;
 public:
-	SpriteComponent();
-
-	void setTexture(std::string textureName);
-	void loadAnimationFromFile(std::string path);
+	void initFromFile(std::string path);
 
 	void update(ms delta);
 
 private:
+	void setTexture(std::string name);
+	void loadAnimationFromFile(std::string path);
+	
 	void updateAnimation(ms delta);
 	void updateBox();
 
