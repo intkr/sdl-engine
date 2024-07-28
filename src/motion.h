@@ -1,57 +1,57 @@
 #pragma once
-#include <map>
-#include <any>
+#include <vector>
 #include <string>
 
 #include "clock.h"
-#include "geometry.h"
-#include "exception.h"
-
-typedef void(*)(Geometry*, Motion*) MotionFunction;
+#include "motion_frame.h"
 
 class Motion {
 public:
-	Motion(std::string _name);
-	
-	void animate(Geometry* target);
-	void reset() { initialTime = Clock::getTime(); }
-	void enableLoop() { looping = true; }
+	Motion(std::string _name, bool _active = true) : name(_name), active(_active) {}
+	bool operator==(const Motion& other) const;
 
-	void setFunction(MotionFunction _function, ms _duration);
-	void setParameter(std::string name, std::any value);
-	void setStartEvent(void(*f)()) { startEvent = f; }
-	void setEndEvent(void(*f)()) { endEvent = f; }
+	virtual void reset();
+	virtual SDL_FRect apply(const SDL_FRect& box) = 0;
 	
-	std::string getName() { return name; }
-	ms getElapsedTime() { return elapsedTime; }
-	ms getDuration() { return duration; }
+	void addMotion(MotionFrame motion);
+	MotionFrame* getMotion(std::string name);
 	
-	template<typename T>
-	T getParameter(std::string name);
+	virtual void activate();
+	void deactivate() { active = false; }
 
-
-private:
-	void init();
-	void updateTime();
-	
-	void triggerEvents();
-	bool shouldStartEventBeTriggered();
-	bool shouldEndEventBeTriggered();
-	
+protected:
 	bool isActive() { return active; }
 	
-	MotionFunction function;
+	void updateTime();
+	
+private:
+	std::vector<MotionFrame> frames;
 
+	std::string name;
+	bool active;
+	
 	Timepoint initialTime;
 	ms elapsedTime;
 	ms duration;
-	
-	std::string name;
-	bool activeness;
-	bool looping;
-	
-	void (*startEvent)();
-	void (*endEvent)();
-
-	std::map<std::string, std::any> parameters;
 };
+
+class SequentialAnimation : public Motion {
+public:
+	SequentialAnimation(std::string _name) : Motion(_name), currentMotion(motions.begin()) {}
+
+	void animate(Geometry& geometry) override;
+	void reset() override;
+	void activate() override;
+	
+private:
+	void selectNextMotion();
+
+	std::vector<MotionFrame>::iterator currentMotion;
+}
+
+class ConcurrentAnimation : public Motion {
+public:
+	ConcurrentAnimation(bool _recursive = false) : Motion(_name) {}
+	
+	void animate(Geometry& geometry) override;
+}

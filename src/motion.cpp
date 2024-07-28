@@ -1,69 +1,88 @@
 #include "motion.h"
 
-Motion::Motion(std::string name) : name(_name) {
-	init();
+Motion::~Motion() {
+	for (auto motion : motions) {
+		delete motion;
+	}
 }
 
-void Motion::init() {
-	function = nullptr;
-	startEvent = endEvent = nullptr;
-	duration = 0;
-	elapsedTime = 0;
-	looping = false;
-	activeness = false;
+bool operator==(const Motion& other) const {
+	return name == other.name;
 }
 
-void Motion::animate() {
-	try {
-		update();
-		checkTriggers();
-		if (isActive()) function(geometry, this);
+void Motion::addMotion(MotionFrame* motion) {
+	if (motion == nullptr) {
+		throw InvalidItemException("nullptr", "motion");
 	}
-	catch (InvalidItemException& e) {
-		std::cout << e.what();
+	motions.push_back(motion);
+}
+
+MotionFrame* Motion::getMotion(std::string name) {
+	for (MotionFrame* motion : motions) {
+		if (motion->getName() == name)
+		return motion;
 	}
+	throw InvalidItemException(name, "motion");
+}
+
+void SequentialAnimation::animate(Geometry& geometry) {
+	ms delta = Clock::getDeltaTime(elapsedTime);
+	
+	MotionFrame* motion = *currentMotion;
+	while (delta.count() > 0) {
+		
+	}
+	
+	if (motion->isActive()) {
+		
+		motion.animate(geometry);
+	}
+	else selectNextMotion();
+}
+
+void ConcurrentAnimation::animate(Geometry& geometry) {
+	bool animatedMotionExists = false;
+	
+	for (MotionFrame* motion : motions) {
+		if (motion.isActive()) {
+			animatedMotionExists = true;
+			motion.animate(geometry);
+		}
+	}
+	
+	// If any of the motions were animated, then this animation is considered active.
+	active = animatedMotionExists;
+}
+
+void SequentialAnimation::selectNextMotion() {
+	currentMotion++;
+	if (currentMotion == motions.end()) deactivate();
+}
+
+void Motion::reset() {
+	initialTime = Clock::getTime();
+	for (auto motion : motions) {
+		motion->reset();
+	}
+}
+
+void SequentialAnimation::reset() {
+	Motion::reset();
+	currentMotion = motions.begin();
+}
+
+void Motion::activate() {
+	active = true;
+	reset();
+}
+
+void SequentialAnimation::activate() {
+	// me when when
+	active = true;
+	reset();
 }
 
 void Motion::updateTime() {
 	elapsedTime = Clock::getDeltaTime(initialTime);
-	activeness = (elapsedTime <= duration);
-}
-
-void Motion::triggerEvents() {
-	if (shouldStartEventBeTriggered()) {
-		startEvent();
-	}
-	if (shouldEndEventBeTriggered()) {
-		endEvent();
-	}
-}
-
-bool Motion::shouldStartEventBeTriggered() {
-	return (elapsedTime == 0)
-		&& (startEvent != nullptr);
-}
-
-bool Motion::shouldEndEventBeTriggered() {
-	return (elapsedTime >= duration)
-		&& (endEvent != nullptr);
-}
-
-void Motion::setFunction(MotionFunction _function, ms _duration) {
-	function = _function;
-	duration = _duration;
-}
-
-void Motion::setParameter(std::string name, std::any value) {
-	parameters.emplace(name, value);
-}
-
-// TODO: check for errors because i have no idea if this works
-template <typename T>
-T Motion::getParameter<T>(std::string name) {
-	try {
-		return std::any_cast<T>(parameters.at(name));
-	}
-	catch (std::out_of_range& e) {
-		throw InvalidItemException(name, "parameter");
-	}
+	active = (elapsedTime <= duration);
 }
