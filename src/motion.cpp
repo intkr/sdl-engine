@@ -8,14 +8,15 @@ void Motion::reset() {
 	for (MotionFrame frame : motions) {
 		frame.reset();
 	}
-}
-
-void SequentialMotion::reset() {
-	Motion::reset();
 	currentFrame = frames.begin();
 }
 
-SDL_FRect SequentialMotion::apply(const SDL_FRect& sourceBox, ms delta) {
+void Motion::addFrame(MotionFrame& frame) {
+	// change parameter to actual frame data
+	motions.push_back(motion);
+}
+
+SDL_FRect Motion::apply(const SDL_FRect& sourceBox, ms delta) {
 	SDL_FRect box = sourceBox;
 	while (delta > 0) {
 		if (currentFrame == frames.end()) {
@@ -42,26 +43,4 @@ SDL_FRect SequentialMotion::apply(const SDL_FRect& sourceBox, ms delta) {
 	}
 
 	return box;
-}
-
-SDL_FRect ConcurrentMotion::apply(const SDL_FRect& box, ms delta) {
-	SDL_FRect box = sourceBox;
-	bool animatedMotionExists = false;
-	
-	for (MotionFrame frame : motions) {
-		if (frame.isUnfinished()) {
-			animatedMotionExists = true;
-			box = frame.apply(box, delta);
-		}
-	}
-
-	// If any of the motions were animated, then this animation is considered active.
-	active = animatedMotionExists;
-
-	return box;
-}
-
-void Motion::addFrame(MotionFrame frame) {
-	// change parameter to actual frame data
-	motions.push_back(motion);
 }

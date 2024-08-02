@@ -3,55 +3,42 @@
 #include <any>
 #include <string>
 
+#include "SDL.h"
+
 #include "clock.h"
-#include "geometry.h"
 #include "exception.h"
 
-typedef void(*)(Geometry*, MotionFrame*) MotionFunction;
+typedef SDL_FRect(*)(SDL_FRect, MotionFrame&) MotionFunction;
 
 class MotionFrame {
 public:
-	MotionFrame(std::string _name);
-	
-	void animate(Geometry* target);
-	void reset() { initialTime = Clock::getTime(); }
-	void enableLoop() { looping = true; }
+	MotionFrame(MotionFunction _function, ms _duration);
 
-	void setFunction(MotionFunction _function, ms _duration);
+	void reset() { duration = ms(0); }
+	SDL_FRect apply(const SDL_FRect& sourceBox, ms delta);
+
+	void setLoop(bool value) { loop = value; }
 	void setParameter(std::string name, std::any value);
-	void setStartEvent(void(*f)()) { startEvent = f; }
-	void setEndEvent(void(*f)()) { endEvent = f; }
 	
-	std::string getName() { return name; }
 	ms getElapsedTime() { return elapsedTime; }
-	ms getDuration() { return duration; }
-	
 	template<typename T>
 	T getParameter(std::string name);
 
-
 private:
 	void init();
-	void updateTime();
+	void updateTime(ms delta);
 	
 	void triggerEvents();
 	bool shouldStartEventBeTriggered();
 	bool shouldEndEventBeTriggered();
-	
-	bool isActive() { return active; }
-	
+
 	MotionFunction function;
 
-	Timepoint initialTime;
 	ms elapsedTime;
 	ms duration;
-	
-	std::string name;
-	bool activeness;
-	bool looping;
-	
-	void (*startEvent)();
-	void (*endEvent)();
+
+	//bool active; // is this even necessary
+	bool loop;
 
 	std::map<std::string, std::any> parameters;
 };

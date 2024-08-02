@@ -5,11 +5,9 @@
 #include "clock.h"
 #include "motion_frame.h"
 
-// previously animation class
-
 class Motion {
 public:
-	Motion(std::string _name, bool _active = true) : attribute(_name), duration(ms(0)) {}
+	Motion(std::string _name, bool _active = true) : attribute(_name), duration(ms(0)), currentMotion(frames.begin()) {}
 	bool operator==(const Motion& other) const;
 
 	virtual void reset();
@@ -17,30 +15,14 @@ public:
 	// Figure out how that information can be notified.
 	virtual SDL_FRect apply(const SDL_FRect& sourceBox, ms delta) = 0;
 	
-	void addFrame(MotionFrame frame);
+	void addFrame(MotionFrame& frame);
 
 private:
 	Attribute attribute;
+	ms duration;
 
 	std::vector<MotionFrame> frames;
-	ms duration;
-};
-
-class SequentialMotion : public Motion {
-public:
-	SequentialMotion(std::string _name) : Motion(_name), currentMotion(frames.begin()) {}
-
-	void reset() override;
-	SDL_FRect apply(const SDL_FRect& sourceBox, ms delta) override;
-	
-private:
 	std::vector<MotionFrame>::iterator currentFrame;
-	// ^ idk why i can init to a private base class member im dumb
-}
 
-class ConcurrentMotion : public Motion {
-public:
-	ConcurrentMotion(bool _recursive = false) : Motion(_name) {}
-	
-	SDL_FRect apply(const SDL_FRect& sourceBox, ms delta) override;
-}
+	// maybe add some callback function variables
+};

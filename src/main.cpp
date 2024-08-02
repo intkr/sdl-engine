@@ -119,10 +119,8 @@ Stuff to do when I have my IDE at home:
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
 	  Additionally, consider organizing this clutter of .h/.cpp files into folders because its gettin kinda messy
 
-	- Consider using Lua to make states instead of hardcoding and linking everything into the StateController.
-	  This should be better for game extensibility and flexibility in the long term.
-	  (maybe consider using Sol (https://github.com/ThePhD/sol2))
-	  * Also research about what should be hardcoded and what should be scripted because I have no idea
+	- Fat reminder: Do not even think about making Lua modding support because I'm already frying my brain with everything
+	  just hardcode every type of entity including their logic, maybe think about Lua on future projects
 */
 
 /*
@@ -148,6 +146,10 @@ Highly prioritized stuff I must do before I eventually meltdown:
 		- StateSpecific (object, Sprite) : used for resources specific to one state only (allows smooth state transitions if false)
 		- Interactable (State) : false for cutscenes and whatnot
 		- Paused (State) : self-explanatory
+
+	- The currently implemented motion system only allows one motion to be active at a time,
+	  but if it gets changed to allowing multiple options, then beware for potential problems that may arise
+	  with non-linear calculations
 */
 
 /*
