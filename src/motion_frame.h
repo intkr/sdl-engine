@@ -27,18 +27,11 @@ public:
 private:
 	void init();
 	void updateTime(ms delta);
-	
-	void triggerEvents();
-	bool shouldStartEventBeTriggered();
-	bool shouldEndEventBeTriggered();
 
 	MotionFunction function;
 
 	ms elapsedTime;
 	ms duration;
-
-	//bool active; // is this even necessary
-	bool loop;
 
 	std::map<std::string, std::any> parameters;
 };

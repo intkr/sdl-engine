@@ -5,10 +5,10 @@
 #include "geometry.h"
 #include "motion.h"
 
-class TargetComponent {
+class DisplayComponent {
     friend class GraphicsComponent;
 public:
-    TargetComponent(Position& objPos) : centerPos(position) {}
+    DisplayComponent(Position& objPos) : centerPos(position) {}
 	void initFromFile(std::string path);
 
 	void update(ms delta);

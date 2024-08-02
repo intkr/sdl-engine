@@ -1,8 +1,7 @@
 #include "motion_frame.h"
 
-MotionFrame::MotionFrame(MotionFunction _function, ms _duration) : function(_function), loop(true),
-																   duration(_duration), elapsedTime(ms(0))
-																    {}
+MotionFrame::MotionFrame(MotionFunction _function, ms _duration)
+  : function(_function), duration(_duration), elapsedTime(ms(0)) {}
 
 SDL_FRect MotionFrame::apply(const SDL_FRect& sourceBox, ms delta) {
 	try {
