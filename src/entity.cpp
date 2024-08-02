@@ -10,7 +10,7 @@ Entity::~Entity() {
 }
 
 bool operator==(const Entity& other) const {
-	return attribute.name == other.attribute.name;
+	return name == other.name;
 }
 
 
@@ -34,14 +34,14 @@ Entity* Entity::getSubentity(std::string name) {
 
 void Entity::setKeyEvent(KeyInput input, void(*f)(Entity*)) {
 	if (keyEvents.find(input) != keyEvents.end()) {
-		std::cout << "Warning - Overriding key event on " << attribute.name << "\n";
+		std::cout << "Warning - Overriding key event on " << name << "\n";
 	}
 	keyEvents.emplace(input, f);
 }
 
 void Entity::setMouseEvent(MouseInput input, void(*f)(Entity*)) {
 	if (mouseEvents.find(input) != mouseEvents.end()) {
-		std::cout << "Warning - Overriding mouse event on " << attribute.name << "\n";
+		std::cout << "Warning - Overriding mouse event on " << name << "\n";
 	}
 	mouseEvents.emplace(input, f);
 }

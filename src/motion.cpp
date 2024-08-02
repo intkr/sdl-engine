@@ -1,7 +1,7 @@
 #include "motion.h"
 
 bool operator==(const Motion& other) const {
-	return attribute.name == other.attribute.name;
+	return name == other.name;
 }
 
 void Motion::reset() {

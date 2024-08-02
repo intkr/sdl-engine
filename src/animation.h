@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "clock.h"
-#include "attribute.h"
 
 struct AnimationFrame {
     int row;
@@ -13,7 +12,7 @@ struct AnimationFrame {
 
 class Animation {
 public:
-    Animation(std::string name) : attribute(name) {}
+    Animation(std::string _name) : name(_name) {}
     
     // The box data of the first sprite is used to calculate
     // all positions of subsequent sprites for a given animation.
@@ -24,7 +23,7 @@ public:
     SDL_Rect getBox();
 
 private:
-    Attribute attribute;
+    std::string name;
     SDL_Rect baseBox;
 
     std::vector<AnimationFrame> frames;

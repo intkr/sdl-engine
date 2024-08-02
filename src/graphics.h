@@ -18,7 +18,7 @@ public:
 	static void deleteGraphics();
 	static Renderer* getRenderer();
 
-	void createTextureFromText(std::string name, std::wstring text, TextAttribute attribute, int wrapLength);
+	void createTextureFromText(std::string name, std::wstring text, TextAttribute attribute, int wrapLength); // im too lazy to fix this rn, remove the attributes parameter
 	void createTextureFromImage(std::string name, std::string path, std::string name);
 	SDL_Texture* getTexture(std::string name);
 	bool doesTextureExist(std::string name);

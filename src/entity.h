@@ -7,7 +7,7 @@
 
 class Entity : public GameObject {
 public:
-	Entity(std::string name, SDL_FPoint pos) : attribute(name), geometry(pos) {}
+	Entity(std::string _name, SDL_FPoint pos) : GameObject(_name), geometry(pos) {}
 	~Entity();
 	
 	bool operator==(const Entity& other) const;
@@ -29,7 +29,7 @@ public:
 	bool isRootEntity() { return (parent == null); }
 	Entity* getParentEntity() { return parent; }
 	Entity* getSubentity(std::string name);
-	std::string getName() { return attribute.name; }
+	std::string getName() { return name; }
 	bool isFocused() { return focused; }
 	
 private:
@@ -43,8 +43,7 @@ private:
 	Entity* parent;
 	std::vector<Entity*> subentities;
 
-	Attribute attribute;
-	Position position;
+	bool active;
 	
 	// TODO: implement in a way such that each Text/Sprite component can be tied to a Display component
 	// 		 so the Renderer can draw each texture as intended

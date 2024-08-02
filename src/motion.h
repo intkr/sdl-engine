@@ -7,7 +7,7 @@
 
 class Motion {
 public:
-	Motion(std::string _name, bool _active = true) : attribute(_name), duration(ms(0)), currentMotion(frames.begin()) {}
+	Motion(std::string _name, bool _active = true) : name(_name), active(true), duration(ms(0)), currentMotion(frames.begin()) {}
 	bool operator==(const Motion& other) const;
 
 	virtual void reset();
@@ -18,7 +18,8 @@ public:
 	void addFrame(MotionFrame& frame);
 
 private:
-	Attribute attribute;
+	std::string name;
+	bool active;
 	ms duration;
 
 	std::vector<MotionFrame> frames;
