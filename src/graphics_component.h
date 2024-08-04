@@ -4,7 +4,7 @@
 #include "renderer.h"
 
 #include "source_component.h"
-#include "target_component.h"
+#include "display_component.h"
 
 class GraphicsComponent {
 public:
@@ -16,7 +16,7 @@ public:
 
 private:
     SourceComponent source;
-    TargetComponent target;
+    DisplayComponent display;
 };
 
 /*

@@ -8,19 +8,27 @@
 class DisplayComponent {
     friend class GraphicsComponent;
 public:
-    DisplayComponent(Position& objPos) : centerPos(position) {}
+    DisplayComponent(TransformComponent& objTransform) : objectTransform(objTransform) {}
 	void initFromFile(std::string path);
 
 	void update(ms delta);
     
 private:
-    // some class object to make changes on the render box idk
+    void loadMotionFromFile(std::string path);
 
-    // Position of the object this component is part of.
-    Position* const centerPos;
+    void applyMotion(ms delta);
+    void applyObjectTransform();
+    void calculateRotatedPosition(double angle_deg);
+    void setBoxWindowRelative();
 
-    // "Object-relative" : (0,0) refers to centerPos.
-    // "Window-relative" : (0,0) refers to the top left corner of the window.
+    std::vector<Motion> motions;
+    std::vector<Motion>::iterator currentMotion;
+
+    // Transform of the object this component is part of.
+    TransformComponent* const objectTransform;
+
+    // "Object-relative" : Relative to the parent object.
+    // "Window-relative" : Relative to the window; "objective".
     
     // Pre-transform, object-relative box.
     // Contains the original values to perform calculations on.
@@ -29,5 +37,8 @@ private:
     // Contains the final values to be used on rendering.
     SDL_FRect renderBox;
 
-    double angle_deg;
+    // Object-relative rotation angle.
+    double relativeAngle_deg;
+    // Window-relative rotation angle.
+    double finalAngle_deg;
 };

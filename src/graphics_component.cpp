@@ -9,9 +9,9 @@ void GraphicsComponent::initFromFile(std::string path) {
 
 void GraphicsComponent::update(ms delta) {
     source.update(delta);
-    target.update(delta);
+    display.update(delta);
 }
 
 void GraphicsComponent::render(Renderer* renderer) {
-    renderer.renderTexture(source.texture, source.textureBox, target.renderBox, target.angle_deg);
+    renderer.renderTexture(source.texture, source.textureBox, display.renderBox, display.finalAngle_deg);
 }
