@@ -93,14 +93,15 @@ Overview of how the object-component stuff work
 			- current input state (input actions and its type value - check input_event.h)
 
 	- Motion
-	  : Handles all changes of an object's geometric data.
-
-		- attributes (active, name, length?, etc)
-		- list of motion parts
-		- reference to the source / target box
-		  (motion calculations are done with the source box data,
-		   and its results are saved on the target box)
-	- Motion Parts (temporary name)
+	  : A sequence of a sprite's rendering data.
+		- Motion Frame
+			- pointer to a premade motion function?
+			- function-related parameters
+	- Animation
+	  : A sequence of a sprite's texture data.
+		- Animation Frame
+			- box data
+			- frame duration
 
 	Overview of the game logic flow:
 		- Process input
@@ -125,6 +126,11 @@ Stuff to do when I have my IDE at home:
 
 /*
 Highly prioritized stuff I must do before I eventually meltdown:
+	- Figure out how to initialize objects from an external json file
+	  - Components with common data should be initialized from a file only once,
+	    then be created with the copy constructor for every subsequent initialization.
+	  - bruh idk
+
 	- Implement a logging system for easier debugging
 
 	- Animations are going to be loaded from a external file.
@@ -167,6 +173,9 @@ Moderately important stuff to ponder upon like a sophisticated individual:
 	  in other words, consider using a different method of storing valid keys (vectors or whatever, maybe create a custom class idk)
 	  
 	- Optimize collision checking
+	
+	- Look into instance rendering, apparently commonly used for drawing multiple of the same sprite
+	  (e.g. particles)
 */
 
 /*

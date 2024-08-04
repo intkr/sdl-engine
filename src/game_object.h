@@ -1,23 +1,29 @@
 #pragma once
 
-#include "geometry.h"
+#include <string>
+
+#include "SDL.h"
+
+#include "clock.h"
 #include "exception.h"
+#include "transform.h"
 
 // Base class for all ingame objects.
 class GameObject {
 public:
-	GameObject(std::string _name, Point<float> point) : name(_name), position(point) {}
+	GameObject(std::string _name, SDL_FPoint initialPos) : name(_name), transform(initialPos) {}
 	~GameObject();
 	
-    // TODO: check if this works with derived classes (equal / different types)
+    // TODO: check if this works between derived classes
 	bool operator==(const GameObject& other) const {
         return name == other.name;
     }
 	
-	void update() = 0;
-	void render() = 0;
+	virtual void update(ms delta) = 0;
 
 protected:
 	std::string name;
-	Position position;
+	bool active;
+	
+	Transform transform;
 };
