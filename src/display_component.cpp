@@ -16,7 +16,7 @@ void DisplayComponent::update(ms delta) {
 }
 
 void DisplayComponent::applyMotion(ms delta) {
-    renderBox = currentMotion->apply(baseBox, delta);
+    modBox = currentMotion->apply(baseBox, delta);
 }
 
 void DisplayComponent::applyObjectTransform() {
@@ -25,7 +25,7 @@ void DisplayComponent::applyObjectTransform() {
 }
 
 void DisplayComponent::calculateRotatedPosition() {
-    double objectAngle_deg = objectTransform->getAngle();
+    double objectAngle_deg = objectTransform->angle_deg;
     // There's nothing to rotate if value equals 0
     if (objectAngle_deg == 0.0) return;
 
@@ -33,7 +33,7 @@ void DisplayComponent::calculateRotatedPosition() {
 }
 
 void DisplayComponent::setBoxWindowRelative() {
-    Position objectPosition = objectTransform->getPosition();
+    SDL_FPoint objectPosition = objectTransform->position;
     renderBox.x += objectPosition.x;
     renderBox.y += objectPosition.y;
 }

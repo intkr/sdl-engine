@@ -1,18 +1,22 @@
 #pragma once
-#include <string>
 #include <vector>
 
-#include "geometry.h"
+#include "SDL.h"
+
+#include "transform.h"
 #include "motion.h"
 
 class DisplayComponent {
-    friend class GraphicsComponent;
+    friend class SpriteComponent;
+
 public:
-    DisplayComponent(TransformComponent& objTransform) : objectTransform(objTransform) {}
 	void initFromFile(std::string path);
+    void setObjectTransform(Transform objTransform) {
+        objectTransform = objTransform;
+    }
 
 	void update(ms delta);
-    
+
 private:
     void loadMotionFromFile(std::string path);
 
@@ -24,21 +28,23 @@ private:
     std::vector<Motion> motions;
     std::vector<Motion>::iterator currentMotion;
 
-    // Transform of the object this component is part of.
-    TransformComponent* const objectTransform;
+    const Transform* objectTransform;
 
     // "Object-relative" : Relative to the parent object.
     // "Window-relative" : Relative to the window; "objective".
     
-    // Pre-transform, object-relative box.
-    // Contains the original values to perform calculations on.
+    // Pre-motion, object-relative box.
+    // Original box values to apply motions on.
     SDL_FRect baseBox;
-    // Post-transform, window-relative box.
-    // Contains the final values to be used on rendering.
+    // Post-motion, object-relative box.
+    // Box values after motions are applied, but not for rendering.
+    SDL_FRect modBox;
+    // Post-motion, window-relative box.
+    // Final box values to be used on rendering.
     SDL_FRect renderBox;
 
     // Object-relative rotation angle.
     double relativeAngle_deg;
     // Window-relative rotation angle.
-    double finalAngle_deg;
+    double angle_deg;
 };
