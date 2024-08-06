@@ -53,7 +53,7 @@ void Input::flushKeys() {
 	}
 }
 
-void Input::flushKeyStatus(InputType& status) {
+void Input::flushKeyStatus(InputState& status) {
 	changeInputStatus(status, _INPUT_PRESS_DOWN, _INPUT_PRESSED);
 	changeInputStatus(status, _INPUT_PRESS_UP, _INPUT_NONE);
 }
@@ -63,7 +63,7 @@ void Input::flushMouse() {
 	changeInputStatus(mouseStatus, _INPUT_PRESS_UP, _INPUT_NONE);
 }
 
-void Input::changeInputStatus(InputType& status, InputType from, InputType to) {
+void Input::changeInputStatus(InputState& status, InputState from, InputState to) {
 	if (status == from)
 		status = to;
 }
@@ -107,9 +107,7 @@ void Input::pollInput() {
 	}
 }
 
-// TODO: this function exists because idk how the polling system works,
-// check if all polled events follow some sort of fixed ordering -
-// which would make this function pointless if so.
+
 void Input::setInputDevicePriority(Uint32 type) {
 	switch (type) {
 	// Key input
@@ -134,14 +132,14 @@ void Input::setInputDevicePriority(Uint32 type) {
 
 void Input::keyDown(SDL_Scancode inputKey) {
 	Key key = getBindedKey(inputKey);
-	InputType& status = keyStatus[key];
+	InputState& status = keyStatus[key];
 	
 	setInputStatus(status, _INPUT_PRESS_DOWN);
 }
 
 void Input::keyUp(SDL_Scancode inputKey) {
 	Key key = getBindedKey(inputKey);
-	InputType& status = keyStatus[key];
+	InputState& status = keyStatus[key];
 	
 	setInputStatus(status, _INPUT_PRESS_UP);
 }
@@ -156,14 +154,14 @@ Key Input::getBindedKey(SDL_Scancode scancode) {
 
 void Input::mouseDown(Uint8 SDLbutton) {
 	MouseButton button = getButton(SDLbutton);
-	InputType& status = mouseStatus[button];
+	InputState& status = mouseStatus[button];
 	
 	setInputStatus(status, _INPUT_PRESS_DOWN);
 }
 
 void Input::mouseUp(Uint8 SDLbutton) {
 	MouseButton button = getButton(SDLbutton);
-	InputType& status = mouseStatus[button];
+	InputState& status = mouseStatus[button];
 	
 	setInputStatus(status, _INPUT_PRESS_UP);
 }

@@ -14,10 +14,9 @@ class Animation {
 public:
     Animation(std::string _name) : name(_name) {}
     
-    // The box data of the first sprite is used to calculate
-    // all positions of subsequent sprites for a given animation.
-    // TODO: rename
-    void initFirstSprite(int x, int y, int w, int h);
+    // The base box data is used to calculate
+    // all sprite positions for a given animation.
+    void setBaseBoxValues(int x, int y, int w, int h);
 
     void update(ms delta);
     SDL_Rect getBox();

@@ -48,10 +48,6 @@ private:
 	SDL_Window* window;
 	Renderer* renderer;
 	
-	// TODO: check how much memory each TTF_Font object uses.
-	// If it is somewhat huge, then consider having one TTF_Font* and load a new font every time it needs to be changed.
-	// In such case, fonts should be map<font name, font path> instead.
-	
 	std::map<std::string, TTF_Font*> fonts;
 	std::map<std::string, SDL_Color> colors;
 	std::map<std::string, SDL_Texture*> textures;

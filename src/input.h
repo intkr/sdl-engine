@@ -29,25 +29,24 @@ private:
 	
 	void deleteBindedKeyIfDuplicate(Key key, SDL_Scancode scancode);
 	
-	// active values (_IN / _OUT) are transformed into passive (_ED) values.
 	void flushInput();
 	void flushKeys();
-	void flushKeyStatus(InputType& status);
+	void flushKeyStatus(InputState& status);
 	void flushMouse();
-	void changeInputStatus(InputType& input, InputType from, InputType to) {
+	void changeInputStatus(InputState& input, InputState from, InputState to) {
 		if (i == from)
 			i = to;
 	}
 	
 	void pollInput();
 	void setInputDevicePriority(Uint32 type);
-	void setInputStatus(InputType& input, InputType type) { i = type; }
+	void setInputStatus(InputState& input, InputState type) { i = type; }
 	
 	void keyDown(SDL_Scancode inputKey);
 	void keyUp(SDL_Scancode inputKey);
 	Key getBindedKey(SDL_Scancode scancode);
-	void setKeyStatus(Key key, InputType type);
-	void addKeyEvent(Key key, InputType type);
+	void setKeyStatus(Key key, InputState type);
+	void addKeyEvent(Key key, InputState type);
 	
 	void mouseDown(Uint8 button);
 	void mouseUp(Uint8 button);
@@ -60,11 +59,11 @@ private:
 	
 	std::map<SDL_Scancode, Key> keybinds;
 
-	std::map<Key, InputType> keyStatus;
-	std::map<MouseButton, InputType> mouseStatus;
+	std::map<Key, InputState> keyStatus;
+	std::map<MouseButton, InputState> mouseStatus;
 	SDL_FPoint cursorPos;
 	
-	// 99% sure this is bad implementation, search for a better alternative
+	// TODO: replace this with a observer connected to the engine - notify it for quit triggers.
 	bool quitTriggered;
 
 	enum class InputDevice { _NONE, _MOUSE, _KEY };

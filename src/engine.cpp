@@ -6,22 +6,22 @@ Engine::Engine() {
 	TTF_Init();
 
 	p = Player::getPlayer();
-	g = Graphics::getGraphics();
-	i = Input::getInput();
-	a = Audio::getAudio();
-	s = StateController::getStateController();
-	c = Clock::getClock();
+	graphics = Graphics::getGraphics();
+	input = Input::getInput();
+	audio = Audio::getAudio();
+	stateController = StateController::getStateController();
+	clock = Clock::getClock();
 	
 	gaming = true;
 }
 
 Engine::~Engine() {
 	p->deletePlayer();
-	s->deleteStateController();
-	a->deleteAudio();
-	i->deleteInput();
-	c->deleteClock();
-	g->deleteGraphics();
+	stateController->deleteStateController();
+	audio->deleteAudio();
+	input->deleteInput();
+	clock->deleteClock();
+	graphics->deleteGraphics();
 	
 	TTF_Quit();
 	IMG_Quit();
@@ -38,36 +38,36 @@ void Engine::loop() {
 }
 
 void Engine::updateGame() {
-	i->processInput();
-	a->update();
-	s->update();
+	input->processInput();
+	audio->update();
+	stateController->update();
 	checkForQuitTrigger();
 }
 
 void Engine::checkForQuitTrigger() {
-	if(i->isQuitTriggered())
+	if(input->isQuitTriggered())
 		gaming = false;
 }
 
 void Engine::render() {
-	Renderer* r = g->getRenderer();
-	r->clearScreen();
-	s->render(r);
-	r->presentScreen();
+	Renderer* renderer = graphics->getRenderer();
+	renderer->clearScreen();
+	stateController->render(renderer);
+	renderer->presentScreen();
 }
 
 void Engine::updateTime() {
-	c->update();
+	clock->update();
 }
 
 void limitFPS() {
-	ms deltaTime = c->getDeltaTime(SteadyClock::now());
-	int frameElapsedMS = (int)deltaTime.count();
+	ms delta = clock->getDeltaTime(SteadyClock::now());
+	int deltaFrame_ms = (int)delta.count();
 	
 	const int msPerSecond = 1000;
 	int msPerFrame = msPerSecond / fps;
 	
-	if (frameElapsedMS < msPerFrame) {
-		SDL_Delay(msPerFrame - frameElapsedMS);
+	if (deltaFrame_ms < msPerFrame) {
+		SDL_Delay(msPerFrame - deltaFrame_ms);
 	}
 }

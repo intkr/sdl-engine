@@ -7,21 +7,21 @@
 // Handle that within the state.
 
 // Defines the state of an input.
-enum class InputType {
-	// Default value for lack of events.
+enum class InputState {
+	// Default state for lack of input.
 	_INPUT_NONE = 0,
-	// Valid values for all key and mouse inputs.
+	// All valid states for key and mouse inputs.
 	_INPUT_DOWN, _INPUT_HOLD, _INPUT_UP
 };
 
 // Defines the valid actions done via key inputs.
 enum class KeyAction {
-	// Default value for keys not listed below
+	// Default value for keys not listed below.
 	_KEY_ETC = 0,
 
-	// Add key values specific to the game's needs
+	// Add key values specific to the game's needs here
 	
-	// Special function keys
+	// Special function keys - should not overlap with values above.
 	_KEY_SHIFT,
 	_KEY_RETURN,
 	_KEY_ESCAPE
@@ -29,23 +29,24 @@ enum class KeyAction {
 
 // Defines all valid mouse buttons.
 enum class MouseButton {
-	// Default value for buttons not listed below
+	// Default value for buttons not listed below.
 	_MOUSE_ETC = 0,
 
+	// add side buttons or scroll-related stuff when needed
 	_MOUSE_LEFT,
 	_MOUSE_MIDDLE,
 	_MOUSE_RIGHT,
-	// add side buttons or scroll-related stuff when needed
 
-	// Used on mouse movement inputs without any buttons pressed.
+	// Used on hover inputs without any buttons pressed.
 	_MOUSE_HOVER
 }
+
 struct UserInput {
-	InputType type;
+	InputState type;
 }
 
 struct KeyInput : UserInput {
-	KeyInput(KeyAction k, InputType t) : key(k), type(t) {}
+	KeyInput(KeyAction k, InputState t) : key(k), type(t) {}
 	
 	bool operator==(const KeyInput& other) {
 		return (key == other.key) && (type == other.type);
@@ -55,7 +56,7 @@ struct KeyInput : UserInput {
 }
 
 struct MouseInput : UserInput {
-	MouseInput(MouseButton b, InputType t, SDL_FPoint p = SDL_FPoint()) : button(b), pos(p), type(t) {}
+	MouseInput(MouseButton b, InputState t, SDL_FPoint p = SDL_FPoint()) : button(b), pos(p), type(t) {}
 	
 	bool operator==(const MouseInput& other) {
 		return (button == other.button) && (type == other.type);

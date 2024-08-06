@@ -101,14 +101,6 @@ void Audio::addChannel(Channel* ch, std::string name) {
 	channels.emplace(name, channel);
 }
 
-/* not sure if this is rly needed but uncomment if so
-Channel* Audio::getChannel(std::string name) {
-	// only returns the most recently created channel with the given name
-	auto range = channels.equal_range(name);
-	return range->second->second;
-}
-*/
-
 void Audio::update() {
 	FMOD::Channel* channel;
 

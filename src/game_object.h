@@ -8,7 +8,7 @@
 #include "exception.h"
 #include "transform.h"
 
-// Base class for all ingame objects.
+// Base class for all in-game objects.
 class GameObject {
 public:
 	GameObject(std::string _name, SDL_FPoint initialPos) : name(_name), transform(initialPos) {}
@@ -19,7 +19,7 @@ public:
         return name == other.name;
     }
 	
-	virtual void update(ms delta) = 0;
+	virtual void update(ms delta) {}
 
 protected:
 	std::string name;

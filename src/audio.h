@@ -24,6 +24,7 @@ public:
 	// Each sound should be assigned a unique name to prevent confusion.
 	Sound* addBGM(std::string path, std::string name);
 	Sound* addSFX(std::string path, std::string name);
+	
 	// Creates a channel with a designated sound loaded in, in a paused state.
 	// You can unpause the channel via Channel::play().
 	Channel* createChannel(std::string soundName);

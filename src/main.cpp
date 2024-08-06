@@ -122,6 +122,9 @@ Stuff to do when I have my IDE at home:
 
 	- Fat reminder: Do not even think about making Lua modding support because I'm already frying my brain with everything
 	  just hardcode every type of entity including their logic, maybe think about Lua on future projects
+
+	- Check if the SDL2 polling system orders its events in a fixed order.
+	  If so, 'Input::setInputDevicePriority' isn't needed and should be removed. 
 */
 
 /*

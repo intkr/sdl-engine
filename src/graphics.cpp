@@ -153,30 +153,3 @@ void Graphics::deleteTexture(std::string name) {
 		std::cout << e.what();
 	}
 }
-
-/*
-TODO: (functions to use on popup state or something idk)
-
-void Graphics::addBlackOverlay(int opacity) {
-	std::string overlayName = "popupOverlay";
-	if (doesSpriteExist(overlayName)) {
-		return;
-	}
-	
-	SDL_Texture* tex = createBlackPixel(opacity);
-	SpriteGeometry geo;
-	
-	Sprite* s = new Sprite(t, geo);
-	sprites[popupLayer].insert(s);
-}
-
-SDL_Texture* Graphics::createBlackPixel(int opacity) {
-	SDL_Texture* t = SDL_CreateTexture(renderer, 0, SDL_TEXTUREACCESS_TARGET, 1, 1);
-	SDL_SetRenderTarget(renderer, t);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, opacity * 255 / 100);
-	SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
-	SDL_RenderDrawPoint(renderer, 0, 0);
-	SDL_SetRenderTarget(renderer, nullptr);
-	return t;
-}
-*/
