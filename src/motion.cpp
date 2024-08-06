@@ -5,39 +5,34 @@ bool operator==(const Motion& other) const {
 }
 
 void Motion::reset() {
-	for (MotionFrame frame : motions) {
+	for (MotionFrame* frame : frames) {
 		frame.reset();
 	}
 	currentFrame = frames.begin();
 }
 
-void Motion::addFrame(MotionFrame& frame) {
-	// change parameter to actual frame data
-	motions.push_back(motion);
+void Motion::addFrame(MotionFrame* frame) {
+	frames.push_back(frame);
 }
 
-SDL_FRect Motion::apply(const SDL_FRect& sourceBox, ms delta) {
+SDL_FRect Motion::apply(const SDL_FRect& sourceBox, ms& delta) {
 	SDL_FRect box = sourceBox;
-	while (delta > 0) {
+
+	while (delta.count() > 0) {
 		if (currentFrame == frames.end()) {
 			// maybe add callbacks or something here
 			return;
 		}
 
-		// if delta > current frame length,
-			// update box to end of frame
-			// delta -= frame length
-			// next frame
-			// continue
-		// if 0 <= delta < current frame length,
-			// update box to delta
-			// break
-		box = currentFrame.apply(box, delta);
-		if (delta.count() >= currentFrame.getDuration()) {
-			delta -= ms(currentFrame.getDuration());
+		// Apply motion frame to the source box.
+		currentFrame->updateTime(delta);
+		box = currentFrame.apply(box);
+
+		// If there's still more time left, move on to the next frame and repeat.
+		if (delta.count() > 0) {
 			currentFrame++;
 		}
-		else if (delta < currentFrame.getDuration()) {
+		else {
 			break;
 		}
 	}

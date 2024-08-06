@@ -1,36 +1,11 @@
 #pragma once
 
-#include <math.h>
+#include "SDL.h"
 
-#include "geometry.h"
-#include "motion.h"
 #include "exception.h"
+#include "motion_frame.h"
 
 namespace Motions {
-	/*
-	 The [x / y] position of the target moves in a sine function.
-	 The function is equal to 'amplitude * sin(frequency*πt)',
-	 where t = elapsed time (in seconds).
-	 
-	 Parameters:
-	 "amplitude" (float) : The size of the sine wave.
-	 "frequency" (float) : The frequency of each sine wave.
-	 "axis" (char) : The axis to apply the function to. Value must either be 'x' or 'y'.
-	*/
-	void Position2D_SineWave(Geometry* geo, Motion* m);
-
-	/*
-	 The [x / y] position of the target moves in a cosine function.
-	 The function is equal to 'amplitude * cos(frequency*πt)',
-	 where t = elapsed time (in seconds).
-	 
-	 Parameters:
-	 "amplitude" (float) : The size of the sine wave.
-	 "frequency" (float) : The frequency of each sine wave.
-	 "axis" (char) : The axis to apply the function to. Value must either be 'x' or 'y'.
-	*/
-	void Position2D_CosineWave(Geometry* geo, Motion* m);
-
 	/*
 	The target moves towards a destination point.
 	

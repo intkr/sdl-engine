@@ -1,53 +1,5 @@
 #include "animation_functions.h"
 
-void Motions::Stationary(Geometry* geo, Motion* m) {
-	// Nothing happens
-}
-
-void Motions::2DPosition_SineWave(Geometry* geo, Motion* m) {
-	const int msPerSecond = 1000;
-	float amplitude = m->getParameter<float>("amplitude"),
-		freqency = m->getParameter<float>("frequency");
-	ms elapsedTime = m->getElapsedTime();
-		
-	float delta = amplitude * (float)sin(frequency * M_PI * (elapsedTime.count() / msPerSecond));
-	
-	char axis = m->getParameter<char>("axis");
-	SDL_FRect*& baseRect = geo->baseRect,
-		modRect = geo->modRect;
-	
-	switch (axis) {
-	case 'x':
-		modRect->x = baseRect->x - delta;
-	case 'y':
-		modRect->y = baseRect->y - delta;
-	default:
-		std::cout << "Invalid parameter 'axis' (" << axis << ") in 2DPosition_SineWave\n";
-	}
-}
-
-void Motions::2DPosition_CosineWave(Geometry* geo, Motion* m) {
-	const int msPerSecond = 1000;
-	float amplitude = m->getParameter<float>("amplitude"),
-		freqency = m->getParameter<float>("frequency");
-	ms elapsedTime = m->getElapsedTime();
-		
-	float delta = amplitude * (float)sin(frequency * M_PI * (elapsedTime.count() / msPerSecond));
-	
-	char axis = m->getParameter<char>("axis");
-	SDL_FRect*& baseRect = geo->baseRect,
-		modRect = geo->modRect;
-	
-	switch (axis) {
-	case 'x':
-		modRect->x = baseRect->x - delta;
-	case 'y':
-		modRect->y = baseRect->y - delta;
-	default:
-		std::cout << "Invalid parameter 'axis' (" << axis << ") in 2DPosition_SineWave\n";
-	}
-}
-
 void Animations::linearMotion(Sprite* _s, AnimationEvent* _e) {
 	float speed = _e->getParameter<float>("speed");
 	char axis = _e->getParameter<char>("axis");

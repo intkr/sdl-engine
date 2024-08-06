@@ -1,37 +1,26 @@
 #include "motion_frame.h"
 
-MotionFrame::MotionFrame(MotionFunction _function, ms _duration)
-  : function(_function), duration(_duration), elapsedTime(ms(0)) {}
+void MotionFrame::updateTime(ms& delta) {
+	ms remainingTime = duration - elapsedTime;
 
-SDL_FRect MotionFrame::apply(const SDL_FRect& sourceBox, ms delta) {
-	try {
-		updateTime(delta);
-		return function(sourceBox, this);
+	if (delta <= remainingTime) {
+		elapsedTime += delta;
 	}
-	catch (InvalidItemException& e) {
-		std::cout << e.what();
-	}
-}
-
-void MotionFrame::updateTime(ms delta) {
-	elapsedTime += delta;
-	if (elapsedTime > duration) {
+	else {
 		elapsedTime = duration;
 	}
+
+	delta -= remainingTime;
 }
 
+SDL_FRect Motions::SineWave2D::apply(const SDL_FRect& sourceBox) {
+	SDL_FRect box = sourceBox;
 
+	double distance = amplitude * sin(frequency * PI * ((double)elapsedTime.count() / MS_PER_SECOND));
 
-void MotionFrame::setParameter(std::string name, std::any value) {
-	parameters.emplace(name, value);
+	box.x += (float)(distance * cos(angle_rad));
+	box.y += (float)(distance * sin(angle_rad) * -1);
+
+	return box;
 }
 
-template <typename T>
-T MotionFrame::getParameter<T>(std::string name) {
-	try {
-		return std::any_cast<T>(parameters.at(name));
-	}
-	catch (std::out_of_range& e) {
-		throw InvalidItemException(name, "parameter");
-	}
-}
