@@ -8,7 +8,7 @@ public:
 	
 	void clearScreen();
 	void displayScreen();
-	void renderTexture(SDL_Texture* tex, SDL_Rect* source, SDL_FRect target, double angle = 0.0);
+	void renderTexture(SDL_Texture* tex, const SDL_Rect* source, const SDL_FRect* target, const double angle, const SDL_FPoint* center);
 	
 private:
 	SDL_Renderer* SDLrenderer;

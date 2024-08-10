@@ -22,5 +22,15 @@ void SpriteComponent::setTransform(Transform* t) {
 }
 
 void SpriteComponent::render(Renderer* renderer) {
-    renderer.renderTexture(source.texture, source.textureBox, display.renderBox, display.finalAngle_deg);
+    // add texture mods here
+
+    SDL_FRect renderBox = source.getSourceBox();
+    Transform transform = display.getTransform();
+
+    renderBox.x = transform.position.x;
+    renderBox.y = transform.position.y;
+    renderBox.w *= transform.scale_percent;
+    renderBox.h *= transform.scale_percent;
+
+    renderer.renderTexture(source.getTexture(), source.getSourceBox(), renderBox, transform.angle_deg, source.getCenter());
 }

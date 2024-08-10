@@ -28,6 +28,7 @@ struct Transform {
 
     void scale(float multiplier) {
         scale_percent *= multiplier;
+        position *= multiplier;
     }
 
     void offset(SDL_FPoint delta) {
