@@ -29,6 +29,7 @@ private:
     std::vector<Motion>::iterator currentMotion;
 
     const Transform* objectTransform;
+    Transform transform;
 
     // "Object-relative" : Relative to the parent object.
     // "Window-relative" : Relative to the window; "objective".

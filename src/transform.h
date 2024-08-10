@@ -3,9 +3,9 @@
 #include "SDL.h"
 
 struct Transform {
-    Transform(SDL_FPoint pos, double angle = 0.0) : position(pos), angle_deg(angle), scale_percent(1.0) {}
+    Transform(SDL_FPoint pos, double angle = 0.0, float scale = 1.0f) : position(pos), angle_deg(angle), scale_percent(scale) {}
     
     SDL_FPoint position;
     double angle_deg;
-    double scale_percent;
+    float scale_percent;
 };

@@ -13,98 +13,95 @@ void MotionFrame::updateTime(ms& delta) {
 	delta -= remainingTime;
 }
 
-SDL_FRect Motions::SineWave2D::apply(const SDL_FRect& sourceBox) {
-	SDL_FPoint sourcePoint = getBoxCenter(sourceBox);
-	SDL_FRect newBox = setBoxPosition(sourceBox, apply(sourcePoint));
-	return newBox;
-}
-
-SDL_FPoint Motions::SineWave2D::apply(const SDL_FPoint& sourcePoint) {
-	SDL_FPoint point = sourcePoint;
+Transform Motions::Move2D_SineWave::apply(const Transform& source) {
+	Transform transform = source;
 
 	float distance = amplitude * sin(frequency * PI * ((float)elapsedTime.count() / MS_PER_SECOND));
+	transform.position.x += distance * cos(angle_rad);
+	transform.position.y += distance * sin(angle_rad) * -1;
 
-	point.x += distance * cos(angle_rad);
-	point.y += distance * sin(angle_rad) * -1;
-
-	return point;
+	return transform;
 }
 
-SDL_FRect Motions::Move2D_Linear::apply(const SDL_FRect& sourceBox) {
-	SDL_FPoint sourcePoint = getBoxCenter(sourceBox);
-	SDL_FRect newBox = setBoxPosition(sourceBox, apply(sourcePoint));
-	return newBox;
+Transform Motions::Move2D_Linear::apply(const Transform& source) {
+	Transform transform = source;
+
+	float x = (float)elapsedTime.count() / duration.count();
+	transform.position = start + (end-start) * x;
+
+	return transform;
 }
 
-SDL_FPoint Motions::Move2D_Linear::apply(const SDL_FPoint& sourcePoint) {
-	SDL_FPoint point;
-	float percentage = (float)elapsedTime.count() / duration.count();
-	point = start + (end - start) * percentage;
-	return point;
-}
+Transform Motions::Move2D_EaseSine::apply(const Transform& source) {
+	Transform transform = source;
 
-SDL_FRect Motions::Move2D_EaseSine::apply(const SDL_FRect& sourceBox) {
-	SDL_FPoint sourcePoint = getBoxCenter(sourceBox);
-	SDL_FRect newBox = setBoxPosition(sourceBox, apply(sourcePoint));
-	return newBox;
-}
-
-SDL_FPoint Motions::Move2D_EaseSine::apply(const SDL_FPoint& sourcePoint) {
-	SDL_FPoint point;
-	float percentage = (float)elapsedTime.count() / duration.count();
-	float sineValue;
+	float x = (float)elapsedTime.count() / duration.count();
+	float easeValue;
 	switch (mode) {
 	case 1: // In
-		sineValue = 1 - cos(percentage * PI / 2);
+		easeValue = 1 - cos(x * PI/2);
 		break;
 
 	case 2: // Out
-		sineValue = sin(percentage * PI / 2);
+		easeValue = sin(x * PI/2);
 		break;
 
 	case 3: // Both
-		sineValue = -(cos(percentage * PI) - 1) / 2;
+		easeValue = -(cos(x * PI) - 1) / 2;
 		break;
 
 	case 0: // None
 	default: // (Shouldn't be used)
-		sineValue = percentage;
+		easeValue = x;
 		break;
 	}
+	transform.position = start + (end-start) * easeValue;
 
-	point = start + (end - start) * sineValue;
-	return point;
+	return transform;
 }
 
-SDL_FRect Motions::Move2D_EaseBack::apply(const SDL_FRect& sourceBox) {
-	SDL_FPoint sourcePoint = getBoxCenter(sourceBox);
-	SDL_FRect newBox = setBoxPosition(sourceBox, apply(sourcePoint));
-	return newBox;
-}
+Transform Motions::Move2D_EaseBack::apply(const Transform& source) {
+	Transform transform = source;
 
-SDL_FPoint Motions::Move2D_EaseBack::apply(const SDL_FPoint& sourcePoint) {
-	SDL_FPoint point;
-	float percentage = (float)elapsedTime.count() / duration.count();
-	float sineValue;
+	float x = (float)elapsedTime.count() / duration.count();
+	float easeValue;
 	switch (mode) {
 	case 1: // In
-		sineValue = 1 - cos(percentage * PI / 2);
+		easeValue = (c+1) * pow(x, 3) - c * pow(x, 2);
 		break;
 
 	case 2: // Out
-		sineValue = sin(percentage * PI / 2);
+		easeValue = 1 + (c+1) * pow(x-1, 3) + c * pow(x-1, 2);
 		break;
 
 	case 3: // Both
-		sineValue = -(cos(percentage * PI) - 1) / 2;
+		if (x < 0.5f) {
+			easeValue = pow(x*2, 2) * ((c*1.525 + 1) * (x*2) - (c*1.525)) / 2;
+		}
+		else {
+			easeValue = pow(x*2 - 2, 2) * ((c*1.525 + 1) * (x*2 - 2) + (c*1.525) + 2) / 2;
+		}
 		break;
 
 	case 0: // None
 	default: // (Shouldn't be used)
-		sineValue = percentage;
+		easeValue = x;
 		break;
 	}
+	transform.position = start + (end-start) * easeValue;
 
-	point = start + (end - start) * sineValue;
-	return point;
+	return transform;
+}
+
+void Animations::linearRotation(Sprite* _s, AnimationEvent* _e) {
+	double speed = (double)_e->getParameter<float>("speed");
+	_s->setAngle(_s->getAngle() + speed);
+}
+
+Transform Motions::Rotate2D_Linear::apply(const Transform& source) {
+	Transform transform = source;
+	
+	transform.angle_deg = startAngle_deg + angularVelocity_deg_per_sec * (elapsedTime.count()/MS_PER_SECOND);
+
+	return transform;
 }

@@ -4,6 +4,7 @@
 #include "SDL.h"
 
 #include "clock.h"
+#include "transform.h"
 #include "exception.h"
 
 // Commonly used constants
@@ -23,9 +24,8 @@ public:
 	virtual void begin(const SDL_FPoint& point);
 	virtual void begin(const SDL_FRect& box);
 
-	// Calculates and returns the new values based on the parameter.
-	virtual SDL_FRect apply(const SDL_FRect& sourceBox) = 0;
-	virtual SDL_FPoint apply(const SDL_FPoint& sourcePoint) = 0;
+	// Calculates and returns the updated Transform.
+	virtual Transform apply(const Transform& source) = 0;
 
 protected:
 	ms elapsedTime;
@@ -38,33 +38,21 @@ https://gizma.com/easing/
 */ 
 
 namespace Motions {
-	SDL_FRect setBoxPosition(const SDL_FRect& box, const SDL_FPoint& newPos) {
-		SDL_FRect newBox = box;
-		newBox.x = newPos.x, newBox.y = newPos.y;
-		return newBox;
-	}
-
-	SDL_FPoint getBoxCenter(const SDL_FRect& box) {
-		SDL_FPoint point = { box.x + box.w / 2, box.y  + box.h / 2 };
-		return point;
-	}
-
 	/*
 	The object moves in a sine function on a predetermined, rotated axis.
 
 	Parameters
 	- amplitude : The size of the sine wave, in pixels.
 	- length : The time to cycle through one sine wave, in seconds.
-	- angle_deg : The angle of the sine wave, in degrees.
+	- angle : The angle of the sine wave, in degrees.
 	*/
-	class SineWave2D : public MotionFrame {
+	class Move2D_SineWave : public MotionFrame {
 	public:
-		SineWave2D(ms duration, float amplitude, float length, float angle_deg) :
+		Move2D_SineWave(ms duration, float amplitude, float length, float angle) :
 		  MotionFrame(duration), amp(amplitude), freq(2 * PI / length),
 		  angle_rad(remainder(angle_deg, 360.0) * 180.0 / PI) {}
 
-		SDL_FRect apply(const SDL_FRect& sourceBox) override;
-		SDL_FPoint apply(const SDL_FPoint& sourcePoint) override;
+		Transform apply(const Transform& source) override;
 
 	private:
 		float amp;
@@ -73,7 +61,7 @@ namespace Motions {
 	}
 
 	/*
-	The object moves to a target position, linearly.
+	The object moves to a target position with linear velocity.
 
 	Parameters
 	- target : The desired end position of the object.
@@ -90,8 +78,7 @@ namespace Motions {
 			start = SDL_FPoint{ box.x, box.y };
 		}
 
-		SDL_FRect apply(const SDL_FRect& sourceBox) override;
-		SDL_FPoint apply(const SDL_FPoint& sourcePoint) override;
+		Transform apply(const Transform& source) override;
 
 	private:
 		SDL_FPoint start;
@@ -117,8 +104,7 @@ namespace Motions {
 			start = SDL_FPoint{ box.x, box.y };
 		}
 
-		SDL_FRect apply(const SDL_FRect& sourceBox) override;
-		SDL_FPoint apply(const SDL_FPoint& sourcePoint) override;
+		Transform apply(const Transform& source) override;
 
 	private:
 		SDL_FPoint start;
@@ -132,13 +118,13 @@ namespace Motions {
 
 	Parameters
 	- target : The desired end position of the object.
+	- strength : Easing strength. Value must be positive.
 	- easeIn / easeOut : Whether or not to ease back.
 	*/
 	class Move2D_EaseBack : public MotionFrame {
 	public:
-	// unfinished
-		Move2D_EaseBack(ms duration, SDL_FPoint& target, bool easeIn, bool easeOut) :
-		  MotionFrame(duration), end(target), mode(easeIn + easeOut * 2) {}
+		Move2D_EaseBack(ms duration, SDL_FPoint& target, float strength, bool easeIn, bool easeOut) :
+		  MotionFrame(duration), end(target), c(strength), mode(easeIn + easeOut * 2) {}
 		
 		void begin(const SDL_FPoint& point) override {
 			start = point;
@@ -147,13 +133,31 @@ namespace Motions {
 			start = SDL_FPoint{ box.x, box.y };
 		}
 
-		SDL_FRect apply(const SDL_FRect& sourceBox) override;
-		SDL_FPoint apply(const SDL_FPoint& sourcePoint) override;
+		Transform apply(const Transform& source) override;
 
 	private:
 		SDL_FPoint start;
 		SDL_FPoint end;
+		float c;
 		// Values: None = 0, In, Out, Both
 		short mode;
+	}
+
+	/*
+	The object rotates with linear angular velocity.
+
+	Parameters
+	- velocity : The angular velocity of the object, in degrees per second.
+	*/
+	class Rotate2D_Linear : public MotionFrame {
+	public:
+		Rotate2D_Linear(ms duration, double velocity) :
+		  MotionFrame(duration), angularVelocity_deg(velocity) {}
+		
+		Transform apply(const Transform& source) override;
+
+	private:
+		double angularVelocity_deg_per_sec;
+		double startAngle_deg;
 	}
 }
