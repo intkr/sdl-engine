@@ -3,6 +3,7 @@
 #include <string>
 
 #include "clock.h"
+#include "transform.h"
 #include "motion_frame.h"
 
 class Motion {
@@ -11,11 +12,9 @@ public:
 	bool operator==(const Motion& other) const;
 
 	void reset();
-	// is using ms& a good idea here?
-	// this allows the function to change value,
-	// which would allow the component to check if there's remaining ms left.
-	// however this just seems too simple to be right idk
-	SDL_FRect apply(const SDL_FRect& sourceBox, ms& delta);
+	// Returns the transform after applying the given time (delta).
+	// The value of delta decreases by the applied amount.
+	Transform apply(const Transform& sourceBox, ms& delta);
 	
 	void addFrame(MotionFrame* frame);
 

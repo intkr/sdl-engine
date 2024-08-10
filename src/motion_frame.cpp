@@ -17,8 +17,8 @@ Transform Motions::Move2D_SineWave::apply(const Transform& source) {
 	Transform transform = source;
 
 	float distance = amplitude * sin(frequency * PI * ((float)elapsedTime.count() / MS_PER_SECOND));
-	transform.position.x += distance * cos(angle_rad);
-	transform.position.y += distance * sin(angle_rad) * -1;
+	transform.position.x = basePos.x + distance * cos(angle_rad);
+	transform.position.y = basePos.y + distance * -sin(angle_rad);
 
 	return transform;
 }
@@ -93,15 +93,19 @@ Transform Motions::Move2D_EaseBack::apply(const Transform& source) {
 	return transform;
 }
 
-void Animations::linearRotation(Sprite* _s, AnimationEvent* _e) {
-	double speed = (double)_e->getParameter<float>("speed");
-	_s->setAngle(_s->getAngle() + speed);
-}
-
 Transform Motions::Rotate2D_Linear::apply(const Transform& source) {
 	Transform transform = source;
 	
 	transform.angle_deg = startAngle_deg + angularVelocity_deg_per_sec * (elapsedTime.count()/MS_PER_SECOND);
+
+	return transform;
+}
+
+Transform Motions::Rotate2D_SineWave::apply(const Transform& source) {
+	Transform transform = source;
+
+	double x = (double)elapsedTime.count() / MS_PER_SECOND;
+	transform.angle_deg = startAngle_deg + sin(x * freq) * amp;
 
 	return transform;
 }
