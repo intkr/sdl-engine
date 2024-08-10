@@ -178,4 +178,8 @@ namespace Motions {
 		double amp;
 		double freq;
 	};
+
+	// stuff to add here:
+	// scaling - linear / sine should be enough
+	// opacity / hue / brightness changes
 }
