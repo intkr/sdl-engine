@@ -9,13 +9,15 @@
 #include "animation.h"
 
 class SourceComponent {
-	friend class SpriteComponent;
-
 public:
 	void initFromFile(std::string path);
 
 	void update(ms delta);
 
+	SDL_Texture* getTexture() { return texture; }
+	const SDL_Rect* getSourceBox() { return textureBox; }
+	const SDL_FPoint* getCenter() { return center; }
+	
 private:
 	void setTexture(std::string name);
 	void loadAnimationFromFile(std::string path);
@@ -25,6 +27,8 @@ private:
 
 	SDL_Texture* texture;
 	SDL_Rect textureBox;
+    // Point where the sprite will rotate around.
+    SDL_FPoint center;
 
 	std::vector<Animation> animations;
 	std::vector<Animation>::iterator currentAnimation;

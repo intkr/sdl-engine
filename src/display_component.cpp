@@ -12,28 +12,21 @@ void DisplayComponent::loadMotionFromFile(std::string path) {
 
 void DisplayComponent::update(ms delta) {
     applyMotion(delta);
-    applyObjectTransform();
 }
 
 void DisplayComponent::applyMotion(ms delta) {
-    modBox = currentMotion->apply(baseBox, delta);
+    transform = currentMotion->apply(transform, delta);
 }
 
-void DisplayComponent::applyObjectTransform() {
-    calculateRotatedPosition();
-    setBoxWindowRelative();
-}
+Transform DisplayComponent::getTransform() {
+    Transform finalTransform = transform;
 
-void DisplayComponent::calculateRotatedPosition() {
-    double objectAngle_deg = objectTransform->angle_deg;
-    // There's nothing to rotate if value equals 0
-    if (objectAngle_deg == 0.0) return;
+    // Update transform by inheriting values from all parents
+    const Transform* currentParent = transform.parent;
+    while (currentParent != nullptr) {
+        finalTransform.inherit(currentParent);
+        currentParent = currentParent.parent;
+    }
 
-    finalAngle_deg = relativeAngle_deg + objectAngle_deg;
-}
-
-void DisplayComponent::setBoxWindowRelative() {
-    SDL_FPoint objectPosition = objectTransform->position;
-    renderBox.x += objectPosition.x;
-    renderBox.y += objectPosition.y;
+    return finalTransform;
 }
