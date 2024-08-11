@@ -26,11 +26,14 @@ void SpriteComponent::render(Renderer* renderer) {
 
     SDL_FRect renderBox = source.getSourceBox();
     Transform transform = display.getTransform();
+    SDL_FPoint center = source.getCenter() * transform.scale_percent;
 
-    renderBox.x = transform.position.x;
-    renderBox.y = transform.position.y;
     renderBox.w *= transform.scale_percent;
     renderBox.h *= transform.scale_percent;
+    // Offset the display position by the source's center position,
+    // so the top left of the render box is set correctly.
+    renderBox.x = transform.position.x - center.x;
+    renderBox.y = transform.position.y - center.y;
 
-    renderer.renderTexture(source.getTexture(), source.getSourceBox(), renderBox, transform.angle_deg, source.getCenter());
+    renderer.renderTexture(source.getTexture(), source.getSourceBox(), renderBox, transform.angle_deg, center);
 }

@@ -19,14 +19,14 @@ void DisplayComponent::applyMotion(ms delta) {
 }
 
 Transform DisplayComponent::getTransform() {
-    Transform finalTransform = transform;
+    Transform globalTransform = transform;
 
     // Update transform by inheriting values from all parents
     const Transform* currentParent = transform.parent;
     while (currentParent != nullptr) {
-        finalTransform.inherit(currentParent);
+        globalTransform.inherit(currentParent);
         currentParent = currentParent.parent;
     }
 
-    return finalTransform;
+    return globalTransform;
 }

@@ -115,6 +115,7 @@ Overview of how the object-component stuff work
 /*
 Stuff to do when I have my IDE at home:
 	- fix all the existing syntax errors / inconsistencies
+	  also whitespaces (tab / 4 spaces - use 4 space)
 
 	- use CMake to build this project instead of Visual Studio,
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
@@ -214,4 +215,7 @@ Naming-related stuff to remind myself because I have dementia:
 		  Use "elapsed" if it refers to the difference between the current and the past.
 		- For beginnings or ends of a time frame, use "start" or "end".
 		- Use "duration" if it refers to how much time something takes.
+	
+	- Use "local" and "global" for two types of variables with the same functionality, but different domains.
+	  ex) vertices in hitbox.h
 */
