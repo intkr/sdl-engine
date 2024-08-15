@@ -18,7 +18,11 @@ public:
 	bool doesCollide(const CollisionComponent& other);
     
 private:
+    bool doesAABBintersect(const CollisionComponent& other);
+    bool doesHitboxIntersect(const CollisionComponent& other);
+
     ObjectType objectType;
-    std::vector<Hitbox> hitboxes;
+    
+    std::vector<Hitbox*> hitboxes;
     Transform transform;
 };

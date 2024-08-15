@@ -19,3 +19,9 @@ SDL_FPoint operator*(SDL_FPoint point, const float& scalar) {
     point.y *= scalar;
     return point;
 }
+
+SDL_FPoint operator/(SDL_FPoint point, const float& scalar) {
+    point.x /= scalar;
+    point.y /= scalar;
+    return point;
+}
