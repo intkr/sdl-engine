@@ -19,10 +19,18 @@ public:
     virtual bool doesCollide(const ConvexHitbox* other) = 0;
 
 protected:
-    bool doesOverlap(const std::vector<SDL_FPoint>& projectionA, const std::vector<SDL_FPoint>& projectionB);
-    SDL_FPoint getNormalizedNormal(const SDL_FPoint& pointA, const SDL_FPoint& pointB);
-    SDL_FPoint projectVertex(const SDL_FPoint& axis, const SDL_FPoint& vertex);
+    // SAT is performed using the axes derived from vertexA only.
+    bool SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, const std::vector<SDL_FPoint>& vertexB, const SDL_FPoint posB);
+    bool SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, const float radiusB, const SDL_FPoint posB);
+
     bool compare(const SDL_FPoint& a, const SDL_FPoint& b);
+    // Returns the unit normal vector of the edge from pointA to pointB.
+    SDL_FPoint getUnitNormal(const SDL_FPoint& pointA, const SDL_FPoint& pointB);
+    // Returns the length of the projection of the vertex onto the axis.
+    float getDotProduct(const SDL_FPoint& axis, const SDL_FPoint& vertex);
+
+    bool checkOverlap(const std::vector<float>& dotA, const float dotPosA, const std::vector<float>& dotB, const float dotPosB);
+    
 
     SDL_FPoint getPos();
 

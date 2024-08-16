@@ -2,9 +2,14 @@
 
 // idk if i did this right
 
-SDL_FPoint operator+(SDL_FPoint point, const SDL_FPoint& other) {
+SDL_FPoint& operator+=(SDL_FPoint& point, const SDL_FPoint& other) {
     point.x += other.x;
     point.y += other.y;
+    return point;
+}
+
+SDL_FPoint operator+(SDL_FPoint point, const SDL_FPoint& other) {
+    point += other;
     return point;
 }
 
