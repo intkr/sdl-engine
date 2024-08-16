@@ -2,7 +2,7 @@
 
 bool CollisionComponent::doesCollide(const CollisionComponent& other) {
     if (doesAABBintersect(other)) {
-        doesHitboxIntersect(other)) {
+        if (doesColliderIntersect(other)) {
             return true;
         }
     }
@@ -10,18 +10,19 @@ bool CollisionComponent::doesCollide(const CollisionComponent& other) {
 }
 
 bool CollisionComponent::doesAABBintersect(const CollisionComponent& other) {
+    if (aabb.x+aabb.w < other.aabb.x || other.aabb.x+other.aabb.w < aabb.x) {
+        return false;
+    }
+    if (aabb.y+aabb.h < other.aabb.y || other.aabb.y+other.aabb.h < aabb.y) {
+        return false;
+    }
     return true;
-    // idk how to implement this for now
-    // problem 1) the transform may have rotation, as well its parent(s)
-    //              -> check two rotating boxes, or aabb of the rotated box?
-    // problem 2) each hitbox may change position/scale/rotation
-    //              -> aabb needs to update, otherwise hitbox may go outside aabb
 }
 
-bool CollisionComponent::doesHitboxIntersect(const CollisionComponent& other) {
-    for (Hitbox* myHitbox : hitboxes) {
-        for (Hitbox* otherHitbox : other.hitboxes) {
-            if (myHitbox.doesCollide(otherHitbox)) {
+bool CollisionComponent::doesColliderIntersect(const CollisionComponent& other) {
+    for (Collider* collider : hitboxes) {
+        for (Collider* otherCollider : other.hitboxes) {
+            if (collider.doesCollide(otherCollider)) {
                 return true;
             }
         }

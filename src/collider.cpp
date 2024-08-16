@@ -1,10 +1,10 @@
 #include "hitbox.h"
 
-void CircleHitbox::setRadius(float _radius) {
+void CircleCollider::setRadius(float _radius) {
     radius = _radius;
 }
 
-void ConvexHitbox::addVertex(SDL_FPoint point) {
+void ConvexCollider::addVertex(SDL_FPoint point) {
     // Checks if point is equal to last added vertex,
     // so that the distance between the two isn't 0.
     if (*vertices.rbegin() == point) {
@@ -14,7 +14,7 @@ void ConvexHitbox::addVertex(SDL_FPoint point) {
     vertices.push_back(point);
 }
 
-SDL_FPoint Hitbox::getPos() {
+SDL_FPoint Collider::getPos() {
     Transform* currentTransform = transform;
     SDL_FPoint pos { 0, 0 };
     while (currentTransform != nullptr) {
@@ -24,7 +24,7 @@ SDL_FPoint Hitbox::getPos() {
     return pos;
 }
 
-bool CircleHitbox::doesCollide(const CircleHitbox& other) {
+bool CircleCollider::doesCollide(const CircleCollider& other) {
     SDL_FPoint pos = getPos(), otherPos = other.getPos();
 
     float sqDistance = (pos.x-otherPos.x)*(pos.x-otherPos.x) + (pos.y-otherPos.y)*(pos.y-otherPos.y);
@@ -36,14 +36,14 @@ bool CircleHitbox::doesCollide(const CircleHitbox& other) {
     else return false;
 }
 
-bool CircleHitbox::doesCollide(const ConvexHitbox& other) {
+bool CircleCollider::doesCollide(const ConvexCollider& other) {
     SDL_FPoint pos = getPos(), otherPos = other.getPos();
 
     if (!SAT(other.vertices, otherPos, radius, pos)) return false;
     return true;
 }
 
-bool ConvexHitbox::doesCollide(const CircleHitbox& other) {
+bool ConvexCollider::doesCollide(const CircleCollider& other) {
     SDL_FPoint pos = getPos(), otherPos = other.getPos();
 
     if (!SAT(vertices, pos, other.radius, otherPos)) return false;
@@ -51,7 +51,7 @@ bool ConvexHitbox::doesCollide(const CircleHitbox& other) {
 }
 
 
-bool ConvexHitbox::doesCollide(const ConvexHitbox& other) {
+bool ConvexCollider::doesCollide(const ConvexCollider& other) {
     SDL_FPoint pos = getPos(), otherPos = other.getPos();
 
     if (!SAT(vertices, pos, other.vertices, otherPos)) return false;
@@ -59,7 +59,7 @@ bool ConvexHitbox::doesCollide(const ConvexHitbox& other) {
     return true;
 }
 
-bool Hitbox::SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, const std::vector<SDL_FPoint>& vertexB, const SDL_FPoint posB) {
+bool Collider::SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, const std::vector<SDL_FPoint>& vertexB, const SDL_FPoint posB) {
     std::vector<float> dotA, dotB;
     SDL_FPoint unitNormal, dotPosA, dotPosB;
     size_t size = vertexA.size();
@@ -89,7 +89,7 @@ bool Hitbox::SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, 
     return true;
 }
 
-bool Hitbox::SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, const float radiusB, const SDL_FPoint posB) {
+bool Collider::SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, const float radiusB, const SDL_FPoint posB) {
     std::vector<float> dotA, dotB;
     SDL_FPoint unitNormal, dotPosA, dotPosB;
     size_t size = vertexA.size();
@@ -116,7 +116,7 @@ bool Hitbox::SAT(const std::vector<SDL_FPoint>& vertexA, const SDL_FPoint posA, 
     return true;
 }
 
-bool Hitbox::compare(const SDL_FPoint& a, const SDL_FPoint& b) {
+bool Collider::compare(const SDL_FPoint& a, const SDL_FPoint& b) {
     // returns true if a < b - i.e. a has lower values than b.
     // x pos takes priority over y pos.
     if (a.x < b.x) return true;
@@ -124,18 +124,18 @@ bool Hitbox::compare(const SDL_FPoint& a, const SDL_FPoint& b) {
     else return false;
 }
 
-SDL_FPoint Hitbox::getUnitNormal(const SDL_FPoint& pointA, const SDL_FPoint& pointB) {
+SDL_FPoint Collider::getUnitNormal(const SDL_FPoint& pointA, const SDL_FPoint& pointB) {
     SDL_FPoint normal { pointB.y-pointA.y, pointA.x-pointB.x };
     float length = sqrt(normal.x*normal.x + normal.y*normal.y);
     return (normal / length);
 }
 
-float Hitbox::getDotProduct(const SDL_FPoint& axis, const SDL_FPoint& vertex) {
+float Collider::getDotProduct(const SDL_FPoint& axis, const SDL_FPoint& vertex) {
     float dot = axis.x*vertex.x + axis.y*vertex.y;
     return dot;
 }
 
-bool Hitbox::checkOverlap(const std::vector<float>& dotA, const float dotPosA, const std::vector<float>& dotB, const float dotPosB) {
+bool Collider::checkOverlap(const std::vector<float>& dotA, const float dotPosA, const std::vector<float>& dotB, const float dotPosB) {
     float minA = std::min_element(dotA.begin(), dotA.end(), compare);
     float maxA = std::max_element(dotA.begin(), dotA.end(), compare);
     float minB = std::min_element(dotB.begin(), dotB.end(), compare);

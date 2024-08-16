@@ -5,18 +5,17 @@
 
 #include "SDL.h"
 
-// spoiler - hitboxes arent boxes
+// TODO: the vertices need to be rotated / resized based on transform
 
-
-class Hitbox {
+class Collider {
 public:
     // set parent to sprite display
     void setParentTransform(const Transform* parentTransform) {
         transform.parent = parentTransform;
     }
 
-    virtual bool doesCollide(const CircleHitbox* other) = 0;
-    virtual bool doesCollide(const ConvexHitbox* other) = 0;
+    virtual bool doesCollide(const CircleCollider* other) = 0;
+    virtual bool doesCollide(const ConvexCollider* other) = 0;
 
 protected:
     // SAT is performed using the axes derived from vertexA only.
@@ -38,23 +37,23 @@ protected:
     Transform transform;
 };
 
-class CircleHitbox : public Hitbox {
+class CircleCollider : public Collider {
 public:
     void setRadius(float _radius);
 
-    bool doesCollide(const CircleHitbox* other) override;
-    bool doesCollide(const ConvexHitbox* other) override;
+    bool doesCollide(const CircleCollider* other) override;
+    bool doesCollide(const ConvexCollider* other) override;
 
 private:
     float radius;
 };
 
-class ConvexHitbox : public Hitbox {
+class ConvexCollider : public Collider {
 public:
     void addVertex(SDL_FPoint point);
 
-    bool doesCollide(const CircleHitbox* other) override;
-    bool doesCollide(const ConvexHitbox* other) override;
+    bool doesCollide(const CircleCollider* other) override;
+    bool doesCollide(const ConvexCollider* other) override;
 
 private:
     std::vector<SDL_FPoint> vertices;
