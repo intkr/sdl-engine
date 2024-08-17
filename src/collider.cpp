@@ -14,8 +14,47 @@ void ConvexCollider::addVertex(SDL_FPoint point) {
     vertices.push_back(point);
 }
 
+void CircleCollider::update() {
+    updateTransform();
+    radius = localRadius * transform.scale_percent;
+}
+
+void ConvexCollider::update() {
+    updateTransform();
+    transformVertices();
+}
+
+void Collider::updateTransform() {
+    finalTransform = *displayTransform;
+    Transform* currentTransform = displayTransform;
+    while (currentTransform != nullptr) {
+        finalTransform.position *= currentTransform->scale_percent;
+        finalTransform.position += currentTransform->position;
+        finalTransform.scale_percent *= currentTransform->scale_percent;
+        finalTransform.angle_deg += currentTransform->angle_deg;
+        currentTransform = currentTransform->parent;
+    }
+}
+
+void ConvexCollider::transformVertices() {
+    vertices.clear();
+    // rotate
+    SDL_FPoint point;
+    double angle_deg = transform.angle_deg;
+    for (SDL_FPoint& vertex : localVertices) {
+        // Apply rotation matrix on each vertex
+        point.x = vertex.x * cos(rotation_deg) - vertex.y * sin(rotation_deg);
+        point.y = vertex.x * sin(rotation_deg) + vertex.y * cos(rotation_deg);
+        // and push to the new vector
+        vertices.push_back(point);
+    }
+    // scale
+    
+    // translate
+}
+
 SDL_FPoint Collider::getPos() {
-    Transform* currentTransform = transform;
+    Transform* currentTransform = displayTransform;
     SDL_FPoint pos { 0, 0 };
     while (currentTransform != nullptr) {
         pos += currentTransform->position;

@@ -216,6 +216,7 @@ Naming-related stuff to remind myself because I have dementia:
 		- For beginnings or ends of a time frame, use "start" or "end".
 		- Use "duration" if it refers to how much time something takes.
 	
-	- Use "local" and "global" for two types of variables with the same functionality, but different domains.
-	  ex) vertices in hitbox.h
+	- For member variables that require two copies for internal / external usage,
+	  use "local" for variables only used internally within a class.
+	  ex) in 'collider.h', "localVertices" and "vertices"
 */

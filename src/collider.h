@@ -9,9 +9,8 @@
 
 class Collider {
 public:
-    // set parent to sprite display
-    void setParentTransform(const Transform* parentTransform) {
-        transform.parent = parentTransform;
+    void setDisplayTransform(const Transform* transform) {
+        displayTransform = transform;
     }
 
     virtual bool doesCollide(const CircleCollider* other) = 0;
@@ -30,21 +29,25 @@ protected:
 
     bool checkOverlap(const std::vector<float>& dotA, const float dotPosA, const std::vector<float>& dotB, const float dotPosB);
     
-
+    void updateTransform();
     SDL_FPoint getPos();
 
-    bool active;
-    Transform transform;
+    const Transform* displayTransform;
+    // Fully calculated transform based on display/parent transforms.
+    Transform finalTransform;
 };
 
 class CircleCollider : public Collider {
 public:
     void setRadius(float _radius);
 
+    void update();
+    
     bool doesCollide(const CircleCollider* other) override;
     bool doesCollide(const ConvexCollider* other) override;
 
 private:
+    float localRadius;
     float radius;
 };
 
@@ -52,9 +55,14 @@ class ConvexCollider : public Collider {
 public:
     void addVertex(SDL_FPoint point);
 
+    void update();
+
     bool doesCollide(const CircleCollider* other) override;
     bool doesCollide(const ConvexCollider* other) override;
 
 private:
+    void transformVertices();
+    // Unrotated vertex data should be stored here.
+    std::vector<SDL_FPoint> localVertices;
     std::vector<SDL_FPoint> vertices;
 };

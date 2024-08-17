@@ -1,5 +1,23 @@
 #include "collision_component.h"
 
+CollisionComponent::~CollisionComponent() {
+    for (Collider* collider : colliders) {
+        delete collider;
+    }
+}
+
+void CollisionComponent::addConvexCollider(const Transform* displayTransform) {
+    ConvexCollider* collider = new ConvexCollider();
+    collider.setDisplayTransform(displayTransform);
+    colliders.push_back(collider);
+}
+
+void CollisionComponent::addCircleCollider(const Transform* displayTransform) {
+    CircleCollider* collider = new ConvexCollider();
+    collider.setDisplayTransform(displayTransform);
+    colliders.push_back(collider);
+}
+
 bool CollisionComponent::doesCollide(const CollisionComponent& other) {
     if (doesAABBintersect(other)) {
         if (doesColliderIntersect(other)) {

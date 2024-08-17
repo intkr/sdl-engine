@@ -5,17 +5,20 @@
 
 #include "object_enum.h"
 #include "transform.h"
-#include "hitbox.h"
+#include "collider.h"
 
 class CollisionComponent {
 public:
+    ~CollisionComponent();
 	void initFromFile(std::string path);
-    // TODO: this
-    void addConvexCollider(const Transform* parentTransform);
-    void addCircleCollider(const Transform* parentTransform);
-    // set parent to object
-    void setParentTransform(const Transform* parentTransform) {
-        transform.parent = parentTransform;
+    
+    // Creates a convex collider shape binded to the given sprite's display.
+    void addConvexCollider(const Transform* displayTransform);
+    // Creates a circular collider shape binded to the given sprite's display.
+    void addCircleCollider(const Transform* displayTransform);
+    
+    void setObjectTransform(const Transform* transform) {
+        objectTransform = transform;
     }
 
 	bool doesCollide(const CollisionComponent& other);
@@ -28,6 +31,7 @@ private:
     // The AABB should be large enough to fit all collision shapes' movements.
     SDL_FRect aabb;
 
-    std::vector<Collider*> hitboxes;
-    Transform transform;
+    std::vector<Collider*> colliders;
+
+    const Transform* objectTransform;
 };
