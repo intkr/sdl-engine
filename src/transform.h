@@ -13,7 +13,7 @@ struct Transform {
     void inherit(const Transform& parent) {
         rotate(parent.angle_deg);
         scale(parent.scale_percent);
-        offset(parent.position);
+        translate(parent.position);
     }
 
     void rotate(double rotation_deg) {
@@ -31,7 +31,7 @@ struct Transform {
         position *= multiplier;
     }
 
-    void offset(SDL_FPoint delta) {
+    void translate(SDL_FPoint delta) {
         position += delta;
     }
     

@@ -18,6 +18,12 @@ void CollisionComponent::addCircleCollider(const Transform* displayTransform) {
     colliders.push_back(collider);
 }
 
+void CollisionComponent::update() {
+    for (Collider* collider : colliders) {
+        collider->update();
+    }
+}
+
 bool CollisionComponent::doesCollide(const CollisionComponent& other) {
     if (doesAABBintersect(other)) {
         if (doesColliderIntersect(other)) {

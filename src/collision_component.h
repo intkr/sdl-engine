@@ -21,6 +21,7 @@ public:
         objectTransform = transform;
     }
 
+    void update();
 	bool doesCollide(const CollisionComponent& other);
     
 private:

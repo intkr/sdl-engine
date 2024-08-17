@@ -30,7 +30,7 @@ void SpriteComponent::render(Renderer* renderer) {
 
     renderBox.w *= transform.scale_percent;
     renderBox.h *= transform.scale_percent;
-    // Offset the display position by the source's center position,
+    // Translate the display position by the source's center position,
     // so the top left of the render box is set correctly.
     renderBox.x = transform.position.x - center.x;
     renderBox.y = transform.position.y - center.y;

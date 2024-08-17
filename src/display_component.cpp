@@ -12,21 +12,20 @@ void DisplayComponent::loadMotionFromFile(std::string path) {
 
 void DisplayComponent::update(ms delta) {
     applyMotion(delta);
+    updateTransform();
 }
 
 void DisplayComponent::applyMotion(ms delta) {
-    transform = currentMotion->apply(transform, delta);
+    localTransform = currentMotion->apply(localTransform, delta);
 }
 
-Transform DisplayComponent::getTransform() {
-    Transform globalTransform = transform;
+void DisplayComponent::updateTransform() {
+    transform = localTransform;
 
     // Update transform by inheriting values from all parents
     const Transform* currentParent = transform.parent;
     while (currentParent != nullptr) {
-        globalTransform.inherit(currentParent);
+        transform.inherit(currentParent);
         currentParent = currentParent.parent;
     }
-
-    return globalTransform;
 }
