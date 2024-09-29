@@ -10,12 +10,20 @@
 
 class SpriteComponent {
 public:
+    bool operator==(const SpriteComponent& other) {
+        return name == other.name;
+    }
+    bool operator==(const std::string& _name) {
+        return name == _name;
+    }
+
     SpriteComponent(std::string _name, short _layer);
     void init(std::string initFilePath, Transform* objectTransform);
     void render(Renderer* renderer);
     void update();
 
-    void getTransform() { return transform; }
+    const Transform* getTransform() { return transform; }
+    void getName() { return name; }
 
 private:
     void initFromFile(std::string path);

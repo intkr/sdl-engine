@@ -16,7 +16,10 @@ bool operator==(const Entity& other) const {
 
 void Entity::addSubentity(Entity* e) {
 	try {
-		checkObjectValidity(e, subentities);
+		// TODO: uh idk where code for this function went lol
+		// also retouch similar functions below and ones on other files
+
+		//checkObjectValidity(e, subentities); 
 		subentities.push_back(e);
 	}
 	catch (GameException& ex) {
@@ -31,6 +34,27 @@ Entity* Entity::getSubentity(std::string name) {
 	}
 	return *iter;
 }
+
+void addSprite(SpriteComponent* sprite) {
+	auto iter = std::find(sprites.begin(), sprites.end(), sprite);
+	if (iter != sprites.end()) {
+		throw DuplicateItemException(sprite->getName(), "sprite");
+	}
+	sprites.push_back(sprite);
+}
+
+void addCollision(CollisionComponent* collision, std::string spriteName) {
+	auto iter = std::find(sprites.begin(), sprites.end(), spriteName);
+	if (iter == sprites.end()) {
+		throw InvalidItemException(spriteName, "sprite");
+	}
+	collisions.push_back(collision);
+	collision->setSpriteTransform(iter->getTransform());
+}
+
+//////////////////////////////////////
+// old code below
+//////////////////////////////////////
 
 void Entity::setKeyEvent(KeyInput input, void(*f)(Entity*)) {
 	if (keyEvents.find(input) != keyEvents.end()) {

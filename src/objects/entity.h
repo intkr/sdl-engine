@@ -12,8 +12,11 @@ class Entity : public GameObject {
 public:
 	Entity(std::string _name, SDL_FPoint pos) : GameObject(_name, pos), parent(nullptr) {}
 	void addSubentity(Entity* entity);
-	void setParent(Entity* entity);
+	void getSubentity(std::string name);
+	void setParent(Entity* entity) { parent = entity; }
 	void addSprite(SpriteComponent* sprite);
+	// Adds collision to a sprite owned by the entity.
+	void addCollision(CollisionComponent* collision, std::string spriteName);
 
 	void update(ms delta) override;
 

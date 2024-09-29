@@ -17,8 +17,8 @@ public:
     // Creates a circular collider shape binded to the given sprite's display.
     void addCircleCollider(const Transform* displayTransform);
     
-    void setObjectTransform(const Transform* transform) {
-        objectTransform = transform;
+    void setSpriteTransform(const Transform* transform) {
+        spriteTransform = transform;
     }
 
     void update();
@@ -34,5 +34,15 @@ private:
 
     std::vector<Collider*> colliders;
 
-    const Transform* objectTransform;
+    const Transform* spriteTransform;
 };
+
+/*
+TODO: need to rewrite collision component / collider code
+
+- spriteTransform (previously objectTransform) is completely unused rn, it serves no purpose
+- CircleCollider has no variable for the center point - it just assumes the center is (0,0) for some reason
+- since displayTransform (in collider) is just spriteTransform (in collision component) now,
+  code should reflect that change accordingly
+- collider data may need changes that sync enough with the sprite texture changes (i.e. animations),
+*/
