@@ -15,10 +15,11 @@ void SpriteComponent::initFromFile(std::string path) {
         // set attributes
         // get source data file path, init source
         // get display data file path, init display
+            // also pass localtransform to display
 }
 
 void SpriteComponent::setTransform(Transform* t) {
-    display->setObjectTransform(t);
+    transform.parent = localTransform.parent = t;
 }
 
 void SpriteComponent::render(Renderer* renderer) {
@@ -36,4 +37,15 @@ void SpriteComponent::render(Renderer* renderer) {
     renderBox.y = transform.position.y - center.y;
 
     renderer.renderTexture(source.getTexture(), source.getSourceBox(), renderBox, transform.angle_deg, center);
+}
+
+void SpriteComponent::update() {
+    transform = localTransform;
+
+    // Update transform by inheriting values from all parents
+    const Transform* currentParent = transform.parent;
+    while (currentParent != nullptr) {
+        transform.inherit(currentParent);
+        currentParent = currentParent.parent;
+    }
 }

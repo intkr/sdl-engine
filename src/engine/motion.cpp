@@ -15,8 +15,8 @@ void Motion::addFrame(MotionFrame* frame) {
 	frames.push_back(frame);
 }
 
-SDL_FRect Motion::apply(const SDL_FRect& sourceBox, ms& delta) {
-	SDL_FRect box = sourceBox;
+Transform Motion::apply(const Transform& sourceTransform, ms& delta) {
+	Transform transform = sourceTransform;
 
 	while (delta.count() > 0) {
 		if (currentFrame == frames.end()) {
@@ -26,7 +26,7 @@ SDL_FRect Motion::apply(const SDL_FRect& sourceBox, ms& delta) {
 
 		// Apply motion frame to the source box.
 		currentFrame->updateTime(delta);
-		box = currentFrame.apply(box);
+		transform = currentFrame.apply(transform);
 
 		// If there's still more time left, move on to the next frame and repeat.
 		if (delta.count() > 0) {
@@ -37,5 +37,5 @@ SDL_FRect Motion::apply(const SDL_FRect& sourceBox, ms& delta) {
 		}
 	}
 
-	return box;
+	return transform;
 }

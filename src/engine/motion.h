@@ -12,8 +12,10 @@ public:
 	bool operator==(const Motion& other) const;
 
 	void reset();
-	// Returns the transform after applying the given time (delta).
-	// The value of delta decreases by the applied amount.
+	// Returns the transform after applying the given time ('delta').
+	// The value of 'delta' decreases by the applied amount.
+	// In most cases, this means that 'delta' will be equal to 0 by the end of the function -
+	// however, if the remaining time of the motion is less than 'delta', then its value will be non-zero.
 	Transform apply(const Transform& sourceBox, ms& delta);
 	
 	void addFrame(MotionFrame* frame);
