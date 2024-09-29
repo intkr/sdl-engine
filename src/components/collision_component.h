@@ -3,9 +3,9 @@
 
 #include "SDL.h"
 
-#include "object_enum.h"
-#include "transform.h"
-#include "collider.h"
+#include "engine/object_enum.h"
+#include "engine/transform.h"
+#include "engine/collider.h"
 
 class CollisionComponent {
 public:

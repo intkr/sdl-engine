@@ -1,4 +1,4 @@
-#include "hitbox.h"
+#include "collider.h"
 
 void CircleCollider::setRadius(float _radius) {
     radius = _radius;

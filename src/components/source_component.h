@@ -5,8 +5,8 @@
 
 #include "SDL.h"
 
-#include "clock.h"
-#include "animation.h"
+#include "engine/clock.h"
+#include "engine/animation.h"
 
 class SourceComponent {
 public:

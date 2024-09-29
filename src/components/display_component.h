@@ -3,8 +3,8 @@
 
 #include "SDL.h"
 
-#include "transform.h"
-#include "motion.h"
+#include "engine/transform.h"
+#include "engine/motion.h"
 
 class DisplayComponent {
 public:

@@ -5,7 +5,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-#include "engine.h"
+#include "engine/engine.h"
 
 void openDebugConsole() {
 	AllocConsole();
@@ -119,7 +119,7 @@ Stuff to do when I have my IDE at home:
 
 	- use CMake to build this project instead of Visual Studio,
 	  so it becomes decoupled from VS for anyone who may not use it to code stuff.
-	  Additionally, consider organizing this clutter of .h/.cpp files into folders because its gettin kinda messy
+		- use the compiler option '-I' to allow for more organized src files.
 
 	- Fat reminder: Do not even think about making Lua modding support because I'm already frying my brain with everything
 	  just hardcode every type of entity including their logic, maybe think about Lua on future projects

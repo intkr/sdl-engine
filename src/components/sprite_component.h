@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "transform.h"
-#include "renderer.h"
+#include "engine/transform.h"
+#include "engine/renderer.h"
 
 #include "source_component.h"
 #include "display_component.h"

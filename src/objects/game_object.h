@@ -4,9 +4,9 @@
 
 #include "SDL.h"
 
-#include "clock.h"
-#include "exception.h"
-#include "transform.h"
+#include "engine/clock.h"
+#include "engine/exception.h"
+#include "engine/transform.h"
 
 // Base class for all in-game objects.
 class GameObject {

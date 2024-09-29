@@ -5,8 +5,8 @@
 #include "SDL.h"
 
 #include "game_object.h"
-#include "sprite_component.h"
-#include "collision_component.h"
+#include "components/sprite_component.h"
+#include "components/collision_component.h"
 
 class Entity : public GameObject {
 public:
