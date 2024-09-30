@@ -181,6 +181,9 @@ Moderately important stuff to ponder upon like a sophisticated individual:
 	
 	- Look into instance rendering, apparently commonly used for drawing multiple of the same sprite
 	  (e.g. particles)
+
+	- Some unintended side effects may occur when pausing / unpausing with different key presses.
+	  Maybe look into solutions if this actually does happen
 */
 
 /*
