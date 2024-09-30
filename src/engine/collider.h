@@ -5,15 +5,13 @@
 
 #include "SDL.h"
 
-// TODO: the vertices need to be rotated / resized based on transform
-
 class Collider {
 public:
     void setDisplayTransform(const Transform* transform) {
         displayTransform = transform;
     }
 
-    virtual void update() = 0;
+    virtual void update(const Transform* transform) = 0;
 
     virtual bool doesCollide(const CircleCollider* other) = 0;
     virtual bool doesCollide(const ConvexCollider* other) = 0;
@@ -23,6 +21,7 @@ protected:
     bool SAT(const std::vector<SDL_FPoint>& vertexA, const std::vector<SDL_FPoint>& vertexB);
     bool SAT(const std::vector<SDL_FPoint>& vertexA, const float radiusB, const SDL_FPoint& posB);
 
+private:
     bool compare(const SDL_FPoint& a, const SDL_FPoint& b);
     // Returns the unit normal vector of the edge from pointA to pointB.
     SDL_FPoint getUnitNormal(const SDL_FPoint& pointA, const SDL_FPoint& pointB);
@@ -30,20 +29,22 @@ protected:
     float getDotProduct(const SDL_FPoint& axis, const SDL_FPoint& vertex);
 
     bool checkOverlap(const std::vector<float>& dotA, const std::vector<float>& dotB);
-
-    const Transform* displayTransform;
 };
 
 class CircleCollider : public Collider {
 public:
-    void setRadius(float _radius);
+    void setCenter(SDL_FPoint _center) { localCenter = _center; }
+    void setRadius(float _radius) { localRadius = _radius; }
 
-    void update() override;
+    void update(const Transform* transform) override;
     
     bool doesCollide(const CircleCollider* other) override;
     bool doesCollide(const ConvexCollider* other) override;
 
 private:
+    SDL_FPoint localCenter;
+    SDL_FPoint center;
+
     float localRadius;
     float radius;
 };
@@ -52,13 +53,12 @@ class ConvexCollider : public Collider {
 public:
     void addVertex(SDL_FPoint point);
 
-    void update() override;
+    void update(const Transform* transform) override;
 
     bool doesCollide(const CircleCollider* other) override;
     bool doesCollide(const ConvexCollider* other) override;
 
 private:
-    // Unrotated vertex data should be stored here.
     std::vector<SDL_FPoint> localVertices;
     std::vector<SDL_FPoint> vertices;
 };

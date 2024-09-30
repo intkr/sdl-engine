@@ -133,7 +133,8 @@ Highly prioritized stuff I must do before I eventually meltdown:
 	- Figure out how to initialize objects from an external json file
 	  - Components with common data should be initialized from a file only once,
 	    then be created with the copy constructor for every subsequent initialization.
-	  - bruh idk
+	  - Maybe use a factory that holds one copy for every kind of object and returns new copies of those idk,
+	    at least don't touch on 'addSprite' or whatever because i have no idea how as of rn 
 
 	- Implement a logging system for easier debugging
 

@@ -20,7 +20,7 @@ void CollisionComponent::addCircleCollider(const Transform* displayTransform) {
 
 void CollisionComponent::update() {
     for (Collider* collider : colliders) {
-        collider->update();
+        collider->update(spriteTransform);
     }
 }
 
@@ -34,12 +34,15 @@ bool CollisionComponent::doesCollide(const CollisionComponent& other) {
 }
 
 bool CollisionComponent::doesAABBintersect(const CollisionComponent& other) {
-    if (aabb.x+aabb.w < other.aabb.x || other.aabb.x+other.aabb.w < aabb.x) {
+/*  add AABB later at home when profiling is possible,
+    because working on AABB data for each sprite may be overkill if it doesnt do much
+
+     if (aabb.x+aabb.w < other.aabb.x || other.aabb.x+other.aabb.w < aabb.x) {
         return false;
     }
     if (aabb.y+aabb.h < other.aabb.y || other.aabb.y+other.aabb.h < aabb.y) {
         return false;
-    }
+    } */
     return true;
 }
 

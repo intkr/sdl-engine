@@ -10,13 +10,13 @@
 
 class Entity : public GameObject {
 public:
+	// dont focus on these stuff until all components are done
 	Entity(std::string _name, SDL_FPoint pos) : GameObject(_name, pos), parent(nullptr) {}
 	void addSubentity(Entity* entity);
-	void getSubentity(std::string name);
+	Entity* getSubentity(std::string name);
 	void setParent(Entity* entity) { parent = entity; }
 	void addSprite(SpriteComponent* sprite);
-	// Adds collision to a sprite owned by the entity.
-	void addCollision(CollisionComponent* collision, std::string spriteName);
+	void addCollision(std::string spriteName, std::string dataPath);
 
 	void update(ms delta) override;
 

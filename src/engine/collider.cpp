@@ -1,47 +1,45 @@
 #include "collider.h"
 
-void CircleCollider::setRadius(float _radius) {
-    radius = _radius;
-}
-
 void ConvexCollider::addVertex(SDL_FPoint point) {
     // Checks if point is equal to last added vertex,
     // so that the distance between the two isn't 0.
-    if (*vertices.rbegin() == point) {
+    if (*localVertices.rbegin() == point) {
+        // maybe add some debug warning log here idk
         return;
     }
 
+    localVertices.push_back(point);
     vertices.push_back(point);
+
 }
 
-void CircleCollider::update() {
-    radius = localRadius * displayTransform.scale_percent;
+void CircleCollider::update(const Transform* transform) {
+    radius = localRadius * transform.scale_percent;
+    center = localCenter + transform.position;
 }
 
-void ConvexCollider::update() {
-    vertices.clear();
+void ConvexCollider::update(const Transform* transform) {
+    double angle_deg = transform.angle_deg;
+    float scale_percent = transform.scale_percent;
+    SDL_FPoint position = transform.position;
 
-    double angle_deg = displayTransform.angle_deg;
-    float scale_percent = displayTransform.scale_percent;
-    SDL_FPoint position = displayTransform.position;
-
-    SDL_FPoint point;
-    for (SDL_FPoint& vertex : localVertices) {
-        // Rotate the vertex by applying the rotation matrix,
+    SDL_FPoint point, vertex;
+    for (size_t i = 0; i < vertices.size(); i++) {
+        vertex = localVertices[i];
+        // Rotate the local vertex by applying the rotation matrix,
         point.x = vertex.x * cos(rotation_deg) - vertex.y * sin(rotation_deg);
         point.y = vertex.x * sin(rotation_deg) + vertex.y * cos(rotation_deg);
         // scale and translate the vertex,
         point *= scale_percent;
         point += position;
-        // and push to the new vector
-        vertices.push_back(point);
+        // and update the global vertex vector
+        vertices[i] = point;
     }
 }
 
 bool CircleCollider::doesCollide(const CircleCollider& other) {
-    SDL_FPoint pos = displayTransform.position, otherPos = other.displayTransform.position;
-
-    float sqDistance = (pos.x-otherPos.x)*(pos.x-otherPos.x) + (pos.y-otherPos.y)*(pos.y-otherPos.y);
+    // could this overflow under normal circumstances?
+    float sqDistance = (center.x-other.center.x)*(center.x-other.center.x) + (center.y-other.center.y)*(center.y-other.center.y);
     float sqRadius = (radius+other.radius) * (radius+other.radius);
     
     if (sqDistance < sqRadius) {
@@ -51,23 +49,17 @@ bool CircleCollider::doesCollide(const CircleCollider& other) {
 }
 
 bool CircleCollider::doesCollide(const ConvexCollider& other) {
-    SDL_FPoint pos = getPos(), otherPos = other.getPos();
-
-    if (!SAT(other.vertices, radius, pos)) return false;
+    if (!SAT(other.vertices, radius, center)) return false;
     return true;
 }
 
 bool ConvexCollider::doesCollide(const CircleCollider& other) {
-    SDL_FPoint pos = getPos(), otherPos = other.getPos();
-
-    if (!SAT(vertices, other.radius, otherPos)) return false;
+    if (!SAT(vertices, other.radius, other.center)) return false;
     return true;
 }
 
 
 bool ConvexCollider::doesCollide(const ConvexCollider& other) {
-    SDL_FPoint pos = getPos(), otherPos = other.getPos();
-
     if (!SAT(vertices, other.vertices)) return false;
     if (!SAT(other.vertices, vertices)) return false;
     return true;
@@ -130,7 +122,7 @@ bool Collider::SAT(const std::vector<SDL_FPoint>& vertexA, const float radiusB, 
 
 bool Collider::compare(const SDL_FPoint& a, const SDL_FPoint& b) {
     // returns true if a < b - i.e. a has lower values than b.
-    // x pos takes priority over y pos.
+    // x center takes priority over y center.
     if (a.x < b.x) return true;
     else if (a.y < b.y) return true;
     else return false;

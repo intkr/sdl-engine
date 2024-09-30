@@ -9,17 +9,15 @@
 
 class CollisionComponent {
 public:
+    CollisionComponent(const Transform* transform) : spriteTransform(transform) {}
     ~CollisionComponent();
+    
 	void initFromFile(std::string path);
     
-    // Creates a convex collider shape binded to the given sprite's display.
-    void addConvexCollider(const Transform* displayTransform);
-    // Creates a circular collider shape binded to the given sprite's display.
-    void addCircleCollider(const Transform* displayTransform);
-    
-    void setSpriteTransform(const Transform* transform) {
-        spriteTransform = transform;
-    }
+    // Creates a convex collider shape binded to the given sprite.
+    void addConvexCollider(const Transform* spriteTransform);
+    // Creates a circular collider shape binded to the given sprite.
+    void addCircleCollider(const Transform* spriteTransform);
 
     void update();
 	bool doesCollide(const CollisionComponent& other);
