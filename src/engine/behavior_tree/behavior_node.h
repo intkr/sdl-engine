@@ -15,5 +15,3 @@ public:
 protected:
     std::vector<BehaviorNode*> children;
 };
-
-// TODO: add action nodes somehow
