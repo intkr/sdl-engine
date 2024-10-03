@@ -14,11 +14,11 @@ public:
     NodeStatus process() override;
 }
 
-class RetryNode : public LogicNode {
+class RepeatNode : public LogicNode {
 public:
-    // The initial process counts in the number of retries.
+    // The initial process counts in the number of tries.
     // i.e. 1 means 'try once', 2 means 'try twice', and so on.
-    RetryNode(int retries) : count(1), maxCount(retries) {}
+    RepeatNode(int tries) : count(1), maxCount(tries) {}
 
     void reset() override;
     NodeStatus process() override;

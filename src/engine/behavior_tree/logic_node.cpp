@@ -23,11 +23,11 @@ NodeStatus InverseNode::process() {
     }
 }
 
-void RetryNode::reset() {
+void RepeatNode::reset() {
     count = 1;
 }
 
-NodeStatus RetryNode::process() {
+NodeStatus RepeatNode::process() {
     if (children.size() == 0) return _NODE_INVALID;
 
     NodeStatus result = children[0]->process();
