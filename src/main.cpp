@@ -130,6 +130,8 @@ Stuff to do when I have my IDE at home:
 
 /*
 Highly prioritized stuff I must do before I eventually meltdown:
+	- Just add commonly used functions to the entity class because im actually melting down
+	  - ex) isStunned() / getDistanceFromPlayer() / etcetc
 	- Figure out how to initialize objects from an external json file
 	  - Components with common data should be initialized from a file only once,
 	    then be created with the copy constructor for every subsequent initialization.
